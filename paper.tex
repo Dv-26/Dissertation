@@ -39,6 +39,8 @@
 
 \renewcommand {\thetable} {\thesection{}-\arabic{table}}    %设置表格编号与章节对应
 \renewcommand {\thefigure} {\thesection{}-\arabic{figure}}  %设置图片编号与章节对应
+\renewcommand {\theequation} {\thesection{}-\arabic{figure}}  %设置图片编号与章节对应
+
 \captionsetup {
   font={
     small,
@@ -78,6 +80,7 @@
   {\centering\zihao{-4}\normalfont\sffamily}
   \renewcommand{\abstractname}{\zihao{3} \heiti 摘\ \ \ 要}
 \begin{abstract}
+  \zihao{-4}
   随着近几十年来多媒体技术、图像扫描技术、移动终端、通信技术的不断发展，数
   字图像和视频数据的广泛使用，图像数据的数量呈指数机增加。于此对图像数据的
   存储以及传输的需求日益严峻。一味地添加设备的存储容量和信道的带宽是不现实
@@ -116,9 +119,7 @@
 \end{abstract}
 
 \newpage
-\begin{spacing}{1.5}
 \tableofcontents
-\end{spacing}
 
 \newpage
 \setcounter{page}{1}
@@ -203,15 +204,15 @@
   所示。
   \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{./图片1.png}
+    \includegraphics[scale=0.6]{./pictures/图片1.png}
     \caption{JPEG的编码和解码流程}\label{jpeg}
   \end{figure}
   JPEG格式的图像压缩流程为：首先将图像每个像素点的R、G、B颜色分量通过色彩空间变
   换转换成色度分量Cr、Cb以及亮度分量Y。之后将图片划分为若干个8*8的数据单元每个
   单元包含64个像素点，再对每个数据单元进行二维离散余弦变换（DCT），将二维的空间
   域数据变成二维的频域数据。再根据量化表对对应的频域分量进行量化处理。再通过Zig-Zag
-  扫描将二维的频域数据转换成一维的序列。最后，依次通过游程编码和霍夫曼编码将冗
-  余的数据压缩JPEG图像数据。
+  扫描将二维的频域数据转换成一维的序列。最后，依次通过游程编码和霍夫曼编码去除掉
+  冗余的数据从而压缩JPEG图像数据。
 
   解压缩流程的流程与压缩的各个流程相反，除了量化和彩色空间变换这一过程会丢失一定
   的信息之外，其他的步骤都可以无损还原原数据，因此JPEG是一种有损压缩技术。
@@ -228,7 +229,7 @@
     四分之一，因此可以利用对颜色感知强度的不同，将RGB彩色空间变换到YCrCb彩色
     空间再根据感知能力做对应的处理。
 
-    ITU-R601建议规定的RGB彩色空间到YCbCr彩色空间变换关系如下式：
+    ITU-R601建议规定的RGB彩色空间到YCbCr彩色空间变换关系如式\ref{RGB2YCbCr}：
     \begin{equation}
       \begin{bmatrix}Y\\ Cr\\ Cb\end{bmatrix}=
       \begin{bmatrix}
@@ -238,8 +239,107 @@
       \end{bmatrix}
       \begin{bmatrix}R\\ G\\ B\end{bmatrix}+
       \begin{bmatrix}0\\ 128\\ 128\end{bmatrix}
+      \label{RGB2YCbCr}
     \end{equation}
+
+    在JPEG编码中，RGB颜色分量的取值范围通常是0到255，因此JPEG数据使用的是8位
+    无符号整数。而在YCrCb颜色空间中，色度的颜色分量Cr、Cb的范围为-128到127。为
+    了将其范围转换为0到255。故添加偏移量128，以确保范围在0到255内。这有助于在
+    JPEG编码和解码中正确处理色度信息。这个偏移量是JPEG编码标准的一部分，确保
+    了色度信息在JPEG图像中正确显示。
+
+    彩色空间的逆变换如下式所示：
+    \begin{equation}
+      \begin{bmatrix}R\\ G\\ B\end{bmatrix}=
+      \begin{bmatrix}
+        1 & 1.402 & 0.\\
+        1 & -0.344 & -0.714\\
+        1 & 0 & 0.500
+      \end{bmatrix}
+      \begin{bmatrix}Y\\ Cb\\ Cr\end{bmatrix}+
+      \begin{bmatrix}128\\ 128\\ 128\end{bmatrix}
+      \label{YCbCr2RGB}
+    \end{equation}
+
+    由于人类的视觉系统对色度变化的感知低于亮度，因此在对色度分量进行采样的时
+    候可以有选择性地进行降采样，进而降低数据量，这也是最朴素的图像压缩技术之
+    一。根据对色度分量的采样率不同分为一下几种采样格式：
+     
+    YCbCr444：每个分量的采样率都为1。这意味着对于每一个像素点都进行完整的采
+    样，携带完整的原图片信息，没有信息丢失。因此YCbCr44也是最高质量的采样格
+    式。
+
+    YCbCr422：在每两个水平相邻的像素中，只用一个Cr分量和一个Cb分量来表示该这
+    两个像素点的色度分量，而每一个像素点都与之对应的Y分量。这种降采样的方式减
+    少了颜色信息的存储和传输需求，在一定程度上牺牲了色度分辨率，但保留了较高
+    的图像质量。
+
+    YCbCr420：在每两个水平相邻以及垂直相邻的像素中，只用一个Cr分量和一个Cb分
+    量表示这4个像素点的色度分量，而每一个像素点都有一个与之对应的Y分量。这种
+    降采样的方式减少了存储和传输的需求，同时牺牲了色度的分辨率，是广泛应用与
+    图片和视频压缩的以及传输的一种采样格式。本设计采用该采样格式。
+
+    再经过采样后需要将采样得到的Y、Cb、Cr三种格式分别根据在空间上的分布整合成
+    若干个8乘8的数据单元。该数据单元是之后JPEG编解码各个流程之中的处理单位，
+    称为MCU（Minimun Coded Unit，最小编码单元）。当使用YCbCr422采样格式时单
+    个MCU有2个8乘8的Y分量单元以及Cr和Cb分量8乘8单元各一个。同理，当使用YCbCr
+    采样格式时单个MUC有4个8乘8的Y分量单元以及Cr和Cb分量8乘8单元各一个。
   \subsection{离散余弦变换及逆变换}
+    由于人类的视觉系统在对，图像上亮度以及色度在空间上变化频率高的细节部分的注
+    意力并不高，因此可以将图像上的高频率的信息适当的过滤掉，进而对数据进行近一
+    步的压缩。DCT（Discrete Cosine Transform离散余弦变换）的作用是将图像从空间域
+    转换到频域。在JPEG中，通过对每个MCU进行2D-DCT从而得到在空间上各个频率代
+    表的正交基分量。2D-DCT的变换公式如下：
+    \begin{equation}
+      \begin{gathered}
+        F(u,v)=\alpha (u)\alpha (v) \sum_{x=0}^{N-1} \sum_{y=0}^{M-1}
+        f(x,y)\cos \left[ \frac{\pi}{N}\left(x+\frac{1}{2}\right)u \right]
+        \cos \left[ \frac{\pi}{M}\left(y+\frac{1}{2}\right)v \right]\\
+        u=0,1,2,\cdots ,N-1 \\
+        v=0,1,2,\cdots,M-1 \\
+      \end{gathered}
+      \label{2D-DCT}
+    \end{equation}
+    其中
+    \begin{equation}
+      \alpha (u) = \begin{cases}
+        \sqrt{\frac{2}{N}} &,u>0\\
+        \frac{1}{\sqrt{N}} &,u=0
+      \end{cases}\quad
+      \alpha (v) = \begin{cases}
+        \sqrt{\frac{2}{M}} &,v>0\\
+        \frac{1}{\sqrt{M}} &,v=0
+      \end{cases}
+    \end{equation}
+    在JPEG中对8×8的像素块进行2D-DCT变换，所以有$N=8,M=8$ 。带入\ref{2D-DCT}有：
+    \begin{equation}
+      \begin{gathered}
+        F(u,v)=\frac{1}{4}\alpha (u)\alpha (v) \sum_{x=0}^{7} \sum_{y=0}^{7}
+        f(x,y)\cos \frac{(2x+1)u\pi}{16}\cos \frac{(2y+1)u\pi}{16}\\
+        \alpha (v),\alpha (u) = \begin{cases}
+          1 &,u,v>0\\
+          \frac{1}{\sqrt{2}} &,u,v=0
+        \end{cases}
+      \end{gathered}
+      \label{8by8 2D-DCT}
+    \end{equation}
+    在公式中，$f(x,y)$表示在位置$(x,y)$的像素值。其中$F(0,0)$实际上就是对64个像素点做
+    加权平均，相当于8×8单元的平均亮度，成为DC（Direct coefficient，直流）系数。其余
+    的63个频率值的点称为AC（Alternation coefficient，交流）系数。在交流系数中距离直流
+    系数点越大代表该点的频率越高。
+
+    将频域转换成空间域的变换称为IDCT（Inverse Discrete Cosine Transform，离散余弦逆变换）
+    ，2D-IDCT的表达式如下：
+    \begin{equation}
+      \begin{gathered}
+        f(x,y)=\frac{1}{4}\alpha(u)\alpha(v)\sum_{u=0}^{7}\sum_{v=0}^{7}
+        F(u,v)\cos\frac{(2x+1)u\pi}{16}\cos\frac{(2y+1)v\pi}{16}\\
+          \alpha (v),\alpha (u) = \begin{cases}
+            1 &,u,v>0\\
+            \frac{1}{\sqrt{2}} &,u,v=0
+          \end{cases}
+      \end{gathered}
+    \end{equation}
   \subsection{量化及反量化}
   \subsection{ZigZag扫描及反扫描}
   \subsection{熵编码及熵解码}
