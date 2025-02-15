@@ -5,13 +5,14 @@
 \usepackage{graphicx}     %插入图片的宏包
 \usepackage{float}        %设置图片浮动位置的宏包
 \usepackage{abstract}     %设置摘要样式
-\usepackage{caption}
+\usepackage{caption}      %标签
+\usepackage{booktabs}
+\usepackage{multirow} % 用于合并单元格（可选）
 \usepackage{fontspec}   %设置英文字体
 \usepackage{titletoc}     %设置目录样式
 \usepackage{amsmath}
 
 \setmainfont{Times New Roman} %设置英文字体
-%test
 
 \let\kaishu\relax
 \newCJKfontfamily\kaishu{KaiTi}[AutoFakeBold]
@@ -40,7 +41,7 @@
 
 \renewcommand {\thetable} {\thesection{}-\arabic{table}}    %设置表格编号与章节对应
 \renewcommand {\thefigure} {\thesection{}-\arabic{figure}}  %设置图片编号与章节对应
-\renewcommand {\theequation} {\thesection{}-\arabic{figure}}  %设置图片编号与章节对应
+\numberwithin {equation}{section}
 
 \captionsetup {
   font={
@@ -130,6 +131,7 @@
 \section{绪\ \ 论}
   \subsection{研究背景及研究意义}
   \subsubsection{选题背景}
+    \vspace{1em}
     图像数据作为信息的重要载体，在如今这个信息化的社会扮演着不可欠缺的角色
     相对与文本，图像具有强大的表达能力，通过像素、色彩及形状结构等元素传递
     出大量的信息。随着高清图像和视频的普及，图像数据的数量呈指数级增长。对
@@ -141,6 +143,7 @@
     数使用软件进行编解码。但对于医疗器械、自动驾驶、视频监控等对视频画面逐
     帧处理要求高的场景，这种方式有着效率低、运行功耗高等诸多缺点。
   \subsubsection{研究意义}
+    \vspace{1em}
     本设计采用FPGA高并行计算能力和低功耗的特性设计出一套高效运行的JPGE格式
     编解码系统。该系统能保证图像数据高实时传输地同时保持较低的功耗，适合运
     它运用在嵌入式系统或边缘计算设备。通过对算法进行硬件级优化，FPGA能够对
@@ -149,6 +152,7 @@
     统作为软核结合FPGA使用使用具有较强的可扩展性，可与大多数视频图像处理系
     统相结合，助力更多地创新应用开发。
   \subsection{国内外研究现状}
+    \vspace{1em}
     随着近几十年来信息技术地不断发展，图像和视频数据被广泛运用。因此如何降
     低数据的存储大小和传输系统的负担一直是研究的问题。现如今图像数据压缩编
     码主要分为两种，一种是针对静止图像在空间在空间的纬度上进行压缩编码的压
@@ -180,6 +184,7 @@
     可达到30fps的视频刷新率。Teja等人针对2D-IDCT（二维离散余弦逆变换）设计了一
     种全流水的硬件结构，同时不使用乘法器，降低了2D-IDCT模块的资源利用。
   \subsection{使用芯片简介}
+    \vspace{1em}
     本设计使用的芯片型号是Xilinx公司Zynq-7000系列的XC7Z020-CLG484。Zynq-7000
     系列是Xilinx公司推出的全可编程片上系统（All Programmable SOC），其中包含了
     PS（Processing System，处理器系统）和PL（Programmable Logic，可编程逻辑）
@@ -192,6 +197,7 @@
   \subsection{开发环境}
     本设计使用的开发环境是EDA工具Vivado2019.2。
     \subsubsection{Vivado简介}
+    \vspace{1em}
       Vivado是Xilinx公司开发的集成开发环境，用于数字设计、验证和实现FPGA和SoC解决
       方案。Vivado提供了一个全面的工具集，帮助设计者从硬件设计到软件开发的整个流
       程，包括：设计与综合、FPGA的布局布线、仿真和验证、码流生成、ILA（Integrated
@@ -220,6 +226,7 @@
 
   下面依次对各个步骤做详细的描述。
   \subsection{彩色空间变换及逆变换}
+    \vspace{1em}
     绝大多数的颜色都可以使用R、G、B三种颜色分量的线性组合进行合成。因此大多
     图像数据每个像素点都是以RGB分量表示。特别是再计算机视频技术中，不管使用
     哪种形式的彩色空间表示，最后一定要转换为RGB彩色空间显示。
@@ -230,7 +237,7 @@
     四分之一，因此可以利用对颜色感知强度的不同，将RGB彩色空间变换到YCrCb彩色
     空间再根据感知能力做对应的处理。
 
-    ITU-R601建议规定的RGB彩色空间到YCbCr彩色空间变换关系如式\ref{RGB2YCbCr}：
+    ITU-R601建议规定的RGB彩色空间到YCbCr彩色空间变换关系如式(\ref{RGB2YCbCr})：
     \begin{equation}
       \begin{bmatrix}Y\\ Cr\\ Cb\end{bmatrix}=
       \begin{bmatrix}
@@ -286,6 +293,7 @@
     个MCU有2个8乘8的Y分量单元以及Cr和Cb分量8乘8单元各一个。同理，当使用YCbCr
     采样格式时单个MUC有4个8乘8的Y分量单元以及Cr和Cb分量8乘8单元各一个。
   \subsection{离散余弦变换及逆变换}
+    \vspace{1em}
     由于人类的视觉系统在对，图像上亮度以及色度在空间上变化频率高的细节部分的注
     意力并不高，因此可以将图像上的高频率的信息适当的过滤掉，进而对数据进行近一
     步的压缩。DCT（Discrete Cosine Transform离散余弦变换）的作用是将图像从空间域
@@ -312,7 +320,7 @@
         \frac{1}{\sqrt{M}} &,v=0
       \end{cases}
     \end{equation}
-    在JPEG中对8×8的像素块进行2D-DCT变换，所以有$N=8,M=8$ 。带入\ref{2D-DCT}有：
+    在JPEG中对8×8的像素块进行2D-DCT变换，所以有$N=8,M=8$ 。带入(\ref{2D-DCT})有：
     \begin{equation}
       \begin{gathered}
         F(u,v)=\frac{1}{4}\alpha (u)\alpha (v) \sum_{x=0}^{7} \sum_{y=0}^{7}
@@ -342,27 +350,405 @@
       \end{gathered}
     \end{equation}
   \subsection{量化及反量化}
+    \vspace{1em}
+    量化是对DCT系数进行压缩的最关键一步，它按照给定的量化系数对每个DCT进行除法，
+    再通过四舍五入取整数的方式得到量化后的系数，这个过程是一个一对多的映射过程。
+    也就代表量化后的数据将无法完整地还原回来，因此存在数据丢失。这也是导致JPEG有
+    损压缩的原因之一，量化的公式如下：
+    \begin{equation}
+      C(u,v)=round\left[\frac{F(u,v)}{Q(u,v)}\right]
+    \end{equation}
+    其中$F(u,v)$是2D-DCT系数，$Q(u,v)$是步长值，$C(u,v)$是量化后的值。而反量化
+    自然就是将量化后的值乘回步长值，反量化的公式如下
+    \begin{equation}
+      F(u,v)=C(u,v)Q(u,v)
+    \end{equation}
+
+    量化是为了将大部分的高频分量都转换为0，进而减少高频分量的信息，同时也是为了
+    下一步编码作出准备。通过不同的量化表从而控制图像的压缩程度。JPEG针对色度以及
+    亮度有不同的量化表，如表\ref{亮度量化表}和表\ref{色度量化表}所示
+
+    \begin{table}[H]
+      \caption{亮度量化表}
+      \label{亮度量化表}
+      \centering
+      \begin{tabular}{cccccccc}
+        \toprule
+        \multicolumn{8}{c}{亮度量化表}\\
+        \midrule
+        16 & 11 & 10 & 16 & 24 & 40 & 51 & 61 \\
+        12 & 12 & 14 & 19 & 26 & 58 & 60 & 55 \\
+        14 & 13 & 16 & 24 & 40 & 57 & 69 & 56 \\
+        18 & 22 & 37 & 56 & 68 & 109 & 103 & 77 \\
+        24 & 35 & 55 & 64 & 81 & 104 & 113 & 92 \\
+        49 & 64 & 78 & 87 & 103 & 121 & 120 & 101 \\
+        72 & 92 & 95 & 98 & 112 & 100 & 103 & 99 \\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    \begin{table}[H]
+      \caption{色度量化表}
+      \label{色度量化表}
+      \centering
+      \begin{tabular}{cccccccc}
+        \toprule
+        \multicolumn{8}{c}{色度量化表}\\
+        \midrule
+        17 & 18 & 24 & 47 & 99 & 99 & 99 & 99 \\
+        18 & 21 & 26 & 66 & 99 & 99 & 99 & 99 \\
+        24 & 26 & 56 & 99 & 99 & 99 & 99 & 99 \\
+        47 & 66 & 99 & 99 & 99 & 99 & 99 & 99 \\
+        99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\
+        99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\
+        99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\
+        99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    对比两个表可以明显地看出，对于亮度步长的划分会更细一点，同时高频分量的
+    值是普遍大于低频部分的。这是由于人眼对色度和高频部分图像信息的辨识能力
+    低于亮度和高频部分。可以把量化当成一个在空间上的二维低通滤波器。
   \subsection{ZigZag扫描及反扫描}
+    \vspace{1em}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.8]{./pictures/zigzag.png}
+    \caption{ZigZag扫描}\label{zigzag}
+    \end{figure}
+    ZigZag扫描的过程如图\ref{zigzag}所示，它对8×8单元进行一维上的重排序。
+    这一步骤也可以在量化前执行。对于大部分的8×8单元而言，在经过量化后，右
+    下角的高频分量存在大量的零值。为了最大限度地将这些零值相邻为后面压缩做
+    准备，通过Z字形扫描对8×8单元进行重排序。同理，反扫描即为将1维序列排回
+    8×8单元。
   \subsection{熵编码及熵解码}
+    \vspace{1em}
+    图像数据的信息冗余量主要体现来两个层面：一是图像数据中各个相邻数据之间
+    存在着一定的关联性。在一点体现在空间域上就是相邻的像素点之间的差距一般
+    并不是很大，体现在频域上则是在经过量化和ZigZag扫描之后的数据中存在大量
+    连续的零值；二是图像中不同的像素值的概率分布通常是不均匀的，某些像素值
+    的出现的概率较高。如果对出现概率较高的数据采用跟少的位数进行编码，则能
+    在一定程度减少一定的数据量。熵编码的主要目的为通过信息熵理论来减少这些
+    冗余的信息，从而降低图像数据在传输和存储中所占用的时间和空间。同时熵编
+    码是可逆的属于无失真压缩。
+
+    在量化后。对于DC系数和AC系数两者在统计性质有很大的不同，因此采用两种不
+    同的编码方式，对于DC系数采用差分脉冲编码（differential Pluse Code Modulaiton， DPCM）
+    ，对于AC系数则使用游程编码（Run-Length Encodeing，RLE）。
+    这两种编码方式通过在空间和频率上各个相邻数据的相似性的特点进行编码。在
+    霍夫曼编码之前，能有效地减少图像数据的冗余性，以实现更高效的图像压缩。
     \subsubsection{DC系数差分脉冲编码}
+    \vspace{1em}
+      DC系数的值通常会比AC的值要大，而DC系数可以认为是每个8×8单元的平均值
+      。而在空间上相邻的8×8单元平均值的差异通常不大。为了充分利用这一特点
+      ，JPEG采用了差分脉冲编码，通过对当前的8×8单元的DC系数与前一个8×8单元
+      的DC系数的差值进行编码。设$DC_{diff}$当前的8×8单元的DC系数$DC_{i}$减
+      去前一个DC
+      系数$DC_{i-1}$,$DC_{0}$表示第一个8×8单元的DC值。公式如下：
+      \begin{equation}
+        DC_{diff}=\begin{cases}
+          DC_{i}-DC_{i-1} &,i>0\\
+          DC_{0}&,i=0
+        \end{cases}
+      \end{equation}
+
+      $DC_{diff}$的编码格式为（Size，Amplitude）。其中Size为Amplitude的位
+      宽值，而Amplitude为$DC_{diff}$的幅值，当幅值为正是为原码。反正则为补
+      码。因此Amplitude没有符号位。根据Size和Amplitude的第一位来判断
+      $DC_{diff}$的正负。
     \subsubsection{AC系数游程编码}
+      \vspace{1em}
+      在经过ZigZag扫描之后，AC系数通常会出现大量连续的零值。也就可以通过连
+      续0的个数来进行编码，这种方式称为游程编码。游程编码可以有效地表示续
+      出现的相同的值，用该数值本事加上该数值的重复次数来替代。进而减少数据
+      量来做到数据压缩。游程编码的编码格式为（Run，Size，Amplifier）。其中
+      Run（游程）表示非零值前面零值的个数，Size表示非零值的尺寸，Amplifier      表示非零值的幅值。同理，也可以根据这三个值还原回原码，从而做到解码。
+
+      有两种特殊的情况需要注意：当出现从某个非零值直到最后第64个值都为零时
+      的情况，使用0/0（EOB）
+      进行编码。当连续零值的数量超过16个时，使用F0（ZRL）进行编码。
     \subsubsection{霍夫曼编码}
+      \vspace{1em}
+      霍夫曼编码是一种可变长度编码，这种编码方法由霍夫曼（Huffman）在1952
+      年提出。它根据字符的出现的概率来构建编码映射。以实现码字的平均长度最
+      短。该编码方式的压缩率接近香农所定义的极限压缩率，因此这种方法也称为
+      最佳编码。
+      通过查找AC和DC系数对应颜色分量的Huffman表进行编码。Huffman码表是由JP
+      EG标准通过大量的图像数据统计进而规定的，详细内容如下表所示。
+      \begin{table}[H]
+        \centering
+        \caption{亮度$DC_{diff}$Huffman表}
+        \begin{tabular}{ccc}
+          \toprule
+          尺寸  & Huffman码长度 & Huffman码字\\
+          \midrule
+          0     & 2             & 00\\
+          1     & 3             & 010\\
+          2     & 3             & 011\\
+          3     & 3             & 100\\
+          4     & 3             & 101\\
+          5     & 3             & 110\\
+          6     & 4             & 1110\\
+          7     & 5             & 11110\\
+          8     & 6             & 111110\\
+          9     & 7             & 1111110\\
+          A     & 8             & 11111110\\
+          B     & 9             & 111111110\\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+
+      \begin{table}[H]
+        \centering
+        \caption{色度$DC_{diff}$Huffman表}
+        \begin{tabular}{ccc}
+          \toprule
+          尺寸  & Huffman码长度 & Huffman码字\\
+          \midrule
+          0     & 2             & 00\\
+          1     & 3             & 010\\
+          2     & 3             & 011\\
+          3     & 3             & 100\\
+          4     & 3             & 101\\
+          5     & 3             & 110\\
+          6     & 4             & 1110\\
+          7     & 5             & 11110\\
+          8     & 6             & 111110\\
+          9     & 7             & 1111110\\
+          A     & 8             & 11111110\\
+          B     & 9             & 111111110\\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+
+      \begin{table}[H]
+        \centering
+        \caption{亮度AC系数Huffman表}
+        \begin{tabular}{ccc}
+          \toprule
+          游程/尺寸 & Huffman码长度 & Huffman码字\\
+          \midrule
+          0/0(EOB)  & 4             & 1010\\
+          0/1       & 2             & 00\\
+          0/2       & 2             & 01\\
+          0/3       & 3             & 100\\
+          0/4       & 4             & 1011\\
+          0/5       & 5             & 11010\\
+          0/6       & 7             & 1111000\\
+          0/7       & 8             & 11111000\\
+          0/8       & 10            & 1111110110\\
+          0/9       & 16            & 1111111110000010\\
+          0/A       & 16            & 1111111110000011\\
+          1/1       & 4             & 1100\\
+          $\cdots$  & $\cdots$      & $\cdots$\\
+          F/A       & 16            & 1111111111111110\\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+
+      \begin{table}[H]
+        \centering
+        \caption{色度AC系数Huffman表}
+        \begin{tabular}{ccc}
+          \toprule
+          游程/尺寸 & Huffman码长度 & Huffman码字\\
+          \midrule
+          0/0(EOB)  & 2             & 00\\
+          0/1       & 2             & 01\\
+          0/2       & 3             & 100\\
+          0/3       & 4             & 1010\\
+          0/4       & 5             & 11000\\
+          0/5       & 5             & 11001\\
+          0/6       & 6             & 111000\\
+          0/7       & 7             & 1111000\\
+          0/8       & 9             & 111110100\\
+          0/9       & 10            & 1111110110\\
+          0/A       & 12            & 111111110100\\
+          1/1       & 4             & 1011\\
+          $\cdots$  & $\cdots$      & $\cdots$\\
+          F/A       & 16            & 1111111111111110\\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+
+      在解码时，当多个Huffman串行码流排列输出在一起时，可以使用二叉树解索
+      引从而获取对应原码从而做到解码得到尺寸，再通过尺寸得到幅值所占的的位
+      宽得到幅值。通过这种方式从而区分出码流中的各个像素点的数据。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.8]{./pictures/deCodeTree.png}
+        \caption{通过二叉树解码}
+      \end{figure}
   \subsection{JPEG文件格式}
+    \vspace{1em}
+    通过上述过程得到了压缩之后的图像数据，除此之外，要对数据进行解码。还需
+    要知道图像的相关属性等信息。JPEG委员会在指定JPEG标准时，定义了许多用来
+    区分图像数据及其相关信息的文件格式。目前，使用比较广泛的是1992年9月由E
+    ric Hamilton 提出的JPEG文件交换格式JFIF（JPEG File Interchange Format）
+    1.02版本。大多数的设备都支持JFIF文件交换格式。JPEG编码的最后一个步骤就是把各
+    种标记代码和编码后的图像数据组成一帧一帧的位码流，这样就方便传输、存储
+    和解码器译码。
+
+    JFIF文件格式可以分为两个部分：标识和压缩数据。每个标识的前一个字节是固
+    定值0xFF。每个标记之前还可以添加数量不限的0xFF。下表列举几种常见的标记
+    码以及它们各自的数据结构。
+    \begin{table}[H]
+      \centering
+      \caption{几种常见的标记}
+      \begin{tabular}{cc}
+        \toprule
+        标记种类 & 含义\\
+        \midrule
+        SOI & 图像的开始\\
+        APP0 & JFIF引用的数据块\\
+        SOF0 & 帧开始\\
+        DHT & Huffman表\\
+        SOS & 扫描线开始\\
+        EOI & 图像结束\\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+    
+    \begin{table}[H]
+      \centering
+      \caption{APP0标识}
+      \begin{tabular}{ccc}
+        \toprule
+        标识结构 & 字节数 & 含义\\
+        \midrule
+        0xFF & 1 & \multirow{2}{*}{APP0标识}\\
+        0xE0 & 1 &\\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    \begin{table}[H]
+      \centering
+      \caption{OF0标识}
+      \begin{tabular}{ccc}
+        \toprule
+        标识结构 & 字节数 & 含义\\
+        \midrule
+        0xFF & 1 & \multirow{2}{*}{APP0标识}\\
+        0xC0 & 1 &\\
+        $L_{f}$ & 2 & 长度字段，表示图像帧信息长度\\
+        P & 1 & 指每个像素点的颜色信息的宽度，通常是8位或12位\\
+        Y & 2 & 图像的高度\\
+        X & 2 & 图像的宽度\\
+        $N_{f}$ & 1 & 图像颜色通道的数量。通常为1或3，分别表示灰度图和RGB彩色图\\
+        $N_{NT}$ & 1 & 颜色通道，0表示Y通道，1表示Cb通道，2表示Cr通道\\
+        $H_{TN}Y_{TN}$ & 1 & 水平方向和垂直方向的采样率\\
+        $T_{QNT}$ & 1 & 表示使用的Huffman编码表的编号\\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    \begin{table}[H]
+      \centering
+      \caption{DHT标识}
+      \begin{tabular}{ccc}
+        \toprule
+        标识结构 & 字节数 & 含义\\
+        \midrule
+        0xFF & 1 & \multirow{2}{*}{APP0标识}\\
+        0xC4 & 1 &\\
+        $L_{b}$ & 2 & 长度字段，表示Huffman码字段的长度\\
+        $T_{c}$ & 0.5 & 当为1时，表示使用该表处理AC系数，为0时，表示该表处理DC系数\\
+        $T_{b}$ & 0.5 & 表示Huffman表的编号\\
+        $L_{i}$ & 1 & Huffman表的长度统计，用于表示不同码字长度的符号数目，i从1到16\\
+        $V_{ij}$ & 1 & 代表每一个Huffman码表所代表的值\\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    \begin{table}[H]
+      \centering
+      \caption{SOS标识}
+      \begin{tabular}{ccc}
+        \toprule
+        标识结构 & 字节数 & 含义\\
+        \midrule
+        0xFF & 1 & \multirow{2}{*}{APP0标识}\\
+        0xDA & 1 &\\
+        $L_{s}$ & 2 & 长度字段，表示数据内容的长度\\
+        $N_{s}$ & 1 & 表示扫描所涉及到颜色通道的数量\\
+        $C_{s}N_{s}$ & 0.5 & 表示Scan中成分的编号\\
+        $T_{d}N_{s}$,$T_{a}N_{s}$ & 1 & $T_{a}N_{s}$表示数据的高4位$T_{a}N_{s}$表示数据的低4位\\
+        $S_{s}$ & 1 & 一般为0\\
+        $S_{s}$ & 1 & 一般为63\\
+        $A_{b}$,$A_{l}$ & 1 & 一般为0\\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    \begin{table}[H]
+      \centering
+      \caption{EOI标识}
+      \begin{tabular}{ccc}
+        \toprule
+        标识结构 & 字节数 & 含义\\
+        \midrule
+        0xFF & 1 & \multirow{2}{*}{EOI标识}\\
+        0xD9 & 1 &\\
+        \bottomrule
+      \end{tabular}
+    \end{table}
   \subsection{本章总结}
+    \vspace{1em}
+    本章阐述了JPEG图像数据编解码的原理和相关理论,以及各个执行的步骤。
 
 \newpage
 \section{JPEG编码系统硬件结构设计}
+  \vspace{1em}
+  上一章节讲解了JPEG编码的步骤和过程。这一章讲解本设计如何使用硬件实现JPEG
+  的编码以及解码。内容包含数字电路设计中的一些设计思想，编码系统的结构划分
+  ，以及各个模块的结构和运行原理。
   \subsection{设计思想}
+    \vspace{1em}
+    在数字系统设计中，一个经常围绕的问题就是速度和面积的权衡。使用多个处理
+    单元对数据进行处理是一种朴素的提高系统计算速度和吞吐量的方式。与之带来
+    的副作用就是电路面积的增大。面积增大所带来的副作用不仅仅是成本增加的问
+    题，它也伴随着系统功耗和发热量的增加，这些负面影响都会降低系统的稳定性
+    。而有些运算过程数据依赖性高、并行操作无法有效地提高性能。甚至可能因为
+    额外的开销导致性能的下降。因此，一个好的数字系统设计往往能够权衡速度和
+    面积。
+
+    通过前人的大量经验实践总结出了大量的设计思想。如果能在合适的情况下使用
+    这些设计思想，就能得到一个好的设计。下面描述变设计所使用的几种设计思想
+    。
     \subsubsection{流水线}
-    \subsubsection{脉动阵列}
+      \vspace{1em}
+      如果一个运行周期长的操作的运行过程能个分解成一各个子步骤。并将这些子
+      步骤封装成一个个并行的模块。让每个操作的不同步骤在不同时刻错开运行，
+      每个模块同时执行不同操作所对应的步骤。最终每经过一个子步骤的时间，就
+      可以得到一个操作的运行结果，通过这种方式系统的吞吐量能得到大幅度提高
+      ，在运行过程中每个步骤的结果数据一步步的从输入流动到输出，因此该操作
+      得名流水线（Pilpeline）。这种方式在如今的工厂车间运用广泛。
+
+      下面通过对比一个分3个步骤的执行的例子，来分析流水线所带来的性能的提
+      升。假设一个系统的执行需要通过step1、step2、step3三个步骤的到结果，
+      每个步骤所花费的时间为一个时钟周期。如果依次按照顺序完成N次运算，每
+      隔3个时钟周期得到一个运行结果，完成所有运算所花费的时间就是3N。如果
+
+      \subsubsection{脉动阵列}
+      \vspace{1em}
     \subsubsection{乒乓操作}
+      \vspace{1em}
   \subsection{编码模块划分}
+    \vspace{1em}
   \subsection{DCT模块}
+    \vspace{1em}
     \subsection{DA算法}
+      \vspace{1em}
     \subsection{DA算法的硬件实现}
+      \vspace{1em}
   \subsection{数据预处理模块}
+    \vspace{1em}
   \subsection{熵编码模块}
+    \vspace{1em}
   \subsection{JPEG文件格式生成模块}
+    \vspace{1em}
 
 \newpage
 \section{JPEG编解码系统FPGA实现以及验证}
