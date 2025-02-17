@@ -1,10 +1,10 @@
 # Fdb version 4
-["xdvipdfmx"] 1739632545.11584 "paper.xdv" "paper.pdf" "paper" 1739632545.72807 0
-  "paper.xdv" 1739632544.96953 277128 b0c45da6e3bb1be5cb361ab26daf12e2 "xelatex"
+["xdvipdfmx"] 1739698906.35851 "paper.xdv" "paper.pdf" "paper" 1739698908.41969 0
+  "paper.xdv" 1739698906.24518 347480 0a9d1d5d980e8e812cd2a56c65e53dea "xelatex"
   (generated)
   "paper.pdf"
   (rewritten before read)
-["xelatex"] 1739632543.5071 "paper.tex" "paper.xdv" "paper" 1739632545.72571 0
+["xelatex"] 1739698904.68617 "paper.tex" "paper.xdv" "paper" 1739698908.41715 0
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1736268207 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1736268207 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1736268207 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -75,12 +75,23 @@
   "/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJKfntef.sty" 1736268207 39577 b470f8a1dbecc9c45c9bf05ca7db9188 ""
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1736268207 41588 b43d3e860a4f94167ee1e725ff526a72 ""
   "/var/lib/texmf/web2c/xetex/xelatex.fmt" 1738778414 9579491 5fd80ecc925bcf26b894d2266add8c63 ""
-  "paper.aux" 1739632544.96853 6024 2b756f6895616f84d0984da9507ac898 "xelatex"
-  "paper.tex" 1739632543.42653 37045 d667df40a5a95887800330afbff0c202 ""
-  "paper.toc" 1739632544.96953 2404 1bdb821b24c97c4f578711c3c22bc965 "xelatex"
+  "paper.aux" 1739698906.24398 8089 419dffba71aa4ee4fd23d0df0e6dfd20 "xelatex"
+  "paper.tex" 1739698904.22318 52669 b961bf7bf71327e6c8e82647987ce32d ""
+  "paper.toc" 1739698906.24505 2404 337b26f3e47a66ee1a85ebfb497032c8 "xelatex"
+  "pictures/1D-DCT.png" 1739697278.75124 62550 43897849d6f7f88d09649f7bf4872245 ""
+  "pictures/2Darray.png" 1739608522.1729 61147 6a737bbfef42dfabba93fdc670b849dd ""
+  "pictures/DCT_PE.png" 1739695567.36095 2445104 46d86457347740363354cbd260711dc8 ""
+  "pictures/DCT脉动阵列.png" 1739695513.74609 90842 a2f82cbb6b79dbd9a2ac9f38757c3587 ""
+  "pictures/PE时序.png" 1739695598.61196 1117297 b2a1ec75bb54591538f048f93e99a9c9 ""
+  "pictures/dct.png" 1739608522.1729 28155 e8a2853e425440d80ec8eea940d84de1 ""
   "pictures/deCodeTree.png" 1739608522.1739 167306 235c8655330cfbd2c3422869f93c59f8 ""
   "pictures/zigzag.png" 1739608522.1749 107947 d62cdde4a765f534fbc6d3f171dcbb8e ""
+  "pictures/乒乓操作.png" 1739608522.1749 368859 e065ceb0403cefa590db5b03e296cd4f ""
+  "pictures/和差项生成.png" 1739695671.0707 57336 4208259adfbfaaacf877e676fbf10257 ""
+  "pictures/和差项生成步骤.png" 1739695695.1266 88345 2511ca800712fee8c2d04e74607f681b ""
   "pictures/图片1.png" 1739608522.1759 62344 81e34900edc41fa2e609ab7b6dbeac48 ""
+  "pictures/流水线.png" 1739608522.1759 316055 cd9ca1496a9221bcd2fdd65b95736484 ""
+  "pictures/编码模块.png" 1739608522.1759 27902 2e94ea20f4786881cd2ae9279957865d ""
   (generated)
   "paper.aux"
   "paper.log"

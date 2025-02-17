@@ -16,7 +16,7 @@
 \newlabel{YCbCr2RGB}{{2.2}{4}{}{}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}离散余弦变换及逆变换}{4}{}\protected@file@percent }
 \newlabel{2D-DCT}{{2.3}{5}{}{}{}}
-\newlabel{8by8 2D-DCT}{{2.5}{5}{}{}{}}
+\newlabel{8*8 2D-DCT}{{2.5}{5}{}{}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}量化及反量化}{5}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {2{}-1}{\ignorespaces 亮度量化表}}{6}{}\protected@file@percent }
 \newlabel{亮度量化表}{{2{}-1}{6}{}{}{}}
@@ -45,16 +45,43 @@
 \@writefile{toc}{\contentsline {section}{\numberline {3}JPEG编码系统硬件结构设计}{14}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}设计思想}{14}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.1}流水线}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}脉动阵列}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}乒乓操作}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}编码模块划分}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}DCT模块}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}DA算法}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}DA算法的硬件实现}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}数据预处理模块}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}熵编码模块}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}JPEG文件格式生成模块}{14}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}JPEG编解码系统FPGA实现以及验证}{15}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}验证系统模块划分}{15}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-4}{\ignorespaces 流水线操作}}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}脉动阵列}{15}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-5}{\ignorespaces 二维脉动技术矩阵乘法}}{16}{}\protected@file@percent }
+\newlabel{2D array}{{3{}-5}{16}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}乒乓操作}{16}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-6}{\ignorespaces 乒乓操作}}{16}{}\protected@file@percent }
+\newlabel{2D array}{{3{}-6}{16}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}编码模块划分}{17}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-7}{\ignorespaces 编码模块}}{17}{}\protected@file@percent }
+\newlabel{code module}{{3{}-7}{17}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}DCT模块}{17}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-8}{\ignorespaces DCT模块内部结果}}{17}{}\protected@file@percent }
+\newlabel{code module}{{3{}-8}{17}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}DA算法}{18}{}\protected@file@percent }
+\newlabel{colDCT}{{3.1}{18}{}{}{}}
+\newlabel{rowDCT}{{3.2}{18}{}{}{}}
+\newlabel{C}{{3.3}{18}{}{}{}}
+\newlabel{col}{{3.4}{18}{}{}{}}
+\newlabel{rowColDCT}{{3.6}{18}{}{}{}}
+\newlabel{colDCTCol}{{3.7}{19}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}DA算法的硬件实现}{19}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-9}{\ignorespaces 计算$Z=CX$的二维脉动阵列实现}}{19}{}\protected@file@percent }
+\newlabel{DCT脉动阵列}{{3{}-9}{19}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-10}{\ignorespaces PE的内部结构}}{20}{}\protected@file@percent }
+\newlabel{PE}{{3{}-10}{20}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-11}{\ignorespaces PE运行时序}}{20}{}\protected@file@percent }
+\newlabel{PE运行时序}{{3{}-11}{20}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-12}{\ignorespaces 一维脉动阵列}}{21}{}\protected@file@percent }
+\newlabel{一维脉动阵列}{{3{}-12}{21}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-13}{\ignorespaces 和差项生成部分}}{21}{}\protected@file@percent }
+\newlabel{和差项生成}{{3{}-13}{21}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-14}{\ignorespaces $Z^{T}$和差项生成步骤}}{22}{}\protected@file@percent }
+\newlabel{和差项生成步骤}{{3{}-14}{22}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}数据预处理模块}{22}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}熵编码模块}{22}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}JPEG文件格式生成模块}{22}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}JPEG编解码系统FPGA实现以及验证}{23}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}验证系统模块划分}{23}{}\protected@file@percent }
 \ttl@finishall
-\gdef \@abspage@last{20}
+\gdef \@abspage@last{28}

@@ -301,9 +301,9 @@
     表的正交基分量。2D-DCT的变换公式如下：
     \begin{equation}
       \begin{gathered}
-        F(u,v)=\alpha (u)\alpha (v) \sum_{x=0}^{N-1} \sum_{y=0}^{M-1}
-        f(x,y)\cos \left[ \frac{\pi}{N}\left(x+\frac{1}{2}\right)u \right]
-        \cos \left[ \frac{\pi}{M}\left(y+\frac{1}{2}\right)v \right]\\
+        Y(u,v)=\alpha (u)\alpha (v) \sum_{i=0}^{N-1} \sum_{j=0}^{M-1}
+        X(i,j)\cos \left[ \frac{\pi}{N}\left(i+\frac{1}{2}\right)u \right]
+        \cos \left[ \frac{\pi}{M}\left(j+\frac{1}{2}\right)v \right]\\
         u=0,1,2,\cdots ,N-1 \\
         v=0,1,2,\cdots,M-1 \\
       \end{gathered}
@@ -323,16 +323,16 @@
     在JPEG中对8×8的像素块进行2D-DCT变换，所以有$N=8,M=8$ 。带入(\ref{2D-DCT})有：
     \begin{equation}
       \begin{gathered}
-        F(u,v)=\frac{1}{4}\alpha (u)\alpha (v) \sum_{x=0}^{7} \sum_{y=0}^{7}
-        f(x,y)\cos \frac{(2x+1)u\pi}{16}\cos \frac{(2y+1)u\pi}{16}\\
-        \alpha (v),\alpha (u) = \begin{cases}
+        Y(u,v)=\frac{1}{4}C(u)C(v) \sum_{i=0}^{7} \sum_{j=0}^{7}
+        X(i,j)\cos \frac{(2i+1)u\pi}{16}\cos \frac{(2j+1)u\pi}{16}\\
+        C (v),C (u) = \begin{cases}
           1 &,u,v>0\\
           \frac{1}{\sqrt{2}} &,u,v=0
         \end{cases}
       \end{gathered}
-      \label{8by8 2D-DCT}
+      \label{8*8 2D-DCT}
     \end{equation}
-    在公式中，$f(x,y)$表示在位置$(x,y)$的像素值。其中$F(0,0)$实际上就是对64个像素点做
+    在公式中，$f(i,j)$表示在位置$(i,j)$的像素值。其中$F(0,0)$实际上就是对64个像素点做
     加权平均，相当于8×8单元的平均亮度，成为DC（Direct coefficient，直流）系数。其余
     的63个频率值的点称为AC（Alternation coefficient，交流）系数。在交流系数中距离直流
     系数点越大代表该点的频率越高。
@@ -341,8 +341,8 @@
     ，2D-IDCT的表达式如下：
     \begin{equation}
       \begin{gathered}
-        f(x,y)=\frac{1}{4}\alpha(u)\alpha(v)\sum_{u=0}^{7}\sum_{v=0}^{7}
-        F(u,v)\cos\frac{(2x+1)u\pi}{16}\cos\frac{(2y+1)v\pi}{16}\\
+        X(i,j)=\frac{1}{4}\alpha(u)\alpha(v)\sum_{u=0}^{7}\sum_{v=0}^{7}
+        Y(u,v)\cos\frac{(2i+1)u\pi}{16}\cos\frac{(2j+1)v\pi}{16}\\
           \alpha (v),\alpha (u) = \begin{cases}
             1 &,u,v>0\\
             \frac{1}{\sqrt{2}} &,u,v=0
@@ -727,22 +727,305 @@
       得名流水线（Pilpeline）。这种方式在如今的工厂车间运用广泛。
 
       下面通过对比一个分3个步骤的执行的例子，来分析流水线所带来的性能的提
-      升。假设一个系统的执行需要通过step1、step2、step3三个步骤的到结果，
+      升。假设一个系统的执行需要通过步骤一、步骤二、步骤三三个步骤的到结果，
       每个步骤所花费的时间为一个时钟周期。如果依次按照顺序完成N次运算，每
       隔3个时钟周期得到一个运行结果，完成所有运算所花费的时间就是3N。如果
+      设置三个执行不同步骤的模块同时并行执行，且每个模块执行不同操作的步骤
+      ，如第一个时刻执行步骤一的模块执行操作一的步骤一，如第二个时刻执行步
+      骤一的模块执行操作二的步骤一，执行步骤二的模块执行操作一的步骤二；第
+      三个时刻执行步骤一的模块执行操作三的步骤一，执行步骤二的模块执行操作
+      二的步骤二，执行步骤三的模块执行操作一的步骤三；之后N个时刻以此类推
+      在第4个时刻得到操作一的结果，下一时刻得到操作二的结果。之后每经过一
+      个时刻得到一个操作结果。得到N操作的结构则需要花费3+N个时钟周期的时间
+      。通过这种方式显著地提升数据的吞吐量。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.6]{./pictures/流水线.png}
+        \caption{流水线操作}
+      \end{figure}
 
+      除此之外，流水线通常用于提高数字电路的最大运行时钟频率。在时序电路中
+      时钟周期至少要大于保持时间、建立时间、组合逻辑延迟时间三者之和。而组
+      合逻辑延迟时间取决于组合逻辑中最长的电路路径。如果在组合逻辑之中插入
+      寄存器，从而切分组合逻辑的关键路径，使组合逻辑在每个时钟周期安装流水
+      线的方式运行。通过这种方式提高时序电路的最大运行时钟频率。从而提高整
+      个电路的运算速度。
       \subsubsection{脉动阵列}
-      \vspace{1em}
-    \subsubsection{乒乓操作}
-      \vspace{1em}
+        \vspace{1em}
+        脉动阵列（Systolic Array）是一种由众多简单的运算元件（Processing 
+        Element，PE）按照一定的规则排列的硬件架构。它最早由H.T.
+        Kung在1982年提出。一个脉动阵列具备一下特征：
+
+        (1)由单一或多种构造的PE按照规则排列；
+
+        (2)只有相邻的PE互相连接，数据只能通过在局部范围内移动；
+
+        (3)PE只重复进行简单的数据处理和必要的数据收发；
+
+        (4)所有PE由统一的时钟同步工作；
+
+        每个PE都和相领的PE同步进行数据收发和运算。数据从外部流入，PE阵列一
+        边搬运数据，一边采用流水线或并行的方式对其进行处理。各个PE的运算和
+        数据的收发动作和心脏规律地收缩促使血液流动的过程非常相似，因此得称
+        脉动阵列。
+
+        由于脉动阵列的数据移动只在相邻的PE中进行，这种方式有利于芯片或FPGA
+        的布局步线，脉动阵列根据排列和连接方式，主要可分为串行的一维脉动阵
+        列，网格连接的二维脉动阵列。其中一维的脉动阵列能实现FIR滤波器，向
+        量乘法，数据排序。二维脉动阵列能完成矩阵运算，如图\ref{2D array}。
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale=1]{./pictures/2Darray.png}
+          \caption{二维脉动技术矩阵乘法}
+          \label{2D array}
+        \end{figure}
+
+        \subsubsection{乒乓操作}
+          \vspace{1em}
+          在两个功能模块进行数据传输时，如果两个模块的吞吐量不同，对数据接
+          收的顺序存在差异等原因。导致两个模块不能够同时工作。这个情况下就
+          可以在两个模块之间添加乒乓缓存（Ping-pong 
+          buffer）来解决这个问题，这种解决方法被称为乒乓操作。
+
+          乒乓操作的处理流程，在两个模块之间添加2个buffer，来进行缓存数据
+          。这个buffer通常是FIFO（First in first 
+          out，先入先出队列）或者RAM。初始状态下，数据发送模块先向一个buff
+          er写入发送的数据，当buffer的容量满后，数据接收模块开始向这个buff
+          er读出数据。同时数据模块继续向另外一个buffer进行写入。之后依次类
+          推，两个buffer交错读写。这样，只有在初始时数据发送模块在往第一个
+          buffer写入数据时，接收模块是空闲状态，在其余时间内，两个模块都是
+          同时工作的。
+          \begin{figure}[H]
+            \centering
+            \includegraphics[scale=0.3]{./pictures/乒乓操作.png}
+            \caption{乒乓操作}
+            \label{2D array}
+          \end{figure}
   \subsection{编码模块划分}
     \vspace{1em}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.3]{./pictures/编码模块.png}
+      \caption{编码模块}
+      \label{code module}
+    \end{figure}
+    JPEG编码模块的内部模块划分如图\ref{code 
+    module}，它接收ov5460CMOS图像传感器的vga格式的视频信号。输出jpeg格式的
+    压缩码流。视频信号依次经过数据预处理缓存模块、DCT模块、熵编码模块、JPE
+    G文件格式生成模块。下面的小节详细介绍这4个模块。
   \subsection{DCT模块}
     \vspace{1em}
+    DCT模块接收数据预处理模块输出的，Y、Cr、Cb三个颜色通道的8*
+    8像素单元。并对每个颜色通道实现进行DCT、量化、Zigzag扫描这三个步骤。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.5]{./pictures/dct.png}
+      \caption{DCT模块内部结果}
+      \label{code module}
+    \end{figure}
+
+    由于本设计采用的采样格式为YCrCb420，所以在每个MCU中有一个Cr分量8×8像素
+    单元，一个Cb分量8×8像素单元，和4个Y分量8×8像素单元。因此Cr和Cb可以分时
+    复用同个色度通道，每个通道的DCT和量化模块均相同。
+
+    如果根据2D-
+    DCT原公式(\ref{8*8 2D-DCT})，对单个8×8单元进行运算，需要进行4096次乘法和4096次加法加法运算。需要
+    使用较多的大量的乘法器资源，而乘法器资源在fpga中比较稀缺。为了降低计算
+    的复杂度，本设计使用了DA算法，通过行列分解2D-DCT运算。
     \subsection{DA算法}
       \vspace{1em}
+      根据式(\ref{8*8 2D-DCT})的特征可以根据行和列分解成两次一维的DCT变换，
+      计算过程如下：
+      \begin{equation*}
+        \begin{aligned}
+          Y(u,v)&=\frac{1}{4}C(u)C(v)\sum_{i=0}^{7}\sum_{j=0}^{7}X(i,j)
+          \cos\frac{(2i+1)u\pi}{16}\cos\frac{(2j+1)v\pi}{16}\\
+          Y(u,v)&=\frac{1}{2}C(u)\sum_{i=0}^{7}\cos\frac{(2i+1)u\pi}{16}
+          \frac{1}{2}C(v)\sum_{j=0}^{7}X(i,j)\cos\frac{(2j+1)v\pi}{16}
+        \end{aligned}
+      \end{equation*}
+      令
+      \begin{equation}
+        Z(i,v)=\frac{1}{2}C(v)\sum_{j=0}^{7}X(i,j)\cos\frac{(2j+1)v\pi}{16}
+        \label{colDCT}
+      \end{equation}
+      有
+      \begin{equation} 
+        Y(u,v)=\frac{1}{2}C(u)\sum_{i=0}^{7}
+        Z(i,v)\cos\frac{(2i+1)u\pi}{16}
+        \label{rowDCT}
+      \end{equation}
+
+      下面再将式(\ref{colDCT})和式(\ref{rowDCT})整理成矩阵运算，令$C$为带
+      常数项的系数矩阵，则有
+      \begin{equation}
+        C=\begin{bmatrix}
+          a & a   & a   & a   & a   & a   & a   & a\\
+          b & d   & e   & g   & -g  & -e  & -d  & -b\\
+          c & f   & -f  & -c  & -c  & -f  & f   & c\\
+          d & -g  & -b  & -e  & e   & b   & g   & -d\\
+          a & -a  & -a  & a   & a   & -a  & -a  & a\\
+          e & -b  & g   & d   & -d  & -g  & b   & -e\\
+          f & -c  & c   & -f  & -f  & c   & -c  & f\\
+          g & -e  & d   & -b  & b   & -d  & e   & -g\\
+        \end{bmatrix},
+        \begin{bmatrix}
+          a \\ b \\ c \\ d \\ e \\ f \\ g
+        \end{bmatrix}=
+        \frac{1}{2}\begin{bmatrix}
+          \cos(4\pi/16)\\
+          \cos(\pi/16)\\
+          \cos(2\pi/16)\\
+          \cos(3\pi/16)\\
+          \cos(4\pi/16)\\
+          \cos(5\pi/16)\\
+          \cos(6\pi/16)\\
+          \cos(7\pi/16)\\
+        \end{bmatrix}
+        \label{C}
+      \end{equation}
+      则式(\ref{colDCT})和式(\ref{rowDCT})的矩阵形式分别为
+      \begin{equation}
+        Z=CX 
+        \label{col}
+      \end{equation}
+      \begin{equation}
+        Y=(CZ^{T})^{T}
+      \end{equation}
+      整理得
+      \begin{equation}
+        Y^{T}=C(CX)^{T} 
+        \label{rowColDCT}
+      \end{equation}
+      通过上述步骤，将8×8的2D-DCT分解成两次对$C$的左乘运算。对于Z的每个列
+      向量有
+      \begin{equation}
+        \begin{bmatrix}
+          z_{i0}\\z_{i1}\\z_{i22}\\z_{i3}\\z_{i4}\\z_{i5}\\z_{i6}\\z_{i7}
+        \end{bmatrix}=\begin{bmatrix}
+          a & a   & a   & a   & a   & a   & a   & a\\
+          b & d   & e   & g   & -g  & -e  & -d  & -b\\
+          c & f   & -f  & -c  & -c  & -f  & f   & c\\
+          d & -g  & -b  & -e  & e   & b   & g   & -d\\
+          a & -a  & -a  & a   & a   & -a  & -a  & a\\
+          e & -b  & g   & d   & -d  & -g  & b   & -e\\
+          f & -c  & c   & -f  & -f  & c   & -c  & f\\
+          g & -e  & d   & -b  & b   & -d  & e   & -g\\
+        \end{bmatrix}\begin{bmatrix}
+          x_{i0}\\x_{i1}\\x_{i22}\\x_{i3}\\x_{i4}\\x_{i5}\\x_{i6}\\x_{i7}
+        \end{bmatrix}
+        \label{colDCTCol}
+      \end{equation}
+      观察到$C$具有左右对称的性质，可将(\ref{colDCTCol})分解如下
+      \begin{equation}
+        \begin{bmatrix}
+          z_{i0}\\z_{i2}\\z_{i4}\\z_{i6}\\
+        \end{bmatrix}=\begin{bmatrix}
+          a & a   & a   & a\\
+          c & f   & -f  & -c\\
+          a & -a  & -a  & a\\
+          f & -c  & c   & -f\\
+        \end{bmatrix}\begin{bmatrix}
+          x_{i0}+x_{i7}\\
+          x_{i1}+x_{i6}\\
+          x_{i2}+x_{i5}\\
+          x_{i3}+x_{i4}\\
+        \end{bmatrix}, 
+        \begin{bmatrix}
+          z_{i1}\\z_{i3}\\z_{i5}\\z_{i7}\\
+        \end{bmatrix}=\begin{bmatrix}
+          b & d   & e   & g\\
+          d & -g  & -b  & -e\\
+          e & -b  & g   & d\\
+          g & -e  & d   & -b\\
+        \end{bmatrix}\begin{bmatrix}
+          x_{i0}-x_{i7}\\
+          x_{i1}-x_{i6}\\
+          x_{i2}-x_{i5}\\
+          x_{i3}-x_{i4}\\
+        \end{bmatrix}
+      \end{equation}
+      $Z$每个列向量的偶项等于$x_{n}+x_{7-n}$（下面统称为和项）的线性组合，
+      奇项等于$x_{n}-x_{7-n}$的线性组合。对于$Y_{T}=CY_{T}$也是同理。
+
+      通过上述步骤将8乘8的矩阵运算转换为两次4乘4的矩阵运算。减少了计算的复
+      杂度减少了一倍。为了在硬件中使用定点数运算，将中各个系数都扩大210倍
+      并取整。
+
     \subsection{DA算法的硬件实现}
       \vspace{1em}
+      对于DA算法中2次4乘以4的矩阵运算，提出了一种基于脉动阵列的硬件实现。
+      如图\ref{DCT脉动阵列}所示，使用二维脉动阵列实现DA算法中的$Z=CX$计算。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/DCT脉动阵列.png}
+        \caption{计算$Z=CX$的二维脉动阵列实现}
+        \label{DCT脉动阵列}
+      \end{figure}
+      该脉动阵列的PE内部结果如图\ref{PE}所示
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.3]{./pictures/DCT_PE.png}
+        \caption{PE的内部结构}
+        \label{PE}
+      \end{figure}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.35]{./pictures/PE时序.png}
+        \caption{PE运行时序}
+        \label{PE运行时序}
+      \end{figure}
+      以列向量输入$x_{00},x_{01},x_{02},x_{03},x_{04},x_{05},x_{06},x_{07}$
+      计算输出$z_{01},z_{02}$的
+      过程为例，描述单个PE的运行原理。首先将列向量通过依次通过2个寄存器延
+      迟2个时钟周期，使相邻的列向量分量能够同时并行输出。为了减少资源浪费
+      ，其中第二个寄存器来自水平相邻的PE。通过当前输入与延迟1拍输入送至加
+      法器得到和项。延迟1拍和延迟2拍送至加法器得到差项。其中正确的和项差
+      项在每个时钟周期中错开。为了使yij的偶项和奇项的计算能够复用同一个乘
+      法器，将加法器和减法器的输出送入到一个2选1多路选择器，再将其输入对
+      应行系数相乘的得到每一个乘项。得到乘项后将其送入寄存器，当乘项是输
+      出项的第一个乘项时，直接输入该乘项。否则和之前的乘项一起输入到加法
+      进行累加。该过程通过置位信号控制2选1多路选择器实现。使用2个串联的寄
+      存器使奇项和偶项的运算时序能够对齐。当累加到4个乘项时，即计算出
+      $z_{01},z_{02}$
+      。从$x_{00}$到$z_{00}$一个需要8个时钟周期。将置位信号延迟8拍作为最
+      后输出2选1多路选择器的选择输入。具体的运行时序如图\ref{PE运行时序}
+      所示。
+
+      由于本设计编码模块输入的是像素点串行的vga格式信号。如果使用4×4二维
+      脉动阵列进行运算，则该模块的吞吐量是输入数据吞吐量的4倍。这代表该模
+      块在每个运行周期会有四分之三运行周期的空闲时间，模块的处理数据的速
+      率已经饱和。为了不浪费资源，如图\ref{一维脉动阵列}所示只使用4个PE组
+      成一行的一维脉动阵列进行运算。这样面积和速度的取舍能做到最优。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.8]{./pictures/1D-DCT.png}
+        \caption{一维脉动阵列}
+        \label{一维脉动阵列}
+      \end{figure}
+
+      通过上述过程可以得到$Z$,还需要再计算$Y^{T}=CZ^{T}$,上述模块依次输出
+      $Z$的列向量$Z_{0},Z_{7},Z_{1},Z_{6},Z_{2},Z_{5},Z_{3},Z_{4}$
+      所以需要通过$Z_{n},Z_{7-n}$得到$Z^{T}$
+      的差项和和项。使用如图\ref{和差项生成}所示的电路结构得到。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.8]{./pictures/和差项生成.png}
+        \caption{和差项生成部分}
+        \label{和差项生成}
+      \end{figure}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.8]{./pictures/和差项生成步骤.png}
+        \caption{$Z^{T}$和差项生成步骤}
+        \label{和差项生成步骤}
+      \end{figure}
+      该结构的运行步骤如图所示，当的第1行（$Z_{00}$到$Z_{07}$）输入时，偶
+      行置位为1。将该行输入到8拍的移位寄存器上；当的第8行（$Z_{70}$到$Z_{
+      77}$）输入时，偶行置位为0。将移位寄存器输出的1行和8行输入到减法器并
+      送回到移位寄存器，同时输入到加法器输出和项；当Y的第2行（$Z_{10}$到$
+      Z_{17}$）输入时，偶行置位为1将该行输入到8拍的移位寄存器上，同时移位
+      寄存器输出上一步骤计算的差项。其他行之间的和差项运算同理。
   \subsection{数据预处理模块}
     \vspace{1em}
   \subsection{熵编码模块}
