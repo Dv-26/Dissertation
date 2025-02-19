@@ -1,0 +1,4 @@
+read_verilog -sv -formal -overwrite {workspace}/hdl/design/Delay.sv
+read_verilog -sv -formal -overwrite {workspace}/hdl/design/dct.sv
+design -reset-vlog; proc;
+write_json {workspace}/netlist/Pe.json
