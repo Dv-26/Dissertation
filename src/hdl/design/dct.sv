@@ -1,12 +1,13 @@
-`include "./interface.sv"
+`include "/home/dv/Documents/Dissertation/src/hdl/design/interface.sv"
+
 module Pe #(
   parameter DATA_WIDTH = 8
 ) (
   input logic clk,
-  PeBusIf.peColIn       colIn,
-  PeBusIf.peColOut    colOut,
-  PeBusIf.peRowIn     rowIn,
-  PeBusIf.peRowOut  rowOut
+  PeCol_if.rx coefficient colRx,
+  PeCol_if.tx coefficient colTx,
+  PeRow_if.rx coefficient rowRx,
+  PeRow_if.tx coefficient rowTx
 );
 
 typedef struct {
@@ -18,23 +19,23 @@ typedef struct {
 
   pePort_t inDelay[2];
   always_ff @(posedge clk)begin
-    inDelay[0].x <= rowIn.x;
-    inDelay[0].sumDiffSel <= rowIn.sumDiffSel ;
-    inDelay[0].load <= rowIn.load ;
+    inDelay[0].x <= rowRx.x;
+    inDelay[0].sumDiffSel <= rowRx.sumDiffSel ;
+    inDelay[0].load <= rowRx.load ;
     inDelay[0].coefficient <= colIn.coefficient  ;
     inDelay[1] <= inDelay[0];
   end
 
-  assign rowOut.x = inDelay[1].x;
-  assign rowOut.sumDiffSel = inDelay[1].sumDiffSel ;
-  assign rowOut.load = inDelay[1].load;
-  assign colOut.coefficient = inDelay[1].coefficient;
+  assign rowTx.x = inDelay[1].x;
+  assign rowTx.sumDiffSel = inDelay[1].sumDiffSel ;
+  assign rowTx.load = inDelay[1].load;
+  assign colTx.coefficient = inDelay[1].coefficient;
 
   logic [DATA_WIDTH-1 : 0]  sum, diff;
-  assign sum = rowIn.x + inDelay[0];
+  assign sum = rowRx.x + inDelay[0];
   assign diff = inDelay[0].x - inDelay[1].x;
   logic [DATA_WIDTH-1 : 0]  product;
-  assign product = colIn.coefficient * (inDelay[0].sumDiffSel? sum : diff);
+  assign product = colRx.coefficient * (inDelay[0].sumDiffSel? sum : diff);
 
   logic [DATA_WIDTH-1 : 0] delay2In, delay2Out, acc;
   Delay #(DATA_WIDTH, 2)delay2(clk, delay2in, delay2Out);
@@ -43,8 +44,8 @@ typedef struct {
 
   logic outSel;
   Delay #(DATA_WIDTH, 6)delay6(clk, inDelay[0].load, outSel);
-  assign rowOut.z = outSel? acc : rowIn.z;
-  assign rowOut.valid = rowIn.valid | outSel;
+  assign rowTx.z = outSel? acc : rowRx.z;
+  assign rowTx.valid = rowRx.valid | outSel;
 endmodule
 
 module array #(
@@ -61,10 +62,10 @@ module array #(
   output logic [DATA_WIDTH-1:0] z[ROW],
   output logic valid[ROW]
 );
-`include "./interface.sv"
+`include "/home/dv/Documents/Dissertation/src/hdl/design/interface.sv"
 
-  PeBusIf portArrayRow[ROW+1][COL+1](.*);
-  PeBusIf portArrayCol[ROW+1][COL+1](.*);
+  PeRow_if portArrayRow[ROW+1][COL+1]();
+  PeCol_if portArrayCol[ROW+1][COL+1]();
 
   generate
     genvar i,j;
@@ -83,6 +84,8 @@ module array #(
           portArrayRow[i][j],
           portArrayRow[i][j+1]
         );
+        if(i==0)
+          assign portArrayCol[i][j].coefficient = 1;
       end
 
       assign z[i] = portArrayRow[i][COL].z;
