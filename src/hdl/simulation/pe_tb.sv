@@ -5,18 +5,20 @@ module Pe_tb;
   logic                   clk;
   logic                   rst_n;
 
-  logic [DATA_WIDTH-1:0]  x[1];
-  logic                                 sumDiffSel[1];
-  logic                                 load[1];
+  logic [DATA_WIDTH-1:0]  x;
+  logic                                 sumDiffSel;
+  logic                                 load;
 
-  logic [DATA_WIDTH-1:0]  z[1];
-  logic                                 valid[1];
+  logic [DATA_WIDTH-1:0]  z;
+  logic                                 valid;
 
   always #5 clk = ~clk;
 
-  array#(8, 1, 4) pe_tb (
+  logic [DATA_WIDTH-1:0] coefficient[4] = {{'1}, {'1}, {'1}, {'1}} ;
+  x2zArray#(8, 4) pe_tb (
     .clk(clk),
     .rst_n(rst_n),
+    .coefficient(coefficient),
     .x(x),
     .sumDiffSel(sumDiffSel),
     .load(load),
@@ -24,28 +26,30 @@ module Pe_tb;
     .valid(valid)
    );
 
-  int i;
+  int i,j;
   initial begin
     clk = 1;
     rst_n = 0;
-    load[0] = 0;
+    load = 0;
     #5
     rst_n = 1;
     #5;
     for(i=0; i<8; i++)begin
-      @(posedge clk)begin
-        x[0] <= i;
-        sumDiffSel[0] <= i%2;
-        if(i == 0 || i == 1)
-          load[0] <= 1;
-        else
-          load[0] <= 0;
-        #10;
+      for(j=0; j<8; j++)begin
+        @(posedge clk)begin
+          x <= j;
+          sumDiffSel <= j%2;
+          if(j == 0 || j == 1)
+            load <= 1;
+          else
+            load <= 0;
+          #10;
+        end
       end
     end
     @(posedge clk)
-      sumDiffSel[0] <= 0;
-      load[0] <= 0;
+      sumDiffSel <= 0;
+      load <= 0;
     #1000;
     $stop();
   end
