@@ -1,4 +1,4 @@
-//`include "design/interface.sv"
+`include "interface.sv"
 
 module dct #(
   parameter DATA_WIDTH = 8
