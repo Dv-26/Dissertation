@@ -1,50 +1,32 @@
-interface X2zPeRow_if#(parameter DATA_WIDTH = 8)(); 
-  logic [DATA_WIDTH-1:0] x;
-  logic [DATA_WIDTH-1:0] z;
+
+typedef struct {
+  logic [8-1:0] data;
   logic sumDiffSel;
   logic load;
+} x2zX_t;
+
+typedef struct {
+  logic [8-1:0] data;
   logic valid;
+} x2zZ_t;
 
-  modport rx (
-    input x,
-    input z,
+typedef struct {
+  x2zX_t x;
+  x2zZ_t z;
+} x2zPort_t;
 
-    input sumDiffSel,
-    input load,
-    input valid
-  );
-  modport tx (
-    output x,
-    output z,
 
-    output sumDiffSel,
-    output load,
-    output valid
-  );
-endinterface
-
-interface Z2yPeRow_if #(parameter DATA_WIDTH = 8)();
-  logic [DATA_WIDTH-1 : 0] z;
+typedef struct {
+  logic [8-1:0] data;
   logic load;
-  logic [DATA_WIDTH-1 : 0] y;
-  modport rx (
-    input z,
-    input load,
-    input y
-  );
-  modport tx (
-    output z,
-    output load,
-    output y
-  );
-endinterface
+} z2yZ_t;
 
-interface PeCol_if #(parameter DATA_WIDTH = 8)();
-  logic  [DATA_WIDTH-1:0]  coefficient;
-  modport rx (
-    input coefficient
-  );
-  modport tx (
-    output coefficient
-  );
-endinterface
+typedef struct {
+  logic [8-1:0] data;
+  logic valid;
+} z2yY_t;
+
+typedef struct {
+  z2yZ_t z;
+  z2yY_t y;
+} z2yPort_t;

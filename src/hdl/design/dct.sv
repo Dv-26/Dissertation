@@ -1,4 +1,4 @@
-`include "./interface.sv"
+//`include "design/interface.sv"
 
 module dct #(
   parameter DATA_WIDTH = 8
@@ -14,8 +14,9 @@ module dct #(
   output logic valid
 );
 
-  logic [DATA_WIDTH-1:0] coefficient[4] = {{'1}, {'1}, {'1}, {'1}} ;
+  logic [DATA_WIDTH-1:0] coefficient[4];
 
+  assign coefficient = {1, 1, 1, 1};
   logic [DATA_WIDTH-1:0] z;
   logic zValid;
   x2zArray #(DATA_WIDTH, 4) x2z (clk, rst_n, coefficient, x, sumDiffSel, load, z, zValid);
@@ -47,31 +48,17 @@ module x2zArray #(
   output logic valid
 );
 
-  typedef struct {
-    logic [DATA_WIDTH-1:0] data;
-    logic sumDiffSel;
-    logic load;
-  } x_t;
-
-  typedef struct {
-    logic [DATA_WIDTH-1:0] data;
-    logic valid;
-  } z_t;
-
-  typedef struct {
-    x_t x;
-    z_t z;
-  } port_t;
-
-  port_t rowPort[COL+1]; 
+// verilator lint_off UNOPTFLAT
+  x2zPort_t rowPort[COL+1]; 
+// verilator lint_on UNOPTFLAT
   assign {rowPort[0].x.data, rowPort[0].x.sumDiffSel, rowPort[0].x.load} = {x, sumDiffSel, load}; 
   assign {rowPort[0].z.data, rowPort[0].z.valid} = '0;
 
   generate
     genvar i;
-    for(i=0; i<COL; i++)begin :pe
+    for(i=0; i<COL; i++)begin
 
-      x_t xDelay2[2];
+      x2zX_t xDelay2[2];
       always_ff @(posedge clk)begin
         xDelay2[0] <= rowPort[i].x; 
         xDelay2[1] <= xDelay2[0];
@@ -115,23 +102,9 @@ module z2yArray #(
   output logic [DATA_WIDTH-1:0] y,
   output logic valid
 );
-
-  typedef struct {
-    logic [DATA_WIDTH-1:0] data;
-    logic load;
-  } z_t;
-
-  typedef struct {
-    logic [DATA_WIDTH-1:0] data;
-    logic valid;
-  } y_t;
-
-  typedef struct {
-    z_t z;
-    y_t y;
-  } port_t;
-
-  port_t rowPort[COL+1];
+// verilator lint_off UNOPTFLAT
+  z2yPort_t rowPort[COL+1];
+// verilator lint_on UNOPTFLAT
   assign {rowPort[0].z.data, rowPort[0].z.load} = {z, load};
   assign {rowPort[0].y.data, rowPort[0].y.valid} = '0;
   generate 
