@@ -1,4 +1,5 @@
-
+`ifndef __INTERFACE__
+`define __INTERFACE__
 typedef struct {
   logic [8-1:0] data;
   logic sumDiffSel;
@@ -25,3 +26,5 @@ typedef struct {
   z2yZ_t z;
   dctPort_t y;
 } z2yPort_t;
+
+`endif

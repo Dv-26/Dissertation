@@ -10,7 +10,7 @@ module dct_tb;
 
   always #5 clk = ~clk;
 
-dct #(8)dct_tb(clk, rst_n, x, y);
+jpegCode #(8)coder(clk, rst_n, x, y);
 
   int i,j;
   initial begin
