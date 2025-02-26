@@ -21,7 +21,6 @@ Y0Rounded = np.round(Y0, 2)
 
 pi = np.pi
 
-# 计算 a, b, c, d, e, f, g
 a = 0.5 * np.cos(4 * pi / 16)
 b = 0.5 * np.cos(1 * pi / 16)
 c = 0.5 * np.cos(2 * pi / 16)
@@ -30,7 +29,6 @@ e = 0.5 * np.cos(4 * pi / 16)
 f = 0.5 * np.cos(5 * pi / 16)
 g = 0.5 * np.cos(6 * pi / 16)
 
-# 定义矩阵 C
 C = np.array([
     [a, a, a, a, a, a, a, a],
     [b, d, e, g, -g, -e, -d, -b],
