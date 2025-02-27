@@ -4,7 +4,7 @@ import numpy as np
 def C(x):
     return 1 / math.sqrt(2) if x==0 else 1
 
-X = np.array([[0, 2, 4, 6, 7, 5, 3, 1] for _ in range(8)])
+X = np.array([[0, 20, 40, 60, 70, 50, 30, 10] for _ in range(8)])
 
 def compute_Y(u, v):
     sum_result = 0
@@ -40,10 +40,16 @@ C = np.array([
     [g, -e, d, -b, b, -d, e, -g]
 ])
 
-Y1 =np.dot(C, X.T).T
-Y1Rounded = np.round(Y1, 2)
+# Y1Rounded = np.round(Y1, 2)
 print("Input matrix X:")
 print(X)
-print("\noutput matrix Y:")
+print("\X^T:")
+print(X.T)
+print("CX^T:")
+print(np.round(np.dot(C, X.T), 2))
+print("(CX^T)^T:")
+print(np.round(np.dot(C, X.T).T, 2))
+print("C((CX^T)^T)")
+print(np.round(np.dot(C, np.dot(C, X.T).T), 2))
+print("Ture is:")
 print(Y0Rounded)
-print(Y1Rounded)

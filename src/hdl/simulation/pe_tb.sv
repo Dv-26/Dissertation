@@ -1,7 +1,7 @@
 // `include "../design/interface.sv"
 module dct_tb;
   
-  parameter DATA_WIDTH = 8;
+  parameter DATA_WIDTH = 10;
 
   logic                   clk;
   logic                   rst_n;
@@ -10,7 +10,7 @@ module dct_tb;
 
   always #5 clk = ~clk;
 
-jpegCode #(8)coder(clk, rst_n, x, y);
+jpegCode #(DATA_WIDTH)coder(clk, rst_n, x, y);
 
   int i,j;
   initial begin
@@ -23,7 +23,7 @@ jpegCode #(8)coder(clk, rst_n, x, y);
     for(i=0; i<8; i++)begin
       for(j=0; j<8; j++)begin
         @(posedge clk)begin
-          x.data <= j;
+          x.data <= j*10;
           x.valid <= 1;
           #10;
         end

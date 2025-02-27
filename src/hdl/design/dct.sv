@@ -14,16 +14,18 @@ module dct #(
 
   x2zX_t xIn;
   dctPort_t z;
- // logic [DATA_WIDTH-1:0] z;
+ 
+  logic cnt8Add;
   logic [2:0] cnt8;
   always_ff @(posedge clk or negedge rst_n)begin
     if(!rst_n) begin
       cnt8 <= 0;
     end else begin 
-      if(x.valid)
+      if(cnt8Add)
         cnt8 <= cnt8 + 1;
     end
   end
+  assign cnt8Add = x.valid | z.valid;
   assign xIn.data = x.data;
   assign xIn.sumDiffSel = cnt8[0];
   assign xIn.load = ~|cnt8[2:1] & x.valid;
@@ -44,7 +46,7 @@ module dct #(
   logic [DATA_WIDTH-1:0] z2yCoefficient[4];
   logic [DATA_WIDTH-1:0] delay8In, delay8Out;
   Delay #(DATA_WIDTH+1, 8)delay8(clk, rst_n, delay8In, delay8Out);
-  assign delay8In = sel? z.data-delay8Out : z.data;
+  assign delay8In = sel? delay8Out-z.data : z.data;
   assign sumDiff.data = sel? delay8Out+z.data : delay8Out;
   assign sel = cnt16[3] & z.valid;
 
@@ -52,15 +54,17 @@ module dct #(
   Delay #(1, 7)validDelay7(clk, rst_n, z.valid, sumDiffValidAhead);
   Delay #(1, 1)validDelay8(clk, rst_n, sumDiffValidAhead, sumDiffValid);
 
+  logic cnt64Add;
   logic [5:0] cnt64Ahead,cnt64;
   always_ff @(posedge clk or negedge rst_n)begin
     if(!rst_n) begin
       cnt64Ahead <= 0;
     end else begin
-      if(sumDiffValidAhead)
+      if(cnt64Add)
         cnt64Ahead <= cnt64Ahead + 1;
     end
   end
+  assign cnt64Add = sumDiffValidAhead | sumDiffValid | y.valid;
   Delay #(6, 1)cnt64Delay(clk, rst_n, cnt64Ahead, cnt64);
 
   assign sumDiff.load = ~|cnt64[5:4] & sumDiffValid;
@@ -68,8 +72,8 @@ module dct #(
 
   coefficientMap #(DATA_WIDTH, 8) coefficientMap (
     clk,
-    cnt8, x.valid, x2zCoefficient,
-    cnt64Ahead[5:3], sumDiffValidAhead, z2yCoefficient
+    cnt8, cnt8Add, x2zCoefficient,
+    cnt64Ahead[5:3], cnt64Add, z2yCoefficient
   );
 endmodule
 
@@ -84,7 +88,7 @@ module multiplier #(
 
 logic signed [2*DATA_WIDTH-1 : 0] product;
 assign product = coefficient * in;
-assign out = product >>> SHIFT;
+assign out = (product + 2**(SHIFT-1)) >>> SHIFT;
 
 endmodule
 module x2zArray #(
@@ -122,8 +126,8 @@ module x2zArray #(
       assign rowPort[i+1].x = xDelay2[1];
 
       logic [DATA_WIDTH-1:0] sum,diff;
-      assign sum = rowPort[i].x.data + xDelay2[0].data;
-      assign diff = xDelay2[0].data - xDelay2[1].data;
+      assign sum = xDelay2[0].data + rowPort[i].x.data;
+      assign diff = xDelay2[1].data - xDelay2[0].data;
        
       logic [DATA_WIDTH-1:0] product;
       multiplier#(DATA_WIDTH, DATA_WIDTH) multiplier (
@@ -225,13 +229,13 @@ module coefficientMap #(
       else
         cos[i] = $cos(i*PI / 16) * 2**(DATA_WIDTH-1);
     end
-    memoryArray[0] = {cos[0], -1*cos[4], cos[2], cos[3]};
-    memoryArray[1] = {cos[1], cos[0], cos[3], -1*cos[5]};
-    memoryArray[2] = {cos[2], cos[3], cos[0], -1*cos[1]};
-    memoryArray[3] = {cos[3], cos[5], cos[4], cos[0]};
-    memoryArray[4] = {cos[0], -1*cos[6], -1*cos[5], -1*cos[6]};
-    memoryArray[5] = {cos[4], -1*cos[0], -1*cos[1], -1*cos[2]};
-    memoryArray[6] = {cos[5], -1*cos[1], -1*cos[0], -1*cos[4]};
-    memoryArray[7] = {cos[6], -1*cos[2], cos[6], cos[0]};
+    memoryArray[0] = {cos[0], -1*cos[2], -1*cos[0], -1*cos[2]};
+    memoryArray[1] = {cos[1], -1*cos[4], cos[6], -1*cos[4]};
+    memoryArray[2] = {cos[0], cos[2], cos[0], cos[2]};
+    memoryArray[3] = {cos[3], cos[3], cos[3], cos[3]};
+    memoryArray[4] = {cos[0], cos[5], cos[0], -1*cos[5]};
+    memoryArray[5] = {cos[4], -1*cos[6], cos[4], -1*cos[1]};
+    memoryArray[6] = {cos[0], -1*cos[5], -1*cos[0], cos[5]};
+    memoryArray[7] = {cos[6], -1*cos[1], -1*cos[1], cos[6]};
   end
 endmodule
