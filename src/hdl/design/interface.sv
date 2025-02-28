@@ -27,4 +27,22 @@ typedef struct {
   dctPort_t y;
 } z2yPort_t;
 
+typedef struct {
+  logic [9:0] data;
+  logic load;
+} in_t;
+
+typedef struct {
+  logic [9:0] data;
+  logic valid;
+} result_t;
+
+typedef struct {
+  in_t in;
+  result_t result;
+} peRowPort_t;
+
+typedef struct {
+  logic [9:0] data;
+}peColPort_t;
 `endif

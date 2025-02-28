@@ -196,6 +196,49 @@ module z2yArray #(
 
 endmodule
 
+module Pe #(
+    parameter DATA_WIDTH = 10,
+    parameter LENGHT = 2,
+    parameter ACC_NUB = 4
+) (
+    input logic clk, rst_n,
+
+    input peRowPort_t rowIn,
+    output peRowPort_t rowOut,
+
+    input peColPort_t colIn,
+    output peColPort_t colOut
+);
+
+  Delay #(DATA_WIDTH+1, LENGHT) rowDelay (
+    clk, rst_n,
+    {rowIn.in.data,  rowIn.in.load},
+    {rowOut.in.data, rowOut.in.load}
+  );
+
+  Delay #(DATA_WIDTH, LENGHT) colDelay (clk, rst_n, colIn.data, colOut.data);
+
+  logic [DATA_WIDTH-1:0] product;
+  multiplier #(DATA_WIDTH, DATA_WIDTH) multiplier (colIn.data, rowIn.in.data, product);
+
+  logic [DATA_WIDTH-1:0] accDelayIn, accDelayOut, acc;
+  Delay #(DATA_WIDTH+1, LENGHT) accDelay (clk, rst_n, accDelayIn, accDelayOut);
+  assign acc = accDelayOut + product;
+  assign accDelayIn = rowIn.in.load? product : acc;
+
+  logic resultSel;
+  generate
+    if(ACC_NUB > 1)begin
+      Delay #(1, LENGHT*(ACC_NUB-1)) loadDelay (clk, rst_n, rowOut.in.load, resultSel);
+    end else begin
+      assign resultSel = rowOut.in.load;
+    end
+  endgenerate
+
+  assign rowOut.result.data = resultSel? acc : rowIn.result.data;
+  assign rowOut.result.valid = resultSel | rowIn.result.valid;
+endmodule
+
 module coefficientMap #(
   parameter DATA_WIDTH = 8,
   parameter DEPTH = 8
