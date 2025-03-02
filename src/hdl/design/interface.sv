@@ -1,5 +1,26 @@
 `ifndef __INTERFACE__
 `define __INTERFACE__
+
+interface rom_if #(
+  parameter DATA_WIDTH = 10,
+  parameter DEPTH = 8,
+  parameter NUB = 4
+) ();
+  logic [DATA_WIDTH-1:0] data[NUB];
+  logic [$clog2(DEPTH)-1:0] addr;
+  logic en;
+  modport rx (
+    output addr,
+    output en,
+    input data
+  );
+  modport tx (
+    input addr,
+    input en,
+    output data
+  );
+endinterface
+
 typedef struct {
   logic [9:0] data;
   logic sumDiffSel;
@@ -10,22 +31,6 @@ typedef struct {
   logic [9:0] data;
   logic valid;
 } dctPort_t;
-
-typedef struct {
-  x2zX_t x;
-  dctPort_t z;
-} x2zPort_t;
-
-
-typedef struct {
-  logic [9:0] data;
-  logic load;
-} z2yZ_t;
-
-typedef struct {
-  z2yZ_t z;
-  dctPort_t y;
-} z2yPort_t;
 
 typedef struct {
   logic [9:0] data;

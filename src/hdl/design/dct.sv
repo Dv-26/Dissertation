@@ -1,200 +1,110 @@
 `include "interface.sv"
-
-module dct #(
-  parameter DATA_WIDTH = 8
-) (
-  input logic clk,
-  input logic rst_n,
-
-  input dctPort_t x,
-  output dctPort_t y
-);
-
-  logic [DATA_WIDTH-1:0] x2zCoefficient[4];
-
-  x2zX_t xIn;
-  dctPort_t z;
  
-  logic cnt8Add;
-  logic [2:0] cnt8;
-  always_ff @(posedge clk or negedge rst_n)begin
-    if(!rst_n) begin
-      cnt8 <= 0;
-    end else begin 
-      if(cnt8Add)
-        cnt8 <= cnt8 + 1;
-    end
-  end
-  assign cnt8Add = x.valid | z.valid;
-  assign xIn.data = x.data;
-  assign xIn.sumDiffSel = cnt8[0];
-  assign xIn.load = ~|cnt8[2:1] & x.valid;
-  x2zArray #(DATA_WIDTH, 4) x2z (clk, rst_n, x2zCoefficient, xIn, z);
-
-  logic [3:0] cnt16;
-  always_ff @(posedge clk or negedge rst_n)begin
-    if(!rst_n) begin
-      cnt16 <= 0;
-    end else begin
-      if(z.valid)
-        cnt16 <= cnt16 + 1;
-    end
-  end
-
-  logic sel;
-  z2yZ_t sumDiff;
-  logic [DATA_WIDTH-1:0] z2yCoefficient[4];
-  logic [DATA_WIDTH-1:0] delay8In, delay8Out;
-  Delay #(DATA_WIDTH+1, 8)delay8(clk, rst_n, delay8In, delay8Out);
-  assign delay8In = sel? delay8Out-z.data : z.data;
-  assign sumDiff.data = sel? delay8Out+z.data : delay8Out;
-  assign sel = cnt16[3] & z.valid;
-
-  logic sumDiffValidAhead, sumDiffValid;
-  Delay #(1, 7)validDelay7(clk, rst_n, z.valid, sumDiffValidAhead);
-  Delay #(1, 1)validDelay8(clk, rst_n, sumDiffValidAhead, sumDiffValid);
-
-  logic cnt64Add;
-  logic [5:0] cnt64Ahead,cnt64;
-  always_ff @(posedge clk or negedge rst_n)begin
-    if(!rst_n) begin
-      cnt64Ahead <= 0;
-    end else begin
-      if(cnt64Add)
-        cnt64Ahead <= cnt64Ahead + 1;
-    end
-  end
-  assign cnt64Add = sumDiffValidAhead | sumDiffValid | y.valid;
-  Delay #(6, 1)cnt64Delay(clk, rst_n, cnt64Ahead, cnt64);
-
-  assign sumDiff.load = ~|cnt64[5:4] & sumDiffValid;
-  z2yArray #(DATA_WIDTH, 4) z2y (clk, rst_n, z2yCoefficient, sumDiff, y);
-
-  coefficientMap #(DATA_WIDTH, 8) coefficientMap (
-    clk,
-    cnt8, cnt8Add, x2zCoefficient,
-    cnt64Ahead[5:3], cnt64Add, z2yCoefficient
-  );
-endmodule
-
-module multiplier #(
-  parameter   DATA_WIDTH = 8,
-  parameter   SHIFT = 8
+module Dct #(
+  parameter DATA_WIDTH = 10,
+  parameter ROW = 3
 ) (
-  input signed [DATA_WIDTH-1:0] coefficient,
-  input signed [DATA_WIDTH-1:0] in,
-  output signed [DATA_WIDTH-1:0]  out
+  input logic clk, rst_n,
+  input dctPort_t in[ROW],
+  output dctPort_t out[ROW]
 );
 
-logic signed [2*DATA_WIDTH-1 : 0] product;
-assign product = coefficient * in;
-assign out = (product + 2**(SHIFT-1)) >>> SHIFT;
+  dctPort_t x[ROW], z[ROW], y[ROW];
+  rom_if #(DATA_WIDTH, 8, 4) x2zCoe ();
+  rom_if #(DATA_WIDTH, 8, 4) z2yCoe ();
 
-endmodule
-module x2zArray #(
-  parameter DATA_WIDTH = 8,
-  parameter COL = 4
-) (
-  input logic clk,
-  input logic rst_n,
-
-  input logic [DATA_WIDTH-1:0]  coefficient[COL],
-  input x2zX_t x,
-  output dctPort_t z
-);
-
-// verilator lint_off UNOPTFLAT
-  x2zPort_t rowPort[COL+1]; 
-// verilator lint_on UNOPTFLAT
-  assign rowPort[0].x = x;
-  assign {rowPort[0].z.data, rowPort[0].z.valid} = '0;
-
+  genvar i;
   generate
-    genvar i;
-    for(i=0; i<COL; i++)begin: pe
+    for (i=0; i<ROW; i++) begin
+      if(i == 0) begin
+        assign x[i] = in[i];
+      end else begin
+        Delay #(DATA_WIDTH+1, i) inDelay (
+          clk, rst_n,
+          {in[i].data, in[i].valid},
+          {x[i].data, x[i].valid}
+        );
+      end
+    end
+  endgenerate
 
-      x2zX_t xDelay2[2];
-      always_ff @(posedge clk or negedge rst_n)begin
-        if(!rst_n) begin
-          {xDelay2[0].data, xDelay2[0].sumDiffSel, xDelay2[0].load} <= '0; 
-          {xDelay2[1].data, xDelay2[1].sumDiffSel, xDelay2[1].load} <= '0; 
-        end else begin
-          xDelay2[0] <= rowPort[i].x; 
-          xDelay2[1] <= xDelay2[0];
+  coefficientMap #(DATA_WIDTH, 8) coefficientMap (x2zCoe, z2yCoe);
+  Array #(DATA_WIDTH, 2, 4, ROW) x2zArray (clk, rst_n, x2zCoe, x, z);
+  Array #(DATA_WIDTH, 16, 4, ROW) z2yArray (clk, rst_n, z2yCoe, z, y);
+
+  assign out = y;
+endmodule
+
+module Array #(
+  parameter DATA_WIDTH = 10,
+  parameter LENGHT = 2,
+  parameter COL = 4,
+  parameter ROW = 1
+) (
+  input logic clk, rst_n,
+  rom_if.rx coe,
+  input dctPort_t in[ROW],
+  output dctPort_t out[ROW]
+);
+
+localparam CNT_WIDTH = $clog2(LENGHT*COL);
+
+genvar i,j;
+generate
+
+  peColPort_t colPorts[ROW+1][COL];
+  peRowPort_t rowPorts[ROW][COL+1];
+
+  for(i=0; i<ROW; i++) begin
+      logic [CNT_WIDTH-1:0] cnt;
+      logic cntAdd;
+      always_ff @(posedge clk or negedge rst_n) begin
+        if(!rst_n)begin
+          cnt <= '0;
+        end else if(cntAdd) begin
+          cnt <= cnt + 1;
         end
       end
-      assign rowPort[i+1].x = xDelay2[1];
+      assign cntAdd = validDelay | rowPorts[i][COL].result.valid | in[i].valid;
+      if(i == 0)
+        assign coe.addr = (cnt >> $clog2(LENGHT)-1) - 1;
 
-      logic [DATA_WIDTH-1:0] sum,diff;
-      assign sum = xDelay2[0].data + rowPort[i].x.data;
-      assign diff = xDelay2[1].data - xDelay2[0].data;
-       
-      logic [DATA_WIDTH-1:0] product;
-      multiplier#(DATA_WIDTH, DATA_WIDTH) multiplier (
-        coefficient[i],
-        xDelay2[0].sumDiffSel? diff : sum,
-        product
-      );
-      logic [DATA_WIDTH-1 : 0] delay2In, delay2Out, acc;
-      assign delay2In = xDelay2[0].load? product : acc;
-      assign acc = product + delay2Out;
-      Delay #(DATA_WIDTH, 2)delay2(clk, rst_n, delay2In, delay2Out);
-
-      logic outSel;
-      Delay #(1, 6)delay6(clk, rst_n, xDelay2[0].load, outSel);
-      assign rowPort[i+1].z.data = outSel?  acc : rowPort[i].z.data;
-      assign rowPort[i+1].z.valid = rowPort[i].z.valid | outSel;
-    end
-  endgenerate
-
-  assign z = rowPort[COL].z;
-endmodule
-
-module z2yArray #(
-  parameter DATA_WIDTH = 8,
-  parameter COL = 4
-) (
-  input   wire  clk,
-  input   wire  rst_n,
-
-  input   logic [DATA_WIDTH-1:0]  coefficient[COL],
-  input   z2yZ_t z,
-  output  dctPort_t y
-);
-// verilator lint_off UNOPTFLAT
-  z2yPort_t rowPort[COL+1];
-// verilator lint_on UNOPTFLAT
-  assign rowPort[0].z = z;
-  assign {rowPort[0].y.data, rowPort[0].y.valid} = '0;
-  generate 
-    genvar i;
-    for (i=0; i<COL; i++) begin: pe
-      Delay #(DATA_WIDTH+1, 16) rowDelay16 (
+      logic [DATA_WIDTH-1:0] sumDiff, sum, diff, diffRegIn, diffRegOut;
+      logic sumDiffSel, peLoad, validDelay;
+      Delay #(DATA_WIDTH, LENGHT/2) diffReg (clk, rst_n, diffRegIn, diffRegOut); 
+      assign diff = diffRegOut -in[i].data;
+      assign sum = in[i].data + diffRegOut;
+      assign sumDiffSel = cnt[$clog2(LENGHT)-1] & in[i].valid;
+      assign diffRegIn = sumDiffSel? diff : in[i].data;
+      assign sumDiff = sumDiffSel? sum : diffRegOut;
+      Delay #(2, LENGHT/2) loadDelay (
         clk, rst_n,
-        {rowPort[i].z.data, rowPort[i].z.load},
-        {rowPort[i+1].z.data, rowPort[i+1].z.load}
+        {~|cnt[CNT_WIDTH-1:$clog2(LENGHT)] & in[i].valid, in[i].valid},
+        {peLoad, validDelay}
       );
+      if(i == 0)
+        assign coe.en = validDelay | rowPorts[i][COL].result.valid;
 
-      logic [DATA_WIDTH-1 : 0] product, acc, delay16In, delay16Out;
-      multiplier#(DATA_WIDTH, DATA_WIDTH) multiplier (
-        coefficient[i],
-        rowPort[i].z.data,
-        product
-      );
-      assign acc = product + delay16Out;
-      Delay #(DATA_WIDTH, 16) delay16 (clk, rst_n, delay16In, delay16Out);
-      assign delay16In = rowPort[i].z.load? product : acc;
+      assign {rowPorts[i][0].in.data, rowPorts[i][0].in.load} = {sumDiff, peLoad};
+      assign {rowPorts[i][0].result.data, rowPorts[i][0].result.valid} = {'0, '0};
+      for(j=0; j<COL; j++)begin
+        if(i == 0)
+          assign colPorts[0][j].data = coe.data[j];
+        Pe #(DATA_WIDTH, LENGHT, COL) pe (
+          clk, rst_n,
+          rowPorts[i][j],
+          rowPorts[i][j+1],
+          colPorts[i][j],
+          colPorts[i+1][j]
+        );
+      end
+      assign out[i].data = rowPorts[i][COL].result.data;
+      assign out[i].valid = rowPorts[i][COL].result.valid;
+  end
 
-      logic outSel;
-      Delay #(1, 48) delay48 (clk, rst_n, rowPort[i+1].z.load, outSel);
-      assign rowPort[i+1].y.data = outSel? acc : rowPort[i].y.data;
-      assign rowPort[i+1].y.valid = rowPort[i].y.valid | outSel;
-    end
-  endgenerate
+endgenerate
 
-  assign y = rowPort[COL].y;
-
-endmodule
+endmodule 
 
 module Pe #(
     parameter DATA_WIDTH = 10,
@@ -216,11 +126,11 @@ module Pe #(
     {rowOut.in.data, rowOut.in.load}
   );
 
-  Delay #(DATA_WIDTH, LENGHT) colDelay (clk, rst_n, colIn.data, colOut.data);
+  Delay #(DATA_WIDTH, 1) colDelay (clk, rst_n, colIn.data, colOut.data);
 
   logic [DATA_WIDTH-1:0] product;
   multiplier #(DATA_WIDTH, DATA_WIDTH) multiplier (colIn.data, rowIn.in.data, product);
-
+  
   logic [DATA_WIDTH-1:0] accDelayIn, accDelayOut, acc;
   Delay #(DATA_WIDTH+1, LENGHT) accDelay (clk, rst_n, accDelayIn, accDelayOut);
   assign acc = accDelayOut + product;
@@ -228,8 +138,8 @@ module Pe #(
 
   logic resultSel;
   generate
-    if(ACC_NUB > 1)begin
-      Delay #(1, LENGHT*(ACC_NUB-1)) loadDelay (clk, rst_n, rowOut.in.load, resultSel);
+    if(ACC_NUB > 2)begin
+      Delay #(1, LENGHT*(ACC_NUB-2)) loadDelay (clk, rst_n, rowOut.in.load, resultSel);
     end else begin
       assign resultSel = rowOut.in.load;
     end
@@ -239,28 +149,31 @@ module Pe #(
   assign rowOut.result.valid = resultSel | rowIn.result.valid;
 endmodule
 
+module multiplier #(
+  parameter   DATA_WIDTH = 8,
+  parameter   SHIFT = 8
+) (
+  input signed [DATA_WIDTH-1:0] coefficient,
+  input signed [DATA_WIDTH-1:0] in,
+  output signed [DATA_WIDTH-1:0]  out
+);
+
+  logic signed [2*DATA_WIDTH-1 : 0] product;
+  assign product = coefficient * in;
+  assign out = (product + 2**(SHIFT-1)) >>> SHIFT;
+endmodule
+
 module coefficientMap #(
   parameter DATA_WIDTH = 8,
   parameter DEPTH = 8
 ) (
-  input logic clk,
-
-  input logic [$clog2(DEPTH)-1:0] addra,
-  input logic ena,
-  output logic [DATA_WIDTH-1:0] douta[4],
-
-  input logic [$clog2(DEPTH)-1:0] addrb,
-  input logic enb,
-  output logic [DATA_WIDTH-1:0] doutb[4]
+  rom_if.tx a,
+  rom_if.tx b
 );
 
   reg [DATA_WIDTH-1:0]  memoryArray[DEPTH][4];
-  always @(posedge clk)begin
-    if(ena)
-      douta <= memoryArray[addra];
-    if(enb)
-      doutb <= memoryArray[addrb];
-  end
+  assign a.data = a.en? memoryArray[a.addr] : {'0, '0, '0, '0};
+  assign b.data = b.en? memoryArray[b.addr] : {'0, '0, '0, '0};
 
   localparam real PI = 3.14159265358979323846;  // Define π manually
   logic signed [DATA_WIDTH-1:0] cos[7];
