@@ -821,14 +821,11 @@
     \begin{figure}[H]
       \centering
       \includegraphics[scale=0.5]{./pictures/dct.png}
-      \caption{DCT模块内部结果}
+      \caption{DCT模块内部结构}
       \label{code module}
     \end{figure}
 
-    由于本设计采用的采样格式为YCrCb420，所以在每个MCU中有一个Cr分量8×8像素
-    单元，一个Cb分量8×8像素单元，和4个Y分量8×8像素单元。因此Cr和Cb可以分时
-    复用同个色度通道，每个通道的DCT和量化模块均相同。
-
+    如果采用YCrCb444以外的采样格式，则Cr、Cb可以复用一个通道，减少资源的消耗
     如果根据2D-
     DCT原公式(\ref{8*8 2D-DCT})，对单个8×8单元进行运算，需要进行4096次乘法和40
     96次加法加法运算。需要使用较多的大量的乘法器资源，而乘法器资源在fpga中比较
@@ -958,7 +955,7 @@
       如图\ref{DCT脉动阵列}所示，使用二维脉动阵列实现DA算法中的$Z=CX$计算。
       \begin{figure}[H]
         \centering
-        \includegraphics[scale=0.15]{./pictures/DCT脉动阵列.png}
+        \includegraphics[scale=0.425]{./pictures/DCT脉动阵列.png}
         \caption{计算$Z=CX$的二维脉动阵列实现}
         \label{DCT脉动阵列}
       \end{figure}

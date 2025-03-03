@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.2.12)  28 FEB 2025 19:05
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.2.12)  3 MAR 2025 14:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -677,14 +677,24 @@ File: ./pictures/编码模块.png Graphic file (type bmp)
  [16]
 File: ./pictures/dct.png Graphic file (type bmp)
 <./pictures/dct.png>
- [17] [18]
+
+Overfull \hbox (15.1098pt too wide) in paragraph at lines 823--824
+ [][] 
+ []
+
+[17] [18]
 File: ./pictures/DCT脉动阵列.png Graphic file (type bmp)
 <./pictures/DCT脉动阵列.png>
+
+Overfull \hbox (12.92992pt too wide) in paragraph at lines 958--959
+ [][] 
+ []
+
 File: ./pictures/DCT_PE.png Graphic file (type bmp)
 <./pictures/DCT_PE.png>
 File: ./pictures/PE时序.png Graphic file (type bmp)
 <./pictures/PE时序.png>
- [19] [20]
+[19] [20]
 File: ./pictures/1D-DCT.png Graphic file (type bmp)
 <./pictures/1D-DCT.png>
 File: ./pictures/和差项生成.png Graphic file (type bmp)
