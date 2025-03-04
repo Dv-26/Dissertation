@@ -825,8 +825,9 @@
       \label{code module}
     \end{figure}
 
-    如果采用YCrCb444以外的采样格式，则Cr、Cb可以复用一个通道，减少资源的消耗
-    如果根据2D-
+    如果采用YCrCb444以外的采样格式，则Cr、Cb可以复用一个通道，减少资源的消耗。
+    
+    根据2D-
     DCT原公式(\ref{8*8 2D-DCT})，对单个8×8单元进行运算，需要进行4096次乘法和40
     96次加法加法运算。需要使用较多的大量的乘法器资源，而乘法器资源在fpga中比较
     稀缺。为了降低计算的复杂度，本设计使用了DA算法，通过行列分解2D-DCT运算。
@@ -943,72 +944,78 @@
         \end{bmatrix}
       \end{equation}
       $Z$每个列向量的偶项等于$x_{n}+x_{7-n}$（下面统称为和项）的线性组合，
-      奇项等于$x_{n}-x_{7-n}$的线性组合。对于$Y^{T}=CY^{T}$也是同理。
+      奇项等于$x_{n}-x_{7-n}$的线性组合。对于$Y^{T}=CZ^{T}$也是同理。
 
       通过上述步骤将8乘8的矩阵运算转换为两次4乘4的矩阵运算。减少了计算的复
-      杂度减少了一倍。为了在硬件中使用定点数运算，将中各个系数都扩大210倍
-      并取整。
+      杂度减少了一倍。为了在硬件中使用定点数运算，将中各个系数都扩大$2^{10}$倍,
+      相当于将系数左移10位，再将输出的乘积右移进行截位得到结果。
 
     \subsection{DA算法的硬件实现}
       \vspace{1em}
-      对于DA算法中2次4乘以4的矩阵运算，提出了一种基于脉动阵列的硬件实现。
-      如图\ref{DCT脉动阵列}所示，使用二维脉动阵列实现DA算法中的$Z=CX$计算。
+      对于DA算法中2次4乘以4的矩阵运算，本文提出了一种基于脉动阵列的硬件实
+      现。 如图\ref{code module}所示。对于单个颜色通道，可以认为一维脉动阵列
+      如图\ref{code module}为单个颜色通道计算$Z=CX$的结构。图\ref{code module}
+      中输入以$x_{00},x_{07},x_{01},x_{06},x_{02},x_{05},x_{03},x_{04}$的顺序依次输入
+      到和差项生成模块生成$x_{00}+x_{07},x_{00}-x_{07}$到$x_{03}-x_{04},x_{03}+x_{04}$,
+      的和差项。再将和差项送进一行四列的脉动阵列。得到$z_{00}$到$z_{07}$。
       \begin{figure}[H]
         \centering
         \includegraphics[scale=0.425]{./pictures/DCT脉动阵列.png}
-        \caption{计算$Z=CX$的二维脉动阵列实现}
+        \caption{计算$Z=CX$的一维脉动阵列实现}
         \label{DCT脉动阵列}
       \end{figure}
-      该脉动阵列的PE内部结果如图\ref{PE}所示
+      计算$Z=CX$和$Y^{T}=CZ^{T}$，脉动阵列的原理一致，区别在于内部移位寄存器
+      延迟的时钟周期数不同，两个矩阵运算的PE内部构成如图\ref{x2zPE}和图\ref{z2yPE}
+      所示
       \begin{figure}[H]
         \centering
-        \includegraphics[scale=0.4]{./pictures/DCT_PE.png}
-        \caption{PE的内部结构}
-        \label{PE}
+        \includegraphics[scale=0.25]{./pictures/x2zPE.png}
+        \caption{$Z=CX$的PE}
+        \label{x2zPE}
       \end{figure}
       \begin{figure}[H]
         \centering
-        \includegraphics[scale=0.35]{./pictures/PE时序.png}
-        \caption{PE运行时序}
+        \includegraphics[scale=0.25]{./pictures/z2yPE.png}
+        \caption{$Y^{T}=CZ^{T}$的PE}
+        \label{z2yPE}
+      \end{figure}
+
+      以$Z=CX$中列向量元素构成的和差项$x_{00}+x_{07},x_{00}-x_{07}$到
+      $x_{03}-x_{04},x_{03}+x_{04}$得到$z_{01},z_{02}$的过程为例，描述单个PE的
+      运行原理。当$x_{00}+x_{07},x_{00}-x_{07}$输入时，置位输入有效。将其与余弦常
+      数项输入相乘得到乘积项，再将其送进延迟2拍的移位寄存器进行暂存。当后续输入
+      $x_{01}+x_{06},x_{01}-x_{06}$到$x_{03}+x_{04},x_{03}-x_{04}$输入时。置位输入无效
+      移位寄存器输入为乘积和延迟2拍的输出进行累加。当$x_{03}+x_{04},x_{03}-x_{04}$
+      累加后得到$z_{00},z{01}$。从$x_{00}+x_{07}$到$z_{00}$的生成经过6个时钟周期，
+      因此将置位信号延迟6拍得到$z$数据输出MUX的选择信号。具体的运行时序如图
+      \ref{PE运行时序}所示。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.5]{./pictures/PE时序.png}
+        \caption{$Z=CX$阵列PE运行时序}
         \label{PE运行时序}
       \end{figure}
-      以列向量输入$x_{00},x_{01},x_{02},x_{03},x_{04},x_{05},x_{06},x_{07}$
-      计算输出$z_{01},z_{02}$的
-      过程为例，描述单个PE的运行原理。首先将列向量通过依次通过2个寄存器延
-      迟2个时钟周期，使相邻的列向量分量能够同时并行输出。为了减少资源浪费
-      ，其中第二个寄存器来自水平相邻的PE。通过当前输入与延迟1拍输入送至加
-      法器得到和项。延迟1拍和延迟2拍送至加法器得到差项。其中正确的和项差
-      项在每个时钟周期中错开。为了使yij的偶项和奇项的计算能够复用同一个乘
-      法器，将加法器和减法器的输出送入到一个2选1多路选择器，再将其输入对
-      应行系数相乘的得到每一个乘项。得到乘项后将其送入寄存器，当乘项是输
-      出项的第一个乘项时，直接输入该乘项。否则和之前的乘项一起输入到加法
-      进行累加。该过程通过置位信号控制2选1多路选择器实现。使用2个串联的寄
-      存器使奇项和偶项的运算时序能够对齐。当累加到4个乘项时，即计算出
-      $z_{01},z_{02}$
-      。从$x_{00}$到$z_{00}$一个需要8个时钟周期。将置位信号延迟8拍作为最
-      后输出2选1多路选择器的选择输入。具体的运行时序如图\ref{PE运行时序}
-      所示。
-
-      由于本设计编码模块输入的是像素点串行的vga格式信号。如果使用4×4二维
-      脉动阵列进行运算，则该模块的吞吐量是输入数据吞吐量的4倍。这代表该模
-      块在每个运行周期会有四分之三运行周期的空闲时间，模块的处理数据的速
-      率已经饱和。为了不浪费资源，如图\ref{一维脉动阵列}所示只使用4个PE组
-      成一行的一维脉动阵列进行运算。这样面积和速度的取舍能做到最优。
+      除第一列以外，每个PE的输入来自水平相邻PE的输出。除了第一行的颜色通道之外，
+      每个PE的常系数输入来自垂直相邻PE的输出。第一行的常系数来自ROM。第n列的PE
+      运算$z_{0,2(n-1)},z_{0,2(n-1)+1}$。为了输出$z_{00}$到$z_{07}$的串行流。如图\ref{x2zPE}
+      所示，水平方向x数据延迟2拍，使运算结果z在时间上不重叠。再通过每个PE中z数据级联
+      MUX和有效信号级联或门的方式使最后一列PE的Z数据输出$z_{00}$到$z_{07}$的串行流对应
+      时序如图\ref{z输出时序}所示。
       \begin{figure}[H]
         \centering
-        \includegraphics[scale=0.8]{./pictures/1D-DCT.png}
-        \caption{一维脉动阵列}
-        \label{一维脉动阵列}
+        \includegraphics[scale=0.8]{./pictures/z输出时序.png}
+        \caption{z输出时序}
+        \label{z输出时序}
       \end{figure}
-
-      通过上述过程可以得到$Z$,还需要再计算$Y^{T}=CZ^{T}$,上述模块依次输出
+      
+      通过上述过程可以得到$Z$,还需要再计算$Y^{T}=CZ^{T}$,$Z=CX$阵列依次输出
       $Z$的列向量$Z_{0},Z_{7},Z_{1},Z_{6},Z_{2},Z_{5},Z_{3},Z_{4}$
-      所以需要通过$Z_{n},Z_{7-n}$得到$Z^{T}$
-      的差项和和项。使用如图\ref{和差项生成}所示的电路结构得到。
+      所以需要通过$Z_{n},Z_{7-n}$输入到和差项生成模块得到$Z^{T}$列向量的和差项,
+      下面通过此过程描述和差项的运行原理。
       \begin{figure}[H]
         \centering
         \includegraphics[scale=0.8]{./pictures/和差项生成.png}
-        \caption{和差项生成部分}
+        \caption{$Y^{T}=CZ^{T}$和差项生成模块}
         \label{和差项生成}
       \end{figure}
       \begin{figure}[H]
@@ -1017,12 +1024,68 @@
         \caption{$Z^{T}$和差项生成步骤}
         \label{和差项生成步骤}
       \end{figure}
+
       该结构的运行步骤如图所示，当的第1行（$Z_{00}$到$Z_{07}$）输入时，偶
       行置位为1。将该行输入到8拍的移位寄存器上；当的第8行（$Z_{70}$到$Z_{
       77}$）输入时，偶行置位为0。将移位寄存器输出的1行和8行输入到减法器并
       送回到移位寄存器，同时输入到加法器输出和项；当Y的第2行（$Z_{10}$到$
       Z_{17}$）输入时，偶行置位为1将该行输入到8拍的移位寄存器上，同时移位
       寄存器输出上一步骤计算的差项。其他行之间的和差项运算同理。
+      \subsection{DCT模块功能仿真结果}
+      \vspace{1em}
+      本设计使用systemverilog进行RTL级描述。在EDA软件vivado进行综合。DCT
+      模块中运算DCT的模块RTL视图如图\ref{DCTSchematice}所示。其中in[0]，
+      out[0]、in[1]，out[1]、in[2]，out[2]表示三个颜色通道的输出输出。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.5]{./pictures/DCTSchematice.png}
+        \caption{DCT运算部分RTL视图}
+        \label{DCTSchematice}
+      \end{figure}
+    下面以一个8×8单元输入为激励进行仿真，仿真后的波形如图\ref{DCTSchematice}
+    其中灰色波形为Y通道，绿色波形为Cr通道，蓝色波形为Cb通道。由图可知从X到Z的
+    时滞为7个时钟周期，从Z到Y的时滞为56个时钟周期，所以整模块的时滞为63。由公式
+    （\ref{8*8 2D-DCT}）可知输出$Y(u,v)$的每个元素都需要$X(i,j)$64个元素进行计算，
+    所以当数据串行输入时，理论极限最小时延为63个时钟周期，本设计时沿达到理论极限。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.375]{./pictures/DCT模块仿真.png}
+        \caption{DCT模块仿真波形}
+        \label{DCTSimulationWave}
+      \end{figure}
+
+      下面验证计算结果的准确性，以如式（\ref{test matrix}）矩阵作为输入。与使用python的numpy库编写
+      的DCT计算结果进行对比。
+      \begin{equation}
+       \begin{bmatrix}
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+          0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
+       \end{bmatrix} 
+       \label{test matrix}
+      \end{equation}
+
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.8]{./pictures/python脚本运行结果.png}
+        \caption{python脚本运行结果}
+        \label{py result}
+      \end{figure}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.3725]{./pictures/DCTSimulationResult.png}
+        \caption{ DCT仿真结果波形}
+        \label{py result}
+      \end{figure}
+
+    
+
+
   \subsection{数据预处理模块}
     \vspace{1em}
   \subsection{熵编码模块}

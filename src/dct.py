@@ -4,7 +4,8 @@ import numpy as np
 def C(x):
     return 1 / math.sqrt(2) if x==0 else 1
 
-X = np.array([[0, 20, 40, 60, 70, 50, 30, 10] for _ in range(8)])
+X = matrix = np.tile(np.arange(8), (8, 1))
+X *= 10
 
 def compute_Y(u, v):
     sum_result = 0

@@ -35,7 +35,10 @@ module dct_tb;
     for(i=0; i<8; i++)begin
       for(j=0; j<8; j++)begin
         @(posedge clk)begin
-          stimulate.data <= j*10;
+          if(j%2==0)
+            stimulate.data <= (j/2)*10;
+          else
+            stimulate.data <= (7-(j-1)/2)*10;
           stimulate.valid <= 1;
           #10;
         end

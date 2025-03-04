@@ -26,9 +26,10 @@
 \contentsline {subsection}{\numberline {3.3}DCT模块}{17}{}%
 \contentsline {subsection}{\numberline {3.4}DA算法}{18}{}%
 \contentsline {subsection}{\numberline {3.5}DA算法的硬件实现}{19}{}%
-\contentsline {subsection}{\numberline {3.6}数据预处理模块}{22}{}%
-\contentsline {subsection}{\numberline {3.7}熵编码模块}{22}{}%
-\contentsline {subsection}{\numberline {3.8}JPEG文件格式生成模块}{22}{}%
-\contentsline {section}{\numberline {4}JPEG编解码系统FPGA实现以及验证}{23}{}%
-\contentsline {subsection}{\numberline {4.1}验证系统模块划分}{23}{}%
+\contentsline {subsection}{\numberline {3.6}DCT模块功能仿真结果}{22}{}%
+\contentsline {subsection}{\numberline {3.7}数据预处理模块}{24}{}%
+\contentsline {subsection}{\numberline {3.8}熵编码模块}{24}{}%
+\contentsline {subsection}{\numberline {3.9}JPEG文件格式生成模块}{24}{}%
+\contentsline {section}{\numberline {4}JPEG编解码系统FPGA实现以及验证}{25}{}%
+\contentsline {subsection}{\numberline {4.1}验证系统模块划分}{25}{}%
 \contentsfinish 
