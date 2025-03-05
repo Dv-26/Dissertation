@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.2.12)  4 MAR 2025 15:53
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.2.12)  5 MAR 2025 16:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -397,9 +397,6 @@ LaTeX Warning: Label `2D array' multiply defined.
 
 LaTeX Warning: Label `code module' multiply defined.
 
-
-LaTeX Warning: Label `py result' multiply defined.
-
 )
 \openout1 = `paper.aux'.
 
@@ -689,7 +686,7 @@ Overfull \hbox (15.1098pt too wide) in paragraph at lines 823--824
 File: ./pictures/DCT脉动阵列.png Graphic file (type bmp)
 <./pictures/DCT脉动阵列.png>
 
-Overfull \hbox (12.92992pt too wide) in paragraph at lines 963--964
+Overfull \hbox (12.92992pt too wide) in paragraph at lines 964--965
  [][] 
  []
 
@@ -701,7 +698,7 @@ File: ./pictures/z2yPE.png Graphic file (type bmp)
 File: ./pictures/PE时序.png Graphic file (type bmp)
 <./pictures/PE时序.png>
 
-Overfull \hbox (9.0865pt too wide) in paragraph at lines 994--995
+Overfull \hbox (9.0865pt too wide) in paragraph at lines 995--996
  [][] 
  []
 
@@ -723,7 +720,12 @@ File: ./pictures/python脚本运行结果.png Graphic file (type bmp)
 <./pictures/python脚本运行结果.png>
 File: ./pictures/DCTSimulationResult.png Graphic file (type bmp)
 <./pictures/DCTSimulationResult.png>
- [24] [25] (./paper.aux)
+File: ./pictures/zigzagModule.png Graphic file (type bmp)
+<./pictures/zigzagModule.png>
+ [24]
+File: ./pictures/zigzag ASM.png Graphic file (type bmp)
+<./pictures/zigzag ASM.png>
+ [25] [26] [27] [28] (./paper.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2022/07/14>
@@ -738,12 +740,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10926 strings out of 474773
- 288192 string characters out of 5761289
+ 10957 strings out of 474773
+ 289390 string characters out of 5761289
  1949842 words of memory out of 5000000
- 32865 multiletter control sequences out of 15000+600000
+ 32894 multiletter control sequences out of 15000+600000
  565865 words of font info for 132 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,13n,97p,361b,560s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.pdf (30 pages).
+Output written on paper.pdf (33 pages).
