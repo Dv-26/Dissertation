@@ -82,8 +82,12 @@ module zigzag #(
             SCAN:begin
                 valid = 1;
                 if(xEqCol && yEqRow)begin
-                    state_n = DONE;
                     zero = 1;
+                    if(start) begin
+                        done = 1;
+                    end else begin
+                        state_n = DONE;
+                    end
                 end else begin
                     if(!direction)begin
                         if(xEqCol) begin
