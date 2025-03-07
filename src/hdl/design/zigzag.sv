@@ -1,4 +1,43 @@
-module zigzag #(
+`include "interface.sv"
+module Zigzag #(
+    parameter DATA_WIDTH = 10
+) (
+    input wire clk, rst_n,
+    input dctPort_t in,
+    ram_if.WrTx out
+);
+
+    logic [5:0] cnt64;
+    always_ff @(posedge clk or negedge rst_n)begin
+        if(!rst_n)
+            cnt64 <= 0;
+        else if(in.valid)
+            cnt64 <= cnt64 + 1;
+    end
+
+    logic [2:0] scanX, scanY;
+    logic scanValid, scanStart, scanDone;
+    Scanner #(8, 8) scanner (clk, rst_n, scanStart, scanDone, scanX, scanY, scanValid);
+    assign scanStart = cnt64 == 27;
+
+    ram #(DATA_WIDTH, 64) ram8x8 (
+        .clk(clk),
+        .din(in.data),
+        .wr_addr(cnt64),
+        .wr_en(in.valid),
+        .dout(out.data),
+        .rd_addr({scanY, scanX}),
+        .rd_en(scanValid)
+    );
+
+    Delay #(7, 1)delay1(
+        clk, rst_n,
+        {scanY, scanX, scanValid},
+        {out.addr, out.en}
+    );
+
+endmodule
+module Scanner #(
     parameter COL = 8,
     parameter ROW = 8
 ) (

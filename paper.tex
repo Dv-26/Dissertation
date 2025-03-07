@@ -168,21 +168,21 @@
 
     国内在JPEG的研究和应用方向上主要都是通过软件编程运行在CPU实现的。在应用
     方面，为了解决胶囊内窥镜有效空间和电池容量以及传输实时性要求高的场景，上
-    海交通大学的赵恒阳、刘华使用fpga芯片对图像进行JPEG格式的编码，以2Mbps的
-    数据速率进行传输，可以达到30fps的视频刷新率。在算法改进方面杜英杰针对传统
-    JPEG使用固定量表，在压缩图像的视觉质量和压缩率的制衡不能灵活调节的问题。
-    提出了一种基于感知量化和统计量化的自适应量化算法，可以根据在不同频率信息
-    中应用不同量化步长的方法，实现更高的压缩比和更优的图像压缩效果，并使用FPGA
-    进行硬件实现。
+    海交通大学的赵恒阳、刘华\cite{ref1}使用fpga芯片对图像进行JPEG格式的编码，以
+    2Mbps的数据速率进行传输，可以达到30fps的视频刷新率。在算法改进方面杜英杰
+    \cite{ref2}针对传统JPEG使用固定量表，在压缩图像的视觉质量和压缩率的制衡不能
+    灵活调节的问题。提出了一种基于感知量化和统计量化的自适应量化算法，可以根
+    据在不同频率信息中应用不同量化步长的方法，实现更高的压缩比和更优的图像压
+    缩效果，并使用FPGA进行硬件实现。
 
-    国外在JPEN格式编解码FPGA实现的研究现状有：里斯本高级工程学院的学者利用FPGA
-    独有的硬件结构可编程的特点，使用了FPGA动态局部可重构技术，根据编码的流程
+    国外在JPEN格式编解码FPGA实现的研究现状有：里斯本高级工程学院的学者
+    \cite{ref10}利用FPGA独有的硬件结构可编程的特点，使用了FPGA动态局部可重构技术，根据编码的流程
     对FPGA硬件逻辑资源进行分时复用，实现硬件资源利用最大化。采用该方案相对使
     用传统的静态解决方案在资源占用上节省了60\%，但代价是是运行速度上慢了9倍。
-    Shan等人通过行列分解的方式实现2D-DCT（二维离散余弦变换），并在设计中引入
-    乒乓缓存器。在运行在100MHZ的时钟信号下，针对1920*1080的图像，最快解码率
-    可达到30fps的视频刷新率。Teja等人针对2D-IDCT（二维离散余弦逆变换）设计了一
-    种全流水的硬件结构，同时不使用乘法器，降低了2D-IDCT模块的资源利用。
+    Shan等人\cite{ref11}通过行列分解的方式实现2D-DCT（二维离散余弦变换），并在
+    设计中引入乒乓缓存器。在运行在100MHZ的时钟信号下，针对1920*1080的图像，
+    最快解码率可达到30fps的视频刷新率。Teja等人针对2D-IDCT（二维离散余弦逆变换）
+    设计了一种全流水的硬件结构，同时不使用乘法器，降低了2D-IDCT模块的资源利用。
   \subsection{使用芯片简介}
     \vspace{1em}
     本设计使用的芯片型号是Xilinx公司Zynq-7000系列的XC7Z020-CLG484。Zynq-7000
@@ -379,6 +379,7 @@
         16 & 11 & 10 & 16 & 24 & 40 & 51 & 61 \\
         12 & 12 & 14 & 19 & 26 & 58 & 60 & 55 \\
         14 & 13 & 16 & 24 & 40 & 57 & 69 & 56 \\
+        14 & 17 & 22 & 29 & 51 & 87 & 80 & 62 \\
         18 & 22 & 37 & 56 & 68 & 109 & 103 & 77 \\
         24 & 35 & 55 & 64 & 81 & 104 & 113 & 92 \\
         49 & 64 & 78 & 87 & 103 & 121 & 120 & 101 \\
@@ -814,6 +815,8 @@
     module}，它接收ov5460CMOS图像传感器的vga格式的视频信号。输出jpeg格式的
     压缩码流。视频信号依次经过数据预处理缓存模块、DCT模块、熵编码模块、JPE
     G文件格式生成模块。下面的小节详细介绍这4个模块。
+  \subsection{数据预处理模块}
+    \vspace{1em}
   \subsection{DCT模块}
     \vspace{1em}
     DCT模块接收数据预处理模块输出的，Y、Cr、Cb三个颜色通道的8*
@@ -831,7 +834,6 @@
     DCT原公式(\ref{8*8 2D-DCT})，对单个8×8单元进行运算，需要进行4096次乘法和40
     96次加法加法运算。需要使用较多的大量的乘法器资源，而乘法器资源在fpga中比较
     稀缺。为了降低计算的复杂度，本设计使用了DA算法，通过行列分解2D-DCT运算。
-    \subsection{DCT运算部分}
       \subsubsection{DA算法}
         \vspace{1em}
         根据式(\ref{8*8 2D-DCT})的特征可以根据行和列分解成两次一维的DCT变换，
@@ -1094,37 +1096,45 @@
       读出。为了最大限度提高数据的实时性，使用python脚本对写入和读出进行建模仿真
       。计算出写入和读出的延时时间最少为27个时钟周期。
 
-      Zigzag扫描模块的内部结构划分如图\ref{zigzag module}所示，当工作时该模块
-      输出Zigzag扫描每个时刻扫描的8×8单元的坐标值$(x,y)$。并将两个坐标值进行高低
-      位拼接作为RAM的读地址。该模块各个输入输出信号的功能如表\ref{zigzag io}所示。
+      Zigzag扫描模块的内部结构划分如图\ref{zigzag module}所示。当输入数据有效时，
+      计数器开启计数，计数值作为RAM的写地址。地址高低3位分别为y，x坐标。由此实现
+      水平扫描写入。当计数值大于等于延迟时间时，启动zigzag扫描器读出数据。
       \begin{figure}[H]
         \centering
         \includegraphics[scale=0.4]{./pictures/zigzagModule.png}
         \caption{Zigzag扫描模块内部划分}
         \label{zigzag module}
       \end{figure}
-      \begin{table}[H]
-        \caption{Zigzag模块输入输出信号}
-        \label{zigzag io}
-        \centering
-        \begin{tabular}{ccc}
-          \toprule
-          信号名称 & 方向 & 功能\\
-          \midrule
-          start & 输入 & 当高电平时启动zigzag扫描\\
-          x & 输出 & zigzag扫描的水平坐标\\
-          y & 输出 & zigzag扫描的垂直坐标\\
-          valid & 输出 & 表示输出坐标值有效\\
-          done & 输出 & 当高电平时表示zigzag扫描结束\\
-          \bottomrule
-        \end{tabular}
-      \end{table}
       
-      \subsubsection{zigzao扫描算法}
+      \subsubsection{zigzao扫描器}
         \vspace{1em}
-        由图\ref{zigzag module}所示。该模块使用一个状态来控制两个代表坐标值的计数器
+        由图\ref{scanner}所示。该模块使用一个状态来控制两个代表坐标值的计数器
         当状态机right、left信号有效时，计数器分别加一和减一。down、up信号同理。当zero
         信号有效时两个计数器清零。
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale=0.4]{./pictures/scanner.png}
+          \caption{Zigzag 扫描器}
+          \label{scanner}
+        \end{figure}
+
+        \begin{table}[H]
+          \caption{Zigzag模块输入输出信号}
+          \label{zigzag io}
+          \centering
+          \begin{tabular}{ccc}
+            \toprule
+            信号名称 & 方向 & 功能\\
+            \midrule
+            start & 输入 & 当高电平时启动zigzag扫描\\
+            x & 输出 & zigzag扫描的水平坐标\\
+            y & 输出 & zigzag扫描的垂直坐标\\
+            valid & 输出 & 表示输出坐标值有效\\
+            done & 输出 & 当高电平时表示zigzag扫描结束\\
+            \bottomrule
+          \end{tabular}
+        \end{table}
+
         \begin{figure}[H]
           \centering
           \includegraphics[scale=0.4]{./pictures/zigzag ASM.png}
@@ -1134,8 +1144,8 @@
 
         该状态机的ASM图如图\ref{zigzag ASM}所示，在ASM图中每个虚线框代表一个状态
         每个状态中都带有一个矩形框，矩形框的左上角标注状态名称，内部存放穆尔型输出，
-        同时表示该信号此时有效。与流程图类似棱形框代表状态输入信号的判断。圆角矩形
-        内部存放米利型输出。下面分别用三个状态描述zigzag扫描的运行步骤。
+        同时表示该信号此时有效。与流程图类似，棱形框代表状态输入信号的判断。圆角矩
+        形内部存放米利型输出。下面分别用三个状态描述zigzag扫描的运行步骤。
 
         初态为IDLE状态，表示该模块空闲，当接收到start信号有效时，跳转到SCAN状态开始
         工作；SCAN状态表示该模块正进行扫描，valid信号有效。如图\ref{zigzag ASM}右下角
@@ -1148,10 +1158,46 @@
 
         该模块的valid输出最终接入RAM模块的读使能。如果在清理之后直接跳转到DONE状态，会
         导致RAM的读数据有2个时钟周期的中断。如果RAM一直保持写入，就会导致RAM的吞吐
-        率不一致，进而导致数据丢失。所以增加清零后SCAN状态的跳转路径。
+        率不一致，进而导致数据丢失。所以增加清零后SCAN状态的跳转路径。zigzag扫描器的仿
+        真波形如图\ref{scannerWave}所示。
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale=0.4]{./pictures/scannerWave.png}
+          \caption{Zigzag 仿真波形图}
+          \label{scannerWave}
+        \end{figure}
 
-  \subsection{数据预处理模块}
-    \vspace{1em}
+  \subsection{量化模块}
+      由于DCT模块的有些输出为组合逻辑输出，如第64个像素点。此时信号的建立时间会比较长
+      ，为了不继续增加组合逻辑关键路径，就先把数据存在Zigzag扫描模块中进行缓存，再通过
+      量化模块进行量化。量化最直接实现就是使用除法器进行实现。由于除法器在fpag中资源比较
+      稀缺，同时工作时钟频率不高。本设计不采用除法器进行实现。考虑到量化中的除数为常数，
+      同时如果被除数是2的次幂，除法运算就相当于右移运算。如式（\ref{qeuatizer equation}）
+      可以将除法分解为一次乘法再进行一次2次幂的除法（移位）,当n越大时，精度就越大。这样
+      就可以使用乘法器实现除数为常数的除法。本设计采用$2^{16}$作为其中的被除数。
+      \begin{equation}
+        \frac{F(u,v)}{Q(u,v)}=F(u,v)*\frac{\left(\frac{2^{n}}{Q(u,v)}\right)}{2^{n}}
+        \label{qeuatizer equation}
+      \end{equation}
+      量化器的RTL视图如图\ref{quantizer}。将对应的乘数$\frac{2^{16}}{Q(u,v)}$存进ROM中，把
+      Zigzag模块的扫描输出作为ROM的读地址输入。进而获取对应的乘数，再将乘积进行右移截
+      位得到最终的量化值。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.5]{./pictures/quantizer.png}
+        \caption{量化器结构图}
+        \label{quantizer}
+      \end{figure}
+      量化模块的输出波形如图\ref{qeuatizer wave}所示，可以看出经过量化后出现大量连续的0值。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.5]{./pictures/quantizerSim.png}
+        \caption{量化器输出波形}
+        \label{quantizer wave}
+      \end{figure}
+
+
+
   \subsection{熵编码模块}
     \vspace{1em}
   \subsection{JPEG文件格式生成模块}
@@ -1160,6 +1206,20 @@
 \newpage
 \section{JPEG编解码系统FPGA实现以及验证}
   \subsection{验证系统模块划分}
+\newpage
+\begin{thebibliography}{20}
+  \bibitem{ref1}王成昊.基于FPGA的低复杂度JPEG解码系统设计及实现[D].四川师范大学,2024.DOI:10.27347/d.cnki.gssdu.2024.000798.
+  \bibitem{ref2}杜英杰.基于FPGA的JPEG图像压缩的自适应量化编码[D].西华大学,2023.DOI:10.27411/d.cnki.gscgc.2023.000416. 
+  \bibitem{ref3}赵恒阳,刘华.Baseline JPEG压缩器在Xilinx FPGA上的设计与实现[J].电子设计工程,2014,22(20):153-156.DOI:10.14022/j.cnki.dzsjgc.2014.20.044
+  \bibitem{ref4}季永国.基于FPGA硬件JPEG压缩器的无线胶囊内窥镜系统[D].上海交通大学,2015.
+  \bibitem{ref5}涂友钢.单兵夜视眼镜视频信号处理技术研究[D].南京理工大学,2019.DOI:10.27241/d.cnki.gnjgu.2019.001490.
+  \bibitem{ref6}董鑫怡.不同应用场景下图像压缩方法的FPGA实现[D].南京理工大学,2023.DOI:10.27241/d.cnki.gnjgu.2023.002037. 
+  \bibitem{ref7}郝亚喆.基于高性能JPEG2000编码器的图像处理系统设计与实现[D].天津大学,2022.DOI:10.27356/d.cnki.gtjdu.2022.000903
+  \bibitem{ref8}任静.图像压缩编解码的FPGA设计与实现[D].南京林业大学,2020.DOI:10.27242/d.cnki.gnjlu.2020.000238.
+  \bibitem{ref9}刘多强.高速图像压缩存储系统关键技术研究与实现[D].西南科技大学,2020.DOI:10.27415/d.cnki.gxngc.2020.001074.
+  \bibitem{ref10}Rodrigues T, Vestias M. Using dyanamic revonfiguration to reduce the area of a JPEG decoder on FPGA[C]/2015 Euromicro Conference on Digital System Design. IEEE, 2015: 65-71
+  \bibitem{ref11}Shan J, Wang D, Yang E. High performance JPEG decoder based on FPGA[C]/2011 Asia Pacific conference on Postgraduate Research in Microelectronics \& Electonice. IEEE, 2011:57-60
+\end{thebibliography}
 
 \end{spacing}
 \end{document}

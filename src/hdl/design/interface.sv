@@ -1,6 +1,35 @@
 `ifndef __INTERFACE__
 `define __INTERFACE__
 
+interface ram_if #(
+  parameter DATA_WIDTH = 10,
+  parameter DEPTH = 8
+) ();
+  logic [DATA_WIDTH-1:0] data;
+  logic [$clog2(DEPTH)-1:0] addr;
+  logic en;
+  modport WrTx (
+    output addr,
+    output en,
+    output data
+  );
+  modport WrRx (
+    input addr,
+    input en,
+    input data
+  );
+  modport RdRx (
+    output addr,
+    output en,
+    input data
+  );
+  modport RdTx (
+    input addr,
+    input en,
+    output data
+  );
+endinterface
+
 interface rom_if #(
   parameter DATA_WIDTH = 10,
   parameter DEPTH = 8,

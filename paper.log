@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.2.12)  5 MAR 2025 16:15
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2025.2.12)  7 MAR 2025 17:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -648,18 +648,18 @@ File: ./pictures/zigzag.png Graphic file (type bmp)
  [6] [7]
 
 LaTeX Font Warning: Font shape `OMX/cmex/m/n' in size <10.53937> not available
-(Font)              size <10.95> substituted on input line 482.
+(Font)              size <10.95> substituted on input line 483.
 
 [8] [9]
 File: ./pictures/deCodeTree.png Graphic file (type bmp)
 <./pictures/deCodeTree.png>
  [10] [11]
-Overfull \hbox (1.65572pt too wide) in paragraph at lines 630--646
+Overfull \hbox (1.65572pt too wide) in paragraph at lines 631--647
  [][] 
  []
 
 
-Overfull \hbox (19.38797pt too wide) in paragraph at lines 651--664
+Overfull \hbox (19.38797pt too wide) in paragraph at lines 652--665
  [][] 
  []
 
@@ -677,16 +677,11 @@ File: ./pictures/编码模块.png Graphic file (type bmp)
  [16]
 File: ./pictures/dct.png Graphic file (type bmp)
 <./pictures/dct.png>
-
-Overfull \hbox (15.1098pt too wide) in paragraph at lines 823--824
- [][] 
- []
-
-[17] [18]
+ [17] [18]
 File: ./pictures/DCT脉动阵列.png Graphic file (type bmp)
 <./pictures/DCT脉动阵列.png>
 
-Overfull \hbox (12.92992pt too wide) in paragraph at lines 964--965
+Overfull \hbox (12.92992pt too wide) in paragraph at lines 966--967
  [][] 
  []
 
@@ -698,7 +693,7 @@ File: ./pictures/z2yPE.png Graphic file (type bmp)
 File: ./pictures/PE时序.png Graphic file (type bmp)
 <./pictures/PE时序.png>
 
-Overfull \hbox (9.0865pt too wide) in paragraph at lines 995--996
+Overfull \hbox (9.0865pt too wide) in paragraph at lines 997--998
  [][] 
  []
 
@@ -723,9 +718,58 @@ File: ./pictures/DCTSimulationResult.png Graphic file (type bmp)
 File: ./pictures/zigzagModule.png Graphic file (type bmp)
 <./pictures/zigzagModule.png>
  [24]
+File: ./pictures/scanner.png Graphic file (type bmp)
+<./pictures/scanner.png>
 File: ./pictures/zigzag ASM.png Graphic file (type bmp)
 <./pictures/zigzag ASM.png>
- [25] [26] [27] [28] (./paper.aux)
+ [25]
+File: ./pictures/scannerWave.png Graphic file (type bmp)
+<./pictures/scannerWave.png>
+ [26]
+File: ./pictures/quantizer.png Graphic file (type bmp)
+<./pictures/quantizer.png>
+
+
+LaTeX Warning: Reference `qeuatizer wave' on page 27 undefined on input line 1191.
+
+File: ./pictures/quantizerSim.png Graphic file (type bmp)
+<./pictures/quantizerSim.png>
+[27] [28]
+Underfull \hbox (badness 5711) in paragraph at lines 1211--1212
+[]\TU/SimSun(0)/m/n/12.045 王 成 昊\TU/TimesNewRoman(0)/m/n/12.045 . \TU/SimSun(0)/m/n/12.045 基 于 \TU/TimesNewRoman(0)/m/n/12.045 FPGA \TU/SimSun(0)/m/n/12.045 的 低 复 杂 度 \TU/TimesNewRoman(0)/m/n/12.045 JPEG \TU/SimSun(0)/m/n/12.045 解 码 系 统 设 计 及 实 现 \TU/TimesNewRoman(0)/m/n/12.045 [D]. \TU/SimSun(0)/m/n/12.045 四 川 师 范 大
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1212--1213
+[]\TU/SimSun(0)/m/n/12.045 杜 英 杰\TU/TimesNewRoman(0)/m/n/12.045 . \TU/SimSun(0)/m/n/12.045 基 于 \TU/TimesNewRoman(0)/m/n/12.045 FPGA \TU/SimSun(0)/m/n/12.045 的 \TU/TimesNewRoman(0)/m/n/12.045 JPEG \TU/SimSun(0)/m/n/12.045 图 像 压 缩 的 自 适 应 量 化 编 码 \TU/TimesNewRoman(0)/m/n/12.045 [D]. \TU/SimSun(0)/m/n/12.045 西 华 大
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1215--1216
+[]\TU/SimSun(0)/m/n/12.045 涂 友 钢\TU/TimesNewRoman(0)/m/n/12.045 . \TU/SimSun(0)/m/n/12.045 单 兵 夜 视 眼 镜 视 频 信 号 处 理 技 术 研 究 \TU/TimesNewRoman(0)/m/n/12.045 [D]. \TU/SimSun(0)/m/n/12.045 南 京 理 工 大
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1216--1217
+[]\TU/SimSun(0)/m/n/12.045 董 鑫 怡\TU/TimesNewRoman(0)/m/n/12.045 . \TU/SimSun(0)/m/n/12.045 不 同 应 用 场 景 下 图 像 压 缩 方 法 的 \TU/TimesNewRoman(0)/m/n/12.045 FPGA \TU/SimSun(0)/m/n/12.045 实 现 \TU/TimesNewRoman(0)/m/n/12.045 [D]. \TU/SimSun(0)/m/n/12.045 南 京 理 工 大
+ []
+
+
+Underfull \hbox (badness 4647) in paragraph at lines 1217--1218
+[]\TU/SimSun(0)/m/n/12.045 郝 亚 喆\TU/TimesNewRoman(0)/m/n/12.045 . \TU/SimSun(0)/m/n/12.045 基 于 高 性 能 \TU/TimesNewRoman(0)/m/n/12.045 JPEG2000 \TU/SimSun(0)/m/n/12.045 编 码 器 的 图 像 处 理 系 统 设 计 与 实 现 \TU/TimesNewRoman(0)/m/n/12.045 [D]. \TU/SimSun(0)/m/n/12.045 天 津 大
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1218--1219
+[]\TU/SimSun(0)/m/n/12.045 任 静\TU/TimesNewRoman(0)/m/n/12.045 . \TU/SimSun(0)/m/n/12.045 图 像 压 缩 编 解 码 的 \TU/TimesNewRoman(0)/m/n/12.045 FPGA \TU/SimSun(0)/m/n/12.045 设 计 与 实 现 \TU/TimesNewRoman(0)/m/n/12.045 [D]. \TU/SimSun(0)/m/n/12.045 南 京 林 业 大
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1219--1220
+[]\TU/SimSun(0)/m/n/12.045 刘 多 强\TU/TimesNewRoman(0)/m/n/12.045 . \TU/SimSun(0)/m/n/12.045 高 速 图 像 压 缩 存 储 系 统 关 键 技 术 研 究 与 实 现 \TU/TimesNewRoman(0)/m/n/12.045 [D]. \TU/SimSun(0)/m/n/12.045 西 南 科 技 大
+ []
+
+[29] (./paper.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2022/07/14>
@@ -736,16 +780,19 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.41063pt have occurred.
 
 
+LaTeX Warning: There were undefined references.
+
+
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10957 strings out of 474773
- 289390 string characters out of 5761289
+ 11012 strings out of 474773
+ 290656 string characters out of 5761289
  1949842 words of memory out of 5000000
- 32894 multiletter control sequences out of 15000+600000
+ 32945 multiletter control sequences out of 15000+600000
  565865 words of font info for 132 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 93i,13n,97p,361b,560s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,13n,97p,361b,563s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.pdf (33 pages).
+Output written on paper.pdf (34 pages).
