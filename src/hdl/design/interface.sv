@@ -57,7 +57,7 @@ typedef struct {
 } x2zX_t;
 
 typedef struct {
-  logic [9:0] data;
+  logic [23:0] data;
   logic valid;
 } dctPort_t;
 

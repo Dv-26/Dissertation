@@ -115,9 +115,22 @@
   {\centering\large\normalfont\sffamily}
   \renewcommand{\abstractname}{ABSTRACT}
 \begin{abstract}
-    this is adstract
+  With the continuous advancement of multimedia technology, image scanning technology, 
+  mobile terminals, and communication technology in recent decades, the widespread use
+  of digital images and video data has led to an exponential increase in the volume of image 
+  data. Consequently, the demand for storage and transmission of image data has become 
+  increasingly critical. Simply increasing the storage capacity of devices and the bandwidth 
+  of communication channels is impractical. Therefore, image compression technology is 
+  employed to reduce the volume of image data. JPEG (Joint Photographic Experts Group), 
+  as the international standard format for static image compression, is widely adopted globally due to its high compression ratio and low distortion rate.
 
-    \noindent\textbf{keywords：} FPGA,JPEG
+  Currently, most JPEG image data encoding and decoding systems are based on software programming and run on general-purpose computers. This approach has several drawbacks, including low computational efficiency, poor real-time performance, and high power consumption. At the same time, the scale of FPGA (Field Programmable Gate Array) chips, which are hardware-programmable and have low power consumption, has been continuously increasing. Implementing complex digital signal processing systems within FPGA chips has become a reality. Therefore, this design combines JPEG compression technology with FPGA to enhance system performance and, based on practical engineering considerations, designs a JPEG encoding and decoding system. This system achieves the implementation of JPEG encoding and decoding on an FPGA.
+
+  The structure of this thesis first elaborates on the research background and significance of implementing JPEG format encoding and decoding on FPGA, as well as the current research status both domestically and internationally. Based on this, a novel pipelined structure for implementing the DCT algorithm using a systolic array is proposed. Subsequently, the implementation steps of the JPEG format encoding and decoding algorithms are described. Then, adopting the System-on-Chip (SOC) design philosophy, the internal structure and hierarchical division of the entire hardware system are presented, with detailed descriptions of each computational step. Finally, the overall verification is completed.
+
+  This design is based on the Xilinx Zynq series FPGA hardware platform, which captures and compresses image data from the CMOS image sensor OV5640. The compressed data is then transmitted using a low-speed serial communication protocol. The synthesis, simulation, layout, routing, and bitstream generation are completed in the EDA tool Vivado 2019.1.
+
+    \noindent\textbf{keywords：} FPGA; JPEG; image compression 
 \end{abstract}
 
 \newpage
@@ -1188,7 +1201,7 @@
         \caption{量化器结构图}
         \label{quantizer}
       \end{figure}
-      量化模块的输出波形如图\ref{qeuatizer wave}所示，可以看出经过量化后出现大量连续的0值。
+      量化模块的输出波形如图\ref{quantizer wave}所示，可以看出经过量化后出现大量连续的0值。
       \begin{figure}[H]
         \centering
         \includegraphics[scale=0.5]{./pictures/quantizerSim.png}
