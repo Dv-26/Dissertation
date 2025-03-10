@@ -3,7 +3,7 @@ module Quantizer #(
     parameter DATA_WIDTH = 10,
     parameter CHROMA = 1
 ) (
-    ram_if.WrRx in,
+    ramWr_if.Rx in,
     output dctPort_t out
 );
     logic signed [15 : 0] coefficientMap [64];

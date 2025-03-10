@@ -10,7 +10,9 @@ module Dvp #(
   input logic pclk, vsync, href,
   input logic [7:0] data,
   
-  output dctPort_t out 
+  output dctPort_t out,
+  output logic [$clog2(WIDTH)-1:0] hCnt;
+  output logic [$clog2(HEIGHT)-1:0] vCnt;
 );
   localparam SHIFT_WIDTH = DATA_FORMAT == "RGB888" ? 2 : 1;
 
@@ -20,8 +22,6 @@ module Dvp #(
   end
   assign vsyncFall = ~vsyncDelay & vsync;
 
-  logic [$clog2(WIDTH)-1:0] hCnt;
-  logic [$clog2(HEIGHT)-1:0] vCnt;
   logic hCntAdd, zero, hCntEqWidth, vCntEqHeight;
 
   always_ff @(posedge pclk or negedge rst_n) begin

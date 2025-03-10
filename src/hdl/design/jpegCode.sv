@@ -14,8 +14,8 @@ Dct #(DATA_WIDTH, ROW) dct (clk, rst_n, in, y);
 generate
   genvar i;
   for(i=0; i<ROW; i++) begin: colorChannel
-    ram_if #(DATA_WIDTH, 64) zigzag2quantizer ();
-    Zigzag #(DATA_WIDTH) zigzag (clk, rst_n, y[i], zigzag2quantizer);
+    ramWr_if #(DATA_WIDTH, 64) zigzag2quantizer (clk);
+    Zigzag #(DATA_WIDTH) zigzag (rst_n, y[i], zigzag2quantizer);
     Quantizer #(DATA_WIDTH, i) quantizer (zigzag2quantizer, out[i]);
   end
 endgenerate

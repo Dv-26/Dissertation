@@ -1,33 +1,42 @@
 `ifndef __INTERFACE__
 `define __INTERFACE__
 
-interface ram_if #(
+interface ramWr_if #(
   parameter DATA_WIDTH = 10,
   parameter DEPTH = 8
-) (input logic rdClk, wrClk);
+) (input wire clk);
   logic [DATA_WIDTH-1:0] data;
   logic [$clog2(DEPTH)-1:0] addr;
   logic en;
-  modport WrTx (
-    input  wrClk,
+  modport Tx (
+    input  clk,
     output addr,
     output en,
     output data
   );
-  modport WrRx (
-    input  wrClk,
+  modport Rx (
+    input clk,
     input addr,
     input en,
     input data
   );
-  modport RdRx (
-    input  rdClk,
+endinterface
+
+interface ramRd_if #(
+  parameter DATA_WIDTH = 10,
+  parameter DEPTH = 8
+) (input wire clk);
+  logic [DATA_WIDTH-1:0] data;
+  logic [$clog2(DEPTH)-1:0] addr;
+  logic en;
+  modport Rx (
+    input  clk,
     output addr,
     output en,
     input data
   );
-  modport RdTx (
-    input rdClk,
+  modport Tx (
+    input clk,
     input addr,
     input en,
     output data

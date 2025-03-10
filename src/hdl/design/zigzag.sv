@@ -4,7 +4,7 @@ module Zigzag #(
 ) (
     input wire rst_n,
     input dctPort_t in,
-    ram_if.WrTx out
+    ramWr_if.Tx out
 );
 
     logic [5:0] cnt64;
@@ -18,8 +18,8 @@ module Zigzag #(
     logic [2:0] scanX, scanY;
     logic scanValid, scanStart, scanDone;
     Scanner #(8, 8) scanner (out.clk, rst_n, scanStart, scanDone, scanX, scanY, scanValid);
-    ram_if #(DATA_WIDTH, 64) ram8x8Rd (clk, clk);
-    ram_if #(DATA_WIDTH, 64) ram8x8Wr (clk, clk);
+    ramRd_if #(DATA_WIDTH, 64) ram8x8Rd (out.clk);
+    ramWr_if #(DATA_WIDTH, 64) ram8x8Wr (out.clk);
     assign scanStart = cnt64 == 27;
 
     Ram #(DATA_WIDTH, 64) ram8x8 (ram8x8Wr, ram8x8Rd);
@@ -28,8 +28,8 @@ module Zigzag #(
     assign ram8x8Wr.addr = cnt64;
     assign ram8x8Wr.en = in.valid;
     assign out.data = ram8x8Rd.data;
-    assign ram8x8.addr = {scanY, scanX};
-    assign ram8x8.en = scanValid;
+    assign ram8x8Rd.addr = {scanY, scanX};
+    assign ram8x8Rd.en = scanValid;
         
     Delay #(7, 1)delay1(
         out.clk, rst_n,
