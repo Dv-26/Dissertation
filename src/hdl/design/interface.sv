@@ -4,26 +4,30 @@
 interface ram_if #(
   parameter DATA_WIDTH = 10,
   parameter DEPTH = 8
-) ();
+) (input logic rdClk, wrClk);
   logic [DATA_WIDTH-1:0] data;
   logic [$clog2(DEPTH)-1:0] addr;
   logic en;
   modport WrTx (
+    input  wrClk,
     output addr,
     output en,
     output data
   );
   modport WrRx (
+    input  wrClk,
     input addr,
     input en,
     input data
   );
   modport RdRx (
+    input  rdClk,
     output addr,
     output en,
     input data
   );
   modport RdTx (
+    input rdClk,
     input addr,
     input en,
     output data

@@ -1,31 +1,23 @@
-module ram #(
-    parameter  WIDTH = 8,
-    parameter  DEPTH = 64
+`include "interface.sv"
+
+module Ram #(
+  parameter WIDTH = 10,
+  parameter DEPTH = 64,
 ) (
-    clk,
-    din, wr_addr, wr_en,
-    dout, rd_addr, rd_en
+  ram_if.WrRx wr,
+  ram_if.RdTx rd
 );
-
-localparam ADDR_W = $clog2(DEPTH);
-input logic clk;
-
-input logic [WIDTH-1:0] din;
-input logic [ADDR_W-1:0]    wr_addr;
-input logic wr_en;
-
-output logic [WIDTH-1:0] dout;
-input logic [ADDR_W-1:0]    rd_addr;
-input logic rd_en;
 
 reg [WIDTH-1:0] memoryArray[DEPTH];
 
-always @(posedge clk)begin
-    if(rd_en)
-        dout <= memoryArray[rd_addr];
-    
-    if(wr_en)
-        memoryArray[wr_addr] <= din;
+always_ff @(posedge rd.clk)begin
+    if(rd.en)
+        rd.data <= memoryArray[rd.addr];
+end
+
+always_ff @(posedge wr.clk)begin
+  if(wr.en)
+    memoryArray[wr.addr] <= wr.data;
 end
 
 endmodule
