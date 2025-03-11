@@ -10,8 +10,8 @@ module Dct #(
 );
 
   dctPort_t x[ROW], z[ROW], y[ROW];
-  rom_if #(DATA_WIDTH, 8, 4) x2zCoe ();
-  rom_if #(DATA_WIDTH, 8, 4) z2yCoe ();
+  rom_if #(DATA_WIDTH, 8) x2zCoe[4] ();
+  rom_if #(DATA_WIDTH, 8) z2yCoe[4] ();
 
   genvar i;
   generate
@@ -42,7 +42,7 @@ module Array #(
   parameter ROW = 1
 ) (
   input logic clk, rst_n,
-  rom_if.rx coe,
+  rom_if.rx coe[COL],
   input dctPort_t in[ROW],
   output dctPort_t out[ROW]
 );
@@ -54,8 +54,9 @@ generate
 
   peColPort_t colPorts[ROW+1][COL];
   peRowPort_t rowPorts[ROW][COL+1];
+  logic validDelay[COL];
 
-  for(i=0; i<ROW; i++) begin
+  for(i=0; i<ROW; i++) begin: row
       logic [CNT_WIDTH-1:0] cnt;
       logic cntAdd;
       always_ff @(posedge clk or negedge rst_n) begin
@@ -65,12 +66,10 @@ generate
           cnt <= cnt + 1;
         end
       end
-      assign cntAdd = validDelay | rowPorts[i][COL].result.valid | in[i].valid;
-      if(i == 0)
-        assign coe.addr = (cnt >> $clog2(LENGHT)-1) - 1;
+      assign cntAdd = in[i].valid;
 
       logic [DATA_WIDTH-1:0] sumDiff, sum, diff, diffRegIn, diffRegOut;
-      logic sumDiffSel, peLoad, validDelay;
+      logic sumDiffSel, peLoad;
       Delay #(DATA_WIDTH, LENGHT/2) diffReg (clk, rst_n, diffRegIn, diffRegOut); 
       assign diff = diffRegOut -in[i].data;
       assign sum = in[i].data + diffRegOut;
@@ -80,16 +79,33 @@ generate
       Delay #(2, LENGHT/2) loadDelay (
         clk, rst_n,
         {~|cnt[CNT_WIDTH-1:$clog2(LENGHT)] & in[i].valid, in[i].valid},
-        {peLoad, validDelay}
+        {peLoad, validDelay[0]}
       );
-      if(i == 0)
-        assign coe.en = validDelay | rowPorts[i][COL].result.valid;
 
       assign {rowPorts[i][0].in.data, rowPorts[i][0].in.load} = {sumDiff, peLoad};
       assign {rowPorts[i][0].result.data, rowPorts[i][0].result.valid} = {'0, '0};
-      for(j=0; j<COL; j++)begin
-        if(i == 0)
-          assign colPorts[0][j].data = coe.data[j];
+
+      for(j=0; j<COL; j++)begin : col
+
+        if(i == 0)begin
+          assign colPorts[0][j].data = coe[j].data;
+          logic [CNT_WIDTH-1:0] cnt;
+          logic cntAdd;
+          always @(posedge clk or negedge rst_n) begin
+            if(!rst_n) begin
+              cnt <= 0;
+            end else if (cntAdd) begin
+              cnt <= cnt + 1;
+            end
+          end
+          assign cntAdd = validDelay[j];
+          assign coe[j].en = validDelay[j];
+          assign coe[j].addr = (cnt >> $clog2(LENGHT)-1);
+          if(j != 0) begin
+            Delay #(1, LENGHT) validShift (clk, rst_n, validDelay[j-1], validDelay[j]);
+          end
+        end
+
         Pe #(DATA_WIDTH, LENGHT, COL) pe (
           clk, rst_n,
           rowPorts[i][j],
@@ -165,33 +181,39 @@ endmodule
 
 module coefficientMap #(
   parameter DATA_WIDTH = 8,
-  parameter DEPTH = 8
+  parameter DEPTH = 8,
+  parameter COL = 4
 ) (
-  rom_if.tx a,
-  rom_if.tx b
+  rom_if.tx a[4],
+  rom_if.tx b[4]
 );
 
   reg [DATA_WIDTH-1:0]  memoryArray[DEPTH][4];
-  assign a.data = a.en? memoryArray[a.addr] : {'0, '0, '0, '0};
-  assign b.data = b.en? memoryArray[b.addr] : {'0, '0, '0, '0};
+  generate
+    genvar i;
+    for(i=0; i<COL; i++) begin
+      assign a[i].data = a[i].en? memoryArray[a[i].addr][i] : '0;
+      assign b[i].data = b[i].en? memoryArray[b[i].addr][i] : '0;
+    end
+  endgenerate
 
   localparam real PI = 3.14159265358979323846;  // Define π manually
   logic signed [DATA_WIDTH-1:0] cos[7];
-  int i;
+  int n;
   initial begin
-    for(i=0; i<7; i++)begin
-      if(i == 0)
-        cos[i] = $cos(4*PI / 16) * 2**(DATA_WIDTH-1);
+    for(n=0; n<7; n++)begin
+      if(n == 0)
+        cos[n] = $cos(4*PI / 16) * 2**(DATA_WIDTH-1);
       else
-        cos[i] = $cos(i*PI / 16) * 2**(DATA_WIDTH-1);
+        cos[n] = $cos(n*PI / 16) * 2**(DATA_WIDTH-1);
     end
-    memoryArray[0] = {cos[0], -1*cos[2], -1*cos[0], -1*cos[2]};
-    memoryArray[1] = {cos[1], -1*cos[4], cos[6], -1*cos[4]};
-    memoryArray[2] = {cos[0], cos[2], cos[0], cos[2]};
-    memoryArray[3] = {cos[3], cos[3], cos[3], cos[3]};
-    memoryArray[4] = {cos[0], cos[5], cos[0], -1*cos[5]};
-    memoryArray[5] = {cos[4], -1*cos[6], cos[4], -1*cos[1]};
-    memoryArray[6] = {cos[0], -1*cos[5], -1*cos[0], cos[5]};
-    memoryArray[7] = {cos[6], -1*cos[1], -1*cos[1], cos[6]};
+    memoryArray[0] = {cos[0], cos[2], cos[0], cos[5]};
+    memoryArray[1] = {cos[1], cos[3], cos[4], cos[6]};
+    memoryArray[2] = {cos[0], cos[5], -1*cos[0], -1*cos[2]};
+    memoryArray[3] = {cos[3], -1*cos[6], -1*cos[1], -1*cos[4]};
+    memoryArray[4] = {cos[0], -1*cos[5], -1*cos[0], cos[2]};
+    memoryArray[5] = {cos[4], -1*cos[1], cos[6], cos[3]};
+    memoryArray[6] = {cos[0], -1*cos[2], cos[0], -1*cos[5]};
+    memoryArray[7] = {cos[6], -1*cos[4], cos[3], -1*cos[1]};
   end
 endmodule

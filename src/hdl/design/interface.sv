@@ -45,10 +45,9 @@ endinterface
 
 interface rom_if #(
   parameter DATA_WIDTH = 10,
-  parameter DEPTH = 8,
-  parameter NUB = 4
+  parameter DEPTH = 8
 ) ();
-  logic [DATA_WIDTH-1:0] data[NUB];
+  logic [DATA_WIDTH-1:0] data;
   logic [$clog2(DEPTH)-1:0] addr;
   logic en;
   modport rx (
@@ -70,7 +69,7 @@ typedef struct {
 } x2zX_t;
 
 typedef struct {
-  logic [23:0] data;
+  logic [9:0] data;
   logic valid;
 } dctPort_t;
 

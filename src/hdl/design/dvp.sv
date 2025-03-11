@@ -11,8 +11,8 @@ module Dvp #(
   input logic [7:0] data,
   
   output dctPort_t out,
-  output logic [$clog2(WIDTH)-1:0] hCnt;
-  output logic [$clog2(HEIGHT)-1:0] vCnt;
+  output logic [$clog2(WIDTH)-1:0] hCnt,
+  output logic [$clog2(HEIGHT)-1:0] vCnt
 );
   localparam SHIFT_WIDTH = DATA_FORMAT == "RGB888" ? 2 : 1;
 
