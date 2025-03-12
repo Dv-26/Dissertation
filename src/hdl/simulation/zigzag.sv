@@ -10,21 +10,34 @@ module zigzag_tb;
 
 logic start;
 logic done;
-logic [2:0] x;
-logic [2:0] y;
+// logic [2:0] x;
+// logic [2:0] y;
 logic valid;
 
-zigzag #(
-  .COL 	(8  ),
-  .ROW 	(8  ))
-u_zigzag(
+// zigzag #(
+//   .COL 	(8  ),
+//   .ROW 	(8  ))
+// u_zigzag(
+//   .clk   	(clk    ),
+//   .rst_n 	(rst_n  ),
+//   .start 	(start  ),
+//   .done  	(done   ),
+//   .x     	(x      ),
+//   .y     	(y      ),
+//   .valid 	(valid  )
+// );
+
+wire [$clog2(8) + 3-1:0] addr;
+
+RdAddrGen #(
+  .WIDTH 	(16))
+u_RdAddrGen(
   .clk   	(clk    ),
   .rst_n 	(rst_n  ),
   .start 	(start  ),
   .done  	(done   ),
-  .x     	(x      ),
-  .y     	(y      ),
-  .valid 	(valid  )
+  .valid 	(valid  ),
+  .addr  	(addr   )
 );
 
   int i,j;
