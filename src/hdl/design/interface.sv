@@ -74,6 +74,11 @@ typedef struct {
 } dctPort_t;
 
 typedef struct {
+  logic [23:0] data;
+  logic valid;
+} dataPort_t;
+
+typedef struct {
   logic [9:0] data;
   logic load;
 } in_t;

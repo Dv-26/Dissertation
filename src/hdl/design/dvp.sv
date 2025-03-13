@@ -1,8 +1,8 @@
 `include "interface.sv"
 
 module Dvp #(
-  parameter WIDTH = 1280,
-  parameter HEIGHT = 720,
+  parameter WIDTH = 16,
+  parameter HEIGHT = 16,
   parameter DATA_FORMAT = "RGB888"
 ) (
   input logic rst_n,
@@ -10,9 +10,9 @@ module Dvp #(
   input logic pclk, vsync, href,
   input logic [7:0] data,
   
-  output dctPort_t out,
-  output logic [$clog2(WIDTH)-1:0] hCnt,
-  output logic [$clog2(HEIGHT)-1:0] vCnt
+  output dataPort_t out,
+  logic [$clog2(WIDTH)-1:0] hCntFF,
+  logic [$clog2(HEIGHT)-1:0] vCntFF
 );
   localparam SHIFT_WIDTH = DATA_FORMAT == "RGB888" ? 2 : 1;
 
@@ -22,7 +22,9 @@ module Dvp #(
   end
   assign vsyncFall = ~vsyncDelay & vsync;
 
-  logic hCntAdd, zero, hCntEqWidth, vCntEqHeight;
+  logic [$clog2(WIDTH)-1:0] hCnt;
+  logic [$clog2(HEIGHT)-1:0] vCnt;
+  logic vCntAdd, hCntAdd, zero, hCntEqWidth, vCntEqHeight;
 
   always_ff @(posedge pclk or negedge rst_n) begin
     if(!rst_n) begin
@@ -32,7 +34,7 @@ module Dvp #(
       if(zero) begin
         hCnt <= 0;
       end else begin
-        if(hCntEqWidth) begin
+        if(vCntAdd) begin
           hCnt <= 0;
           vCnt <= vCnt + 1; 
         end else if(hCntAdd) begin
@@ -41,8 +43,17 @@ module Dvp #(
       end
     end
   end
+  always_ff @(posedge pclk or negedge rst_n) begin
+    if(!rst_n) begin
+      hCntFF <= 0;
+      vCntFF <= 0;
+    end else begin
+      hCntFF <= hCnt;
+      vCntFF <= vCnt;
+    end
+  end
   
-  assign hCntEqWidth = hCnt == WIDTH;
+  assign hCntEqWidth = hCnt == WIDTH-1;
   assign vCntEqHeight = vCnt == HEIGHT-1;
 
   logic [8*SHIFT_WIDTH-1:0] dataHightReg;
@@ -87,6 +98,7 @@ module Dvp #(
     load = 0;
     valid = 0;
     hCntAdd = 0;
+    vCntAdd = 0;
     state_n = state;
     case(state)
       IDLE: begin
@@ -99,10 +111,7 @@ module Dvp #(
           valid = 1;
         end
       end READ: begin
-        if(hCntEqWidth && vCntEqHeight) begin
-          zero = 1;
-          state_n = IDLE;
-        end else if(href) begin
+        if(href) begin
           if(validDelay[SHIFT_WIDTH-1])begin
             load = 1;
             hCntAdd = 1;
@@ -112,7 +121,13 @@ module Dvp #(
           if(out.valid)
             valid = 1;
         end else begin
-          state_n = WAIT;
+          if(hCntEqWidth && vCntEqHeight) begin
+            zero = 1;
+            state_n = IDLE;
+          end else begin 
+            state_n = WAIT;
+            vCntAdd = 1;
+          end
         end
       end
     endcase

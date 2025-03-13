@@ -36,13 +36,13 @@ module CdcPulse (
             inFF <= 1'b0;
         end else begin
             if(in)
-                if(out2InSync[1])
-                    inFF <= inFF;
-                else
-                    inFF <= 1'b0;
-            else
                 inFF <= 1'b1;
+            else
+                if(out2InSync[1])
+                    inFF <= 1'b0;
+                else
+                    inFF <= inFF;
         end
     end
-    assign out = in2OutSync[2] ^ in2OutSync[1];
+    assign out = in2OutSync[2] & ~in2OutSync[1];
 endmodule

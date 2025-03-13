@@ -76,11 +76,20 @@ generate
       assign sumDiffSel = cnt[$clog2(LENGHT)-1] & in[i].valid;
       assign diffRegIn = sumDiffSel? diff : in[i].data;
       assign sumDiff = sumDiffSel? sum : diffRegOut;
-      Delay #(2, LENGHT/2) loadDelay (
-        clk, rst_n,
-        {~|cnt[CNT_WIDTH-1:$clog2(LENGHT)] & in[i].valid, in[i].valid},
-        {peLoad, validDelay[0]}
-      );
+
+      if (i==0) begin
+        Delay #(2, LENGHT/2) loadDelay (
+          clk, rst_n,
+          {~|cnt[CNT_WIDTH-1:$clog2(LENGHT)] & in[i].valid, in[i].valid},
+          {peLoad, validDelay[0]}
+        );
+      end else begin
+        Delay #(1, LENGHT/2) loadDelay (
+          clk, rst_n,
+          ~|cnt[CNT_WIDTH-1:$clog2(LENGHT)] & in[i].valid,
+          peLoad
+        );
+      end
 
       assign {rowPorts[i][0].in.data, rowPorts[i][0].in.load} = {sumDiff, peLoad};
       assign {rowPorts[i][0].result.data, rowPorts[i][0].result.valid} = {'0, '0};

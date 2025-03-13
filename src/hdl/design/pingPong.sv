@@ -12,8 +12,13 @@ module PingpongBuf #(
 
   localparam BUF_ADDR_W = $clog2(WIDTH) + 3;
   localparam BUF_DEPTH = 2**BUF_ADDR_W;
+  typedef struct {
+    logic value;
+    logic set;
+    logic reset;
+  } Full_t;
 
-  dctPort_t dvpOut; 
+  dataPort_t dvpOut; 
   logic [$clog2(WIDTH)-1:0] hCnt;
   logic [$clog2(HEIGHT)-1:0] vCnt;
 
@@ -24,43 +29,43 @@ module PingpongBuf #(
   );
 
   logic switch;
-  assign switch = hCnt == WIDTH && (~|vCnt[2:0]);
+  assign switch = hCnt == WIDTH-1 && (&vCnt[2:0]) && dvpOut.valid;
 
   ramRd_if #(24, WIDTH) buf0Out (clk);
   ramWr_if #(24, WIDTH) buf0In (pclk);
-  logic buf0Full, buf0FullSetIn, buf0FullSetOut, buf0FullReset;
-  CdcPulse buf0Set (rst_n, pclk, buf0FullSetIn, clk, buf0FullSetOut);
+  Full_t buf0Full, buf1Full;
+  logic buf0FullSet, buf1FullSet;
+  CdcPulse buf0Set (rst_n, pclk, buf0FullSet, clk, buf0Full.set);
 
   ramRd_if #(24, WIDTH) buf1Out (clk);
   ramWr_if #(24, WIDTH) buf1In (pclk);
-  logic buf1Full, buf1FullSetIn, buf1FullSetOut, buf1FullReset;
-  CdcPulse buf1Set (rst_n, pclk, buf1FullSetIn, clk, buf1FullSetOut);
+  CdcPulse buf1Set (rst_n, pclk, buf1FullSet, clk, buf1Full.set);
 
   always_ff @(posedge clk or negedge rst_n) begin
-    if(rst_n) begin
-      buf0Full <= 1'b0;
-    end else if(buf0Full & buf0FullReset) begin
-      buf0Full <= 1'b0;
-    end else if(~buf0Full & buf0FullSetOut) begin
-      buf0Full <= 1'b1;
+    if(!rst_n) begin
+      buf0Full.value <= 1'b0;
+    end else if(buf0Full.value & buf0Full.reset) begin
+      buf0Full.value <= 1'b0;
+    end else if(~buf0Full.value & buf0Full.set) begin
+      buf0Full.value <= 1'b1;
     end
   end
   Ram #(24, BUF_DEPTH) buf0 (buf0In, buf0Out);
 
   always_ff @(posedge clk or negedge rst_n) begin
-    if(rst_n) begin
-      buf1Full <= 1'b1;
-    end else if(buf1Full & buf1FullReset) begin
-      buf1Full <= 1'b1;
-    end else if(~buf1Full & buf1FullSetOut) begin
-      buf1Full <= 1'b1;
+    if(!rst_n) begin
+      buf1Full.value <= 1'b0;
+    end else if(buf1Full.value & buf1Full.reset) begin
+      buf1Full.value <= 1'b0;
+    end else if(~buf1Full.value & buf1Full.set) begin
+      buf1Full.value <= 1'b1;
     end
   end
   Ram #(24, BUF_DEPTH) buf1 (buf1In, buf1Out);
 
   logic rdStart, rdDone, rdValid;
   logic [BUF_ADDR_W-1:0] rdAddr; 
-  RdAddrGen #(WIDTH) rdAddrGen (clk, rst, rdStart, rdDone, rdValid, rdAddr);
+  RdAddrGen #(WIDTH) rdAddrGen (clk, rst_n, rdStart, rdDone, rdValid, rdAddr);
 
   logic wrBufSel, rdBufSel;
   assign buf1In.data = dvpOut.data;
@@ -92,16 +97,20 @@ module PingpongBuf #(
       wrState <= wrState_n;
   always_comb begin
     wrState_n = wrState;
+    buf0FullSet = 0;
+    buf1FullSet = 0;
     case (wrState)
       WR_BUF0: begin
         wrBufSel = 0;
         if(switch) begin
           wrState_n = WR_BUF1;
+          buf0FullSet = 1;
         end
       end WR_BUF1: begin
         wrBufSel = 1;
         if(switch) begin
           wrState_n = WR_BUF0;
+          buf1FullSet = 1;
         end
       end
     endcase
@@ -122,28 +131,28 @@ module PingpongBuf #(
     rdState_n = rdState;
     rdBufSel = 0; 
     rdStart = 0;
-    buf0FullReset = 0;
-    buf1FullReset = 0;
+    buf0Full.reset = 0;
+    buf1Full.reset = 0;
     case(rdState)
       RD_IDLE: begin
-        if(buf0Full) begin
+        if(buf0Full.value) begin
           rdState_n = RD_BUF0;
           rdStart = 1;
         end
-        if(buf1Full) begin
+        if(buf1Full.value) begin
           rdState_n = RD_BUF1;
           rdStart = 1;
         end
       end RD_BUF0: begin
         rdBufSel = 0; 
         if(rdDone) begin
-          buf0FullReset = 1;
+          buf0Full.reset = 1;
           rdState_n = RD_IDLE;
         end
       end RD_BUF1: begin
         rdBufSel = 1; 
         if(rdDone) begin
-          buf1FullReset = 1;
+          buf1Full.reset = 1;
           rdState_n = RD_IDLE;
         end
       end

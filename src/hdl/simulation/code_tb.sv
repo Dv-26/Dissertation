@@ -3,7 +3,7 @@
 module code_tb;
    
   localparam CYCLE = 80;
-  localparam WIDTH = 10;
+  localparam WIDTH = 24;
   localparam HEIGHT = 16;
 
   localparam TIME_2 = 5 * 2 * CYCLE;
@@ -12,36 +12,31 @@ module code_tb;
   localparam TIME_7 = 5 * 2 * CYCLE;
   localparam TIME_5 = 10 * 2 * CYCLE;
 
-  logic clk, rst_n;
+  logic pclk, clk, rst_n;
   logic vsync, href;
   logic [7:0] data;
 
   always #(CYCLE/2) clk = ~clk;
+  always #(CYCLE/4) pclk = ~pclk;
 
-  dctPort_t out; 
-  Dvp #(WIDTH, HEIGHT, "RGB888") dvp_tb (
-    rst_n,
-    clk, vsync, href,
-    data,
+  dctPort_t out[3]; 
+  top #(WIDTH, HEIGHT) top_tb (
+    clk, rst_n,
+    pclk, vsync, href, data,
     out
   );
-  // dctPort_t stimulate, in[ROW], out[ROW];
-  // JpegCode #(DATA_WIDTH, ROW) coder (
-  //   clk, rst_n,
-  //   in,
-  //   out
-  // );
   int i, j;
 
   initial begin
     clk = 1;
+    pclk = 1;
     href = 0;
     vsync = 0; 
     rst_n = 0;
     #(2*CYCLE);
     rst_n = 1;
     #(2*CYCLE);
-    @(negedge clk)
+    @(negedge pclk)
       vsync = 1; 
     #TIME_2;
     vsync = 0; 
@@ -49,14 +44,14 @@ module code_tb;
     for(i =0; i<HEIGHT; i++)begin
       href = 1;
       for(j=0; j<WIDTH; j++) begin
-        @(negedge clk)
+        @(negedge pclk)
           data <= 1;
-        @(negedge clk)
+        @(negedge pclk)
           data <= 2; 
-        @(negedge clk)
+        @(negedge pclk)
           data <= 3; 
       end
-      @(negedge clk)
+      @(negedge pclk)
       data <= 'x;
       href <= 0;
       #TIME_7;
