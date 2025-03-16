@@ -10,7 +10,7 @@ module JpegCode #(
 );
 
 dctPort_t color[ROW];
-RGB2YCbCr #(DATA_WIDTH) rgb2ycbcr (clk, rst_n, in, color)
+RGB2YCbCr #(DATA_WIDTH) rgb2ycbcr (clk, rst_n, in, color);
 dctPort_t y[ROW];
 Dct #(DATA_WIDTH, ROW) dct (clk, rst_n, color, y);
 generate
