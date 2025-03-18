@@ -48,8 +48,6 @@ module code_tb;
           data <= 1;
         @(negedge pclk)
           data <= 2; 
-        @(negedge pclk)
-          data <= 3; 
       end
       @(negedge pclk)
       data <= 'x;

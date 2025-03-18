@@ -11,11 +11,13 @@ module RGB2YCbCr #(
   generate
     genvar i;
     for(i=0; i<3; i++) begin
+      logic [DATA_WIDTH-1 : 0] sumOut; 
       ProductsSumTree #(DATA_WIDTH, 3) colorTranform (
         clk, 
         {in[2].data, in[1].data, in[0].data},
-        ConstAaary[i], out[i].data
+        ConstAaary[i], sumOut
       );  
+      assign out[i].data = i == 0 ? sumOut : sumOut + 128;
     end
 
     localparam Delay = $clog2(3)+1;
@@ -33,17 +35,17 @@ module RGB2YCbCr #(
   endgenerate
 
   initial begin
-    ConstAaary[0][0] = 1;
-    ConstAaary[0][1] = 1;
-    ConstAaary[0][2] = 1;
+    ConstAaary[0][0] = 0.299 * 2**DATA_WIDTH;
+    ConstAaary[0][1] = 0.587 * 2**DATA_WIDTH;
+    ConstAaary[0][2] = 0.144 * 2**DATA_WIDTH;
 
-    ConstAaary[1][0] = 1;
-    ConstAaary[1][1] = 1;
-    ConstAaary[1][2] = 1;
+    ConstAaary[1][0] = 0.5 * 2**DATA_WIDTH;
+    ConstAaary[1][1] = -0.419 * 2**DATA_WIDTH;
+    ConstAaary[1][2] = -0.169 * 2**DATA_WIDTH;
 
-    ConstAaary[2][0] = 1;
-    ConstAaary[2][1] = 1;
-    ConstAaary[2][2] = 1;
+    ConstAaary[2][0] = -0.169 * 2**DATA_WIDTH;
+    ConstAaary[2][1] = -0.331 * 2**DATA_WIDTH;
+    ConstAaary[2][2] = 0.5 * 2**DATA_WIDTH;
   end
 endmodule
 

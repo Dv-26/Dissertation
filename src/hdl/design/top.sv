@@ -11,7 +11,7 @@ module top #(
 
     dctPort_t pingpong2Code[3]; 
 
-    PingpongBuf #(WIDTH, HEIGHT, "RGB888") pingpongBuf (
+    PingpongBuf #(WIDTH, HEIGHT, "RGB565") pingpongBuf (
         clk, rst_n,
         pclk, vsync, href, data,
         pingpong2Code
