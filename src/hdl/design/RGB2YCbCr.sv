@@ -35,17 +35,17 @@ module RGB2YCbCr #(
   endgenerate
 
   initial begin
-    ConstAaary[0][0] = 0.299 * 2**DATA_WIDTH;
-    ConstAaary[0][1] = 0.587 * 2**DATA_WIDTH;
-    ConstAaary[0][2] = 0.144 * 2**DATA_WIDTH;
+    ConstAaary[0][2] = 0.299 * 2**8;
+    ConstAaary[0][1] = 0.587 * 2**8;
+    ConstAaary[0][0] = 0.144 * 2**8;
 
-    ConstAaary[1][0] = 0.5 * 2**DATA_WIDTH;
-    ConstAaary[1][1] = -0.419 * 2**DATA_WIDTH;
-    ConstAaary[1][2] = -0.169 * 2**DATA_WIDTH;
+    ConstAaary[1][2] = 0.5 * 2**8;
+    ConstAaary[1][1] = -0.419 * 2**8;
+    ConstAaary[1][0] = -0.169 * 2**8;
 
-    ConstAaary[2][0] = -0.169 * 2**DATA_WIDTH;
-    ConstAaary[2][1] = -0.331 * 2**DATA_WIDTH;
-    ConstAaary[2][2] = 0.5 * 2**DATA_WIDTH;
+    ConstAaary[2][2] = -0.169 * 2**8;
+    ConstAaary[2][1] = -0.331 * 2**8;
+    ConstAaary[2][0] = 0.5 * 2**8;
   end
 endmodule
 
@@ -62,7 +62,7 @@ module ProductsSumTree #(
   generate
     genvar i, j;
     for(i=0; i<NUB; i++) begin: mul
-      multiplier #(DATA_WIDTH, DATA_WIDTH) multiplier (
+      multiplier #(DATA_WIDTH, 8) multiplier (
         constIn[i], in[i], product[0][i]
       );
       always_ff @(posedge clk)
@@ -77,8 +77,8 @@ module AddTree #(
   parameter NUB = 7
 ) (
   input logic clk,
-  input logic [DATA_WIDTH-1:0] in[NUB],
-  output logic [DATA_WIDTH-1:0] out
+  input logic signed[DATA_WIDTH-1:0] in[NUB],
+  output logic signed[DATA_WIDTH-1:0] out
 );
   
   generate

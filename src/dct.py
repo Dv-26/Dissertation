@@ -29,7 +29,6 @@ d = 0.5 * np.cos(3 * pi / 16)
 e = 0.5 * np.cos(4 * pi / 16)
 f = 0.5 * np.cos(5 * pi / 16)
 g = 0.5 * np.cos(6 * pi / 16)
-
 C = np.array([
     [a, a, a, a, a, a, a, a],
     [b, d, e, g, -g, -e, -d, -b],
