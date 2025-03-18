@@ -58,7 +58,7 @@ module ProductsSumTree #(
   output logic [DATA_WIDTH-1:0] out
 );
   
-  logic [DATA_WIDTH-1:0] product[2][NUB];
+  logic signed [DATA_WIDTH-1:0] product[2][NUB];
   generate
     genvar i, j;
     for(i=0; i<NUB; i++) begin: mul
@@ -86,7 +86,7 @@ module AddTree #(
       always_ff @(posedge clk)
         out <= in[0] + in[1];
     end else begin 
-      logic [DATA_WIDTH-1:0] subSum[2];
+      logic signed [DATA_WIDTH-1:0] subSum[2];
       genvar i,j;
 
       if(NUB%2 != 0) begin
@@ -97,7 +97,7 @@ module AddTree #(
             InDelay[i] <= i == 0 ? in[NUB-1] : InDelay[i-1];
         assign subSum[1] = InDelay[DELAY-1];
 
-        logic [DATA_WIDTH-1:0] subIn[NUB-1];
+        logic signed [DATA_WIDTH-1:0] subIn[NUB-1];
         for(i=0; i<NUB-1; i++)
           assign subIn[i] = in[i];
         AddTree #(DATA_WIDTH, NUB-1) subTree (clk, subIn, subSum[0]);
