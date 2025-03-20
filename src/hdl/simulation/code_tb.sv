@@ -1,5 +1,6 @@
 `timescale 1ns/1ns
 //`include "interface.sv"
+`define __SIM__
 module code_tb;
    
   localparam CYCLE = 80;

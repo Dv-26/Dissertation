@@ -9,10 +9,9 @@ module Dvp #(
 
   input logic pclk, vsync, href,
   input logic [7:0] data,
-  
   output dataPort_t out,
-  logic [$clog2(WIDTH)-1:0] hCntFF,
-  logic [$clog2(HEIGHT)-1:0] vCntFF
+  output logic [$clog2(WIDTH)-1:0] hCntFF,
+  output logic [$clog2(HEIGHT)-1:0] vCntFF
 );
   localparam SHIFT_WIDTH = DATA_FORMAT == "RGB888" ? 2 : 1;
 
@@ -67,27 +66,10 @@ module Dvp #(
     end
   end
 
-  generate 
-    if(DATA_FORMAT == "RGB888" ) begin
-      always_ff @(posedge pclk) begin
-        if(load) 
-          out.data <= {dataHightReg, data};
-      end
-    end else begin
-      logic [7:0] r, g, b;
-      always_comb begin
-        r = {3'b0, dataHightReg[7:3]};
-        g = {2'b0, dataHightReg[2:0], data[7:5]};
-        b = {2'b0, data[4:0]};
-        r = r  << 5 | r >> 2;
-        g = g << 2 | g >> 4;
-        b = b << 3 | b >> 2;
-      end
-      always_ff @(posedge pclk)
-        if(load) 
-          out.data <= {r, g, b};
-    end
-  endgenerate
+  always_ff @(posedge pclk) begin
+    if(load) 
+      out.data <= {dataHightReg, data};
+  end
 
   always_ff @(posedge pclk or negedge rst_n)begin
     if(!rst_n)

@@ -4,7 +4,8 @@ module Zigzag #(
 ) (
     input wire rst_n,
     input dctPort_t in,
-    ramWr_if.Tx out
+    ramWr_if.Tx out,
+    output logic done
 );
 
     logic [5:0] cnt64;
@@ -36,6 +37,12 @@ module Zigzag #(
         {scanY, scanX, scanValid},
         {out.addr, out.en}
     );
+
+    always_ff @(posedge out.clk or negedge rst_n) 
+        if(!rst_n)
+            done <= 1'b0;
+        else 
+            done <= scanDone;
 
 endmodule
 

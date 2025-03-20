@@ -31,14 +31,14 @@ module PingpongBuf #(
   logic switch;
   assign switch = hCnt == WIDTH-1 && (&vCnt[2:0]) && dvpOut.valid;
 
-  ramRd_if #(24, WIDTH) buf0Out (clk);
-  ramWr_if #(24, WIDTH) buf0In (pclk);
+  ramRd_if #(16, WIDTH) buf0Out (clk);
+  ramWr_if #(16, WIDTH) buf0In (pclk);
   Full_t buf0Full, buf1Full;
   logic buf0FullSet, buf1FullSet;
   CdcPulse buf0Set (rst_n, pclk, buf0FullSet, clk, buf0Full.set);
 
-  ramRd_if #(24, WIDTH) buf1Out (clk);
-  ramWr_if #(24, WIDTH) buf1In (pclk);
+  ramRd_if #(16, WIDTH) buf1Out (clk);
+  ramWr_if #(16, WIDTH) buf1In (pclk);
   CdcPulse buf1Set (rst_n, pclk, buf1FullSet, clk, buf1Full.set);
 
   always_ff @(posedge clk or negedge rst_n) begin
@@ -50,7 +50,7 @@ module PingpongBuf #(
       buf0Full.value <= 1'b1;
     end
   end
-  Ram #(24, BUF_DEPTH) buf0 (buf0In, buf0Out);
+  Ram #(16, BUF_DEPTH) buf0 (buf0In, buf0Out);
 
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
@@ -61,7 +61,7 @@ module PingpongBuf #(
       buf1Full.value <= 1'b1;
     end
   end
-  Ram #(24, BUF_DEPTH) buf1 (buf1In, buf1Out);
+  Ram #(16, BUF_DEPTH) buf1 (buf1In, buf1Out);
 
   logic rdStart, rdDone, rdValid;
   logic [BUF_ADDR_W-1:0] rdAddr; 
@@ -80,16 +80,23 @@ module PingpongBuf #(
   assign {buf0Out.en, buf1Out.en} = rdBufSel ?
     {rdValid, 1'b0} :
     {1'b0, rdValid};
+
+  logic [4:0] r5,b5;
+  logic [5:0] g6;
   logic rdValidDelay;
-  assign {out[0].data, out[1].data, out[2].data} = rdBufSel? buf0Out.data : buf1Out.data;
+  assign {r5, g6, b5} = rdBufSel? buf0Out.data : buf1Out.data;
   assign {out[0].valid, out[1].valid, out[2].valid} = {3{rdValidDelay}};
   Delay #(1, 1) validDelay (clk, rst_n, rdValid, rdValidDelay);
+
+  assign out[0].data = b5 << 5 | b5 >> 2; 
+  assign out[1].data = g6 << 2 | g6 >> 4; 
+  assign out[2].data = r5 << 5 | r5 >> 2; 
 
   typedef enum logic {
     WR_BUF0,
     WR_BUF1
   } wrState_t;
-  wrState_t wrState, wrState_n;
+  (* MARK_DEBUG="true" *)wrState_t wrState, wrState_n;
   always_ff @(posedge pclk or negedge rst_n)  
     if(!rst_n)
       wrState <= WR_BUF0;
@@ -121,7 +128,7 @@ module PingpongBuf #(
     RD_BUF0,
     RD_BUF1
   } rdState_t;
-  rdState_t rdState, rdState_n;
+  (* MARK_DEBUG="true" *)rdState_t rdState, rdState_n;
   always_ff @(posedge clk or negedge rst_n)  
     if(!rst_n)
       rdState <= RD_IDLE;
@@ -269,4 +276,19 @@ module RdAddrGen #(
       end
     endcase
   end
+endmodule
+
+module rgb565torgb888 (
+  input logic [4:0] r5,
+  input logic [5:0] g6,
+  input logic [4:0] b5,
+  output logic [7:0] r8, g8, b8
+);
+
+always_comb begin
+  r8 = r5  << 5 | r5 >> 2;
+  g8 = g6 << 2 | g6 >> 4;
+  b8 = b5 << 5 | b5 >> 2;
+end
+
 endmodule

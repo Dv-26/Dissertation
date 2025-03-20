@@ -62,11 +62,6 @@ interface rom_if #(
   );
 endinterface
 
-typedef struct {
-  logic [9:0] data;
-  logic sumDiffSel;
-  logic load;
-} x2zX_t;
 
 typedef struct {
   logic [9:0] data;
@@ -74,26 +69,14 @@ typedef struct {
 } dctPort_t;
 
 typedef struct {
-  logic [23:0] data;
+  logic [15:0] data;
   logic valid;
 } dataPort_t;
 
 typedef struct {
   logic [9:0] data;
-  logic load;
-} in_t;
-
-typedef struct {
-  logic [9:0] data;
   logic valid;
-} result_t;
+  logic done;
+} codePort_t;
 
-typedef struct {
-  in_t in;
-  result_t result;
-} peRowPort_t;
-
-typedef struct {
-  logic [9:0] data;
-}peColPort_t;
 `endif

@@ -1,5 +1,30 @@
 `include "interface.sv"
- 
+
+typedef struct {
+  logic [9:0] data;
+  logic load;
+} in_t;
+
+typedef struct {
+  logic [9:0] data;
+  logic sumDiffSel;
+  logic load;
+} x2zX_t;
+
+typedef struct {
+  logic [9:0] data;
+  logic valid;
+} result_t;
+
+typedef struct {
+  in_t in;
+  result_t result;
+} peRowPort_t;
+
+typedef struct {
+  logic [9:0] data;
+}peColPort_t;
+
 module Dct #(
   parameter DATA_WIDTH = 10,
   parameter ROW = 3

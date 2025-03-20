@@ -6,7 +6,7 @@ module JpegCode #(
     input logic clk,
     input logic rst_n,
     input dctPort_t in[ROW],
-    output dctPort_t out[ROW]
+    output logic [3:0] zeroNub[ROW]
 );
 
 dctPort_t color[ROW];
@@ -17,8 +17,22 @@ generate
   genvar i;
   for(i=0; i<ROW; i++) begin: colorChannel
     ramWr_if #(DATA_WIDTH, 64) zigzag2quantizer (clk);
-    Zigzag #(DATA_WIDTH) zigzag (rst_n, y[i], zigzag2quantizer);
-    Quantizer #(DATA_WIDTH, i) quantizer (zigzag2quantizer, out[i]);
+    dctPort_t quantizerOut;
+    logic zigzagDone;
+    Zigzag #(DATA_WIDTH) zigzag (rst_n, y[i], zigzag2quantizer, zigzagDone);
+    Quantizer #(DATA_WIDTH, i) quantizer (zigzag2quantizer, quantizerOut);
+
+    codePort_t quantizer2code;
+    logic [DATA_WIDTH-2:0] vli;
+    logic isDC, valid;
+    EntropyCoder #(DATA_WIDTH) coder (
+      clk, rst_n,
+      quantizer2code,
+      vli, zeroNub[i], isDC, valid
+    );
+    assign quantizer2code.data =  quantizerOut.data;
+    assign quantizer2code.valid =  quantizerOut.valid;
+    assign quantizer2code.done =  zigzagDone;
   end
 endgenerate
 
