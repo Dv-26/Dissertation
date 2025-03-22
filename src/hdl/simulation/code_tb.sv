@@ -20,12 +20,13 @@ module code_tb;
   always #(CYCLE/2) clk = ~clk;
   always #(CYCLE/4) pclk = ~pclk;
 
-  dctPort_t out[3]; 
+  logic [3:0] zeroNub[3];
   top #(WIDTH, HEIGHT) top_tb (
     clk, rst_n,
     pclk, vsync, href, data,
-    out
+    zeroNub
   );
+  logic [15:0]array[8][8];
   int i, j;
 
   initial begin
@@ -34,6 +35,11 @@ module code_tb;
     href = 0;
     vsync = 0; 
     rst_n = 0;
+    for(i=0; i<8; i++) begin
+      for(j=0; j<8; j++) begin
+        array[j][i] = j * 10 + i;
+      end
+    end
     #(2*CYCLE);
     rst_n = 1;
     #(2*CYCLE);
@@ -46,9 +52,9 @@ module code_tb;
       href = 1;
       for(j=0; j<WIDTH; j++) begin
         @(negedge pclk)
-          data <= 1;
+          data <= array[i%8][j%8][15:8];
         @(negedge pclk)
-          data <= 2; 
+          data <= array[i%8][j%8][7:0];
       end
       @(negedge pclk)
       data <= 'x;

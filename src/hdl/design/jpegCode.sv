@@ -25,10 +25,11 @@ generate
     codePort_t quantizer2code;
     logic [DATA_WIDTH-2:0] vli;
     logic isDC, valid;
+    logic [$clog2(DATA_WIDTH-1)-1:0] size;
     EntropyCoder #(DATA_WIDTH) coder (
       clk, rst_n,
       quantizer2code,
-      vli, zeroNub[i], isDC, valid
+      size, vli, zeroNub[i], isDC, valid
     );
     assign quantizer2code.data =  quantizerOut.data;
     assign quantizer2code.valid =  quantizerOut.valid;

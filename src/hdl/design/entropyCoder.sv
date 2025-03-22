@@ -1,18 +1,87 @@
 `include "interface.sv"
 
-module EntropyCoder #(
+typedef struct {
+    logic [4:0] size;
+    logic [8:0] vli;
+    logic [3:0] zeroNub;
+    logic isDC;
+} tempCodeData_t;
+
+typedef struct {
+    logic [8:0] code;
+    logic [2:0] size;
+} dcHuffman_t;
+
+typedef struct {
+    logic [15:0] code;
+    logic [3:0] size;
+} acHuffman_t;
+
+typedef struct {
+    tempCodeData_t data;
+    logic valid, done;
+} tempCode_t;
+
+module huffmanCode #(
+    parameter DATA_WIDTH = 10,
+    parameter LUMINANCE = 1 // 1:亮度 0:色度
+) (
+    input clk, rst_n,
+    input tempCode_t  in,
+    output codePort_t out
+);
+    localparam IN_W = 5 + 9 + 3 + 1;
+    logic isZRL, notZRL, isEOB;
+    assign isZRL = &{in.valid, !in.isDC , &in.zeroNub};
+    assign notZRL = &{in.valid, !isZRL};
+    assign isEOB = &{in.done, !in.valid};
+    logic bufRst;
+
+    tempCodeData_t ZRLbuf;
+    fifoWr_if #(IN_W) bufWr ();
+    fifoRd_if #(IN_W) bufRd ();
+    ShiftFIFO #(IN_W, 4) InBuf (clk, rst_n, bufRst, bufWr, bufRd);
+    assign bufWr.data = {in.data.size, in.data.vli, in.data.zeroNub, in.data.isDC};
+    assign {ZRLbuf.size, ZRLbuf.vli, ZRLbuf.zeroNub, ZRLbuf.isDC} = bufRd.data; 
+
+    enum logic {NORMAL, RD_BUF} state, state_n;
+    always_ff @(posedge clk, negedge rst_n) 
+        state <= !rst_n ? NORMAL : RD_BUF;
+    always_comb begin
+        state_n = state;
+        bufWr.en = 0;
+        if(isZRL)
+            bufWr.en = 1;
+        case(state)
+            NORMAL: begin
+                if(notZRL && !inBuf.empty) begin
+                    bufWr.en = 1;
+                    bufRd.en = 1;
+                    state_n = RD_BUF;
+                end
+            end RD_BUF: begin
+                bufRd.en = 1;
+                if(in.valid)
+                    bufWr.en = 1;
+                if(inBuf.empty)
+                    state_n = NORMAL;
+            end
+        endcase
+    end
+
+
+endmodule
+
+module tempCoder #(
     parameter DATA_WIDTH = 10
 ) (
     input clk, rst_n,
     input codePort_t in,
-    output logic [$clog2(DATA_WIDTH-1)-1:0] size,
-    output logic [DATA_WIDTH-2:0] vli,
-    output logic [3:0] zeroNub,
-    output logic isDC, valid
+    output tempCode_t out
 );
     typedef struct {
         logic [5:0] value;
-        logic reset, add, minus, zero, eq;
+        logic add, zero, eq;
     } cnt_t;
 
     typedef struct {
@@ -25,16 +94,17 @@ module EntropyCoder #(
         AC
     } state_t;
     state_t state, state_n;
-    logic valid_n, isDC_n;
+    logic valid_n;
 
     always_ff @(posedge clk or negedge rst_n) begin
         state <= !rst_n? DC : state_n;
-        valid <= !rst_n? 1'b0 : valid_n;
+        out.valid <= !rst_n? 1'b0 : valid_n;
     end
 
     always_comb begin
         state_n = state;
         lastDC.load = 0;
+        lastDC.reset = 0;
         zeroCnt.add = 0;
         zeroCnt.zero = 0;
         valid_n = 0;
@@ -80,7 +150,6 @@ module EntropyCoder #(
             zeroCnt.value <= zeroCnt.value + 1;
     end
     assign zeroCnt.eq = zeroCnt.value == 15;
-    assign zeroNub = zeroCnt.value[3:0];
 
     reg_t lastDC;
     logic [DATA_WIDTH-1:0] dcDiff;
@@ -96,7 +165,7 @@ module EntropyCoder #(
     end
     assign dcDiff = in.data - lastDC.data;
 
-    logic [$clog2(DATA_WIDTH-1)-1:0] size_n;
+    logic [$clog2(DATA_WIDTH-1):0] size_n;
     logic [DATA_WIDTH-2:0] vli_n;
     vliCode #(DATA_WIDTH) vliCoder (
         state == DC ? dcDiff : in.data,
@@ -104,16 +173,19 @@ module EntropyCoder #(
     );
     always_ff @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
-            vli <= '0;
-            size <= '0;
+            out.data.vli <= '0;
+            out.data.size <= '0;
+            out.data.isDC <= 0;
+            out.data.zeroNub <= '0;
         end else if(valid_n) begin
-            isDC <= (state == DC);
-            vli <= vli_n;
-            size <= size_n;
+            out.data.isDC <= (state == DC);
+            out.data.vli <= vli_n;
+            out.data.size <= size_n;
+            out.data.zeroNub <= zeroCnt.value[3:0];
+            out.done <= in.done;
         end
     end
 
-     
 endmodule
 
 module vliCode #(
@@ -121,16 +193,16 @@ module vliCode #(
 ) (
     input logic [DATA_WIDTH-1:0] in,
     output logic [DATA_WIDTH-2:0]  vli,
-    output logic [$clog2(DATA_WIDTH-1)-1:0]  size
+    output logic [$clog2(DATA_WIDTH-1):0]  size
 );
     logic [DATA_WIDTH-2:0] hotOne, reverse, abs;
     always_comb begin
         if(in[DATA_WIDTH-1]) begin
-            vli = in[DATA_WIDTH-2:0];
-            abs = vli;
-        end else begin
             vli = in[DATA_WIDTH-2:0] - 1;
             abs = ~vli;
+        end else begin
+            vli = in[DATA_WIDTH-2:0];
+            abs = vli;
         end
         for(int i=0; i<DATA_WIDTH-1; i++)
             reverse[i] = abs[DATA_WIDTH-2-i];
@@ -138,7 +210,9 @@ module vliCode #(
         for(int i=0; i<DATA_WIDTH-1; i++)
             hotOne[i] = reverse[DATA_WIDTH-2-i];
     end
-    encode #(DATA_WIDTH-2) (hotOne, size);
+    logic [$clog2(DATA_WIDTH-1)-1:0]  bin;
+    encode #(DATA_WIDTH-1) hot2bin (hotOne, bin);
+    assign size = |in[DATA_WIDTH-2:0] ? bin + 1 : 0;
 
 endmodule
 

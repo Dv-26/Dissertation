@@ -43,6 +43,65 @@ interface ramRd_if #(
   );
 endinterface
 
+interface fifoRd_if #(
+  parameter DATA_WIDTH = 10
+) (input wire clk);
+  logic [DATA_WIDTH-1:0] data;
+  logic en, empty; 
+  modport asyncTx (
+    input clk,
+    input en,
+    output data,
+    output empty
+  );
+  modport asyncRx (
+    input clk,
+    output en,
+    input data,
+    output empty
+  );
+  modport syncTx (
+    input en,
+    output data,
+    output empty
+  );
+  modport syncRx (
+    output en,
+    input data,
+    output empty
+  );
+endinterface
+
+interface fifoWr_if #(
+  parameter DATA_WIDTH = 10,
+  parameter DEPTH = 8
+) (input wire clk);
+  logic [DATA_WIDTH-1:0] data;
+  logic en, full; 
+  modport asyncTx (
+    input clk,
+    output en,
+    output data,
+    output full
+  );
+  modport asyncRx (
+    input clk,
+    input en,
+    input data,
+    output full
+  );
+  modport syncTx (
+    output en,
+    output data,
+    output full
+  );
+  modport syncRx (
+    input en,
+    input data,
+    output full
+  );
+endinterface
+
 interface rom_if #(
   parameter DATA_WIDTH = 10,
   parameter DEPTH = 8
