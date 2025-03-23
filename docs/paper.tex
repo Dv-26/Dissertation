@@ -90,7 +90,7 @@
   准格式的JPEG（Joint Photographic Experts Group），因具有压缩率高、失真率
   小等特点。在国际上取得广泛的应用。
 
-  目前大多数的JPGE格式图像数据编解码系统都是基于软件编程从而运行在通用计算
+  目前大多数的JPEG格式图像数据编解码系统都是基于软件编程从而运行在通用计算
   机上。这种方式存在计算效率低、实时性低、运行功耗高等诸多缺点。于此同时具
   有对硬件可编程、运行功耗低的FPGA（Field Programmable Gate Array）芯片的
   规模不断增加，在FPGA芯片内实现复杂的数字信号处理系统已成为现实。因此本设
@@ -171,7 +171,7 @@
     码主要分为两种，一种是针对静止图像在空间在空间的纬度上进行压缩编码的压
     缩方式，如JPEG、JPEG-2000、JPEG-LS。另一种是针对多个数据帧在时间纬度上
     进行压缩的方式如H.264、H.256等。其中JPEG（Joint Photographic Exprts Group，
-    联合专家组）标准有ISO在1991年提出，之后有相继提出了JPEG-L、JPEG-MOTION
+    联合专家组）标准有ISO在1991年提出，之后有相继提出了JPEG-L、JPEG-Motion
     、JPEG2000三个图像标准，JPEG-LS是一种接近无损压缩的压缩格式，其工作简单
     高效，但是输出的编码率随原图像的改变存在较大的波动。PEG-MONTION是基于JPEG
     发展起来的，可用于动态图像的压缩，但是压缩率比较低。JPEG2000是用小波变
@@ -489,8 +489,8 @@
       年提出。它根据字符的出现的概率来构建编码映射。以实现码字的平均长度最
       短。该编码方式的压缩率接近香农所定义的极限压缩率，因此这种方法也称为
       最佳编码。
-      通过查找AC和DC系数对应颜色分量的Huffman表进行编码。Huffman码表是由JP
-      EG标准通过大量的图像数据统计进而规定的，详细内容如下表所示。
+      通过查找AC和DC系数对应颜色分量的Huffman表进行编码。Huffman码表是由JPEG
+      标准通过大量的图像数据统计进而规定的，详细内容如下表所示。
       \begin{table}[H]
         \centering
         \caption{亮度$DC_{diff}$Huffman表}
@@ -1058,7 +1058,7 @@
           \caption{DCT运算部分RTL视图}
           \label{DCTSchematice}
         \end{figure}
-      下面以一个8×8单元输入为激励进行仿真，仿真后的波形如图\ref{DCTSchematice}
+      下面以一个8×8单元输入为激励进行仿真，仿真后的波形如图\ref{DCTSimulationWave}
       其中灰色波形为Y通道，绿色波形为Cr通道，蓝色波形为Cb通道。由图可知从X到Z的
       时滞为7个时钟周期，从Z到Y的时滞为56个时钟周期，所以整模块的时滞为63。由公式
       （\ref{8*8 2D-DCT}）可知输出$Y(u,v)$的每个元素都需要$X(i,j)$64个元素进行计算，
@@ -1070,21 +1070,27 @@
           \label{DCTSimulationWave}
         \end{figure}
 
-        下面验证计算结果的准确性，以如式（\ref{test matrix}）矩阵作为输入。与使用python的numpy库编写
+        下面验证计算结果的准确性，以如表（\ref{testMatrix}）矩阵作为输入。与使用python的numpy库编写
         的DCT计算结果进行对比。
-        \begin{equation}
-        \begin{bmatrix}
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70\\ 
-        \end{bmatrix} 
-        \label{test matrix}
-        \end{equation}
+        \begin{table}[H]
+          \caption{测试8×8单元测试输入}
+          \label{testMatrix}
+          \centering
+          \begin{tabular}{cccccccc}
+            \toprule
+            \multicolumn{8}{c}{测试8×8单元测试输入}\\
+            \midrule
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+            \bottomrule
+          \end{tabular}
+        \end{table}
 
         \begin{figure}[H]
           \centering
@@ -1220,19 +1226,20 @@
 \section{JPEG编解码系统FPGA实现以及验证}
   \subsection{验证系统模块划分}
 \newpage
-\begin{thebibliography}{20}
-  \bibitem{ref1}王成昊.基于FPGA的低复杂度JPEG解码系统设计及实现[D].四川师范大学,2024.DOI:10.27347/d.cnki.gssdu.2024.000798.
-  \bibitem{ref2}杜英杰.基于FPGA的JPEG图像压缩的自适应量化编码[D].西华大学,2023.DOI:10.27411/d.cnki.gscgc.2023.000416. 
-  \bibitem{ref3}赵恒阳,刘华.Baseline JPEG压缩器在Xilinx FPGA上的设计与实现[J].电子设计工程,2014,22(20):153-156.DOI:10.14022/j.cnki.dzsjgc.2014.20.044
-  \bibitem{ref4}季永国.基于FPGA硬件JPEG压缩器的无线胶囊内窥镜系统[D].上海交通大学,2015.
-  \bibitem{ref5}涂友钢.单兵夜视眼镜视频信号处理技术研究[D].南京理工大学,2019.DOI:10.27241/d.cnki.gnjgu.2019.001490.
-  \bibitem{ref6}董鑫怡.不同应用场景下图像压缩方法的FPGA实现[D].南京理工大学,2023.DOI:10.27241/d.cnki.gnjgu.2023.002037. 
-  \bibitem{ref7}郝亚喆.基于高性能JPEG2000编码器的图像处理系统设计与实现[D].天津大学,2022.DOI:10.27356/d.cnki.gtjdu.2022.000903
-  \bibitem{ref8}任静.图像压缩编解码的FPGA设计与实现[D].南京林业大学,2020.DOI:10.27242/d.cnki.gnjlu.2020.000238.
-  \bibitem{ref9}刘多强.高速图像压缩存储系统关键技术研究与实现[D].西南科技大学,2020.DOI:10.27415/d.cnki.gxngc.2020.001074.
-  \bibitem{ref10}Rodrigues T, Vestias M. Using dyanamic revonfiguration to reduce the area of a JPEG decoder on FPGA[C]/2015 Euromicro Conference on Digital System Design. IEEE, 2015: 65-71
-  \bibitem{ref11}Shan J, Wang D, Yang E. High performance JPEG decoder based on FPGA[C]/2011 Asia Pacific conference on Postgraduate Research in Microelectronics \& Electonice. IEEE, 2011:57-60
-\end{thebibliography}
 
+\bibliographystyle{plain}
+\bibliography{references}
+% \begin{thebibliography}{20}
+%   \bibitem{ref1}王成昊. 基于FPGA的低复杂度JPEG解码系统设计及实现[D].四川师范大学,2024.DOI:10.27347/d.cnki.gssdu.2024.000798.
+%   \bibitem{ref2}杜英杰. 基于FPGA的JPEG图像压缩的自适应量化编码[D].西华大学,2023.DOI:10.27411/d.cnki.gscgc.2023.000416. 
+%   \bibitem{ref3}赵恒阳, 刘华.Baseline JPEG压缩器在Xilinx FPGA上的设计与实现[J].电子设计工程,2014,22(20):153-156.DOI:10.14022/j.cnki.dzsjgc.2014.20.044
+%   \bibitem{ref4}季永国. 基于FPGA硬件JPEG压缩器的无线胶囊内窥镜系统[D].上海交通大学,2015.
+%   \bibitem{ref5}涂友钢. 单兵夜视眼镜视频信号处理技术研究[D].南京理工大学,2019.DOI:10.27241/d.cnki.gnjgu.2019.001490.
+%   \bibitem{ref6}董鑫怡. 不同应用场景下图像压缩方法的FPGA实现[D].南京理工大学,2023.DOI:10.27241/d.cnki.gnjgu.2023.002037. 
+%   \bibitem{ref7}郝亚喆. 基于高性能JPEG2000编码器的图像处理系统设计与实现[D].天津大学,2022.DOI:10.27356/d.cnki.gtjdu.2022.000903
+%   \bibitem{ref8}任静. 图像压缩编解码的FPGA设计与实现[D].南京林业大学,2020.DOI:10.27242/d.cnki.gnjlu.2020.000238.
+%   \bibitem{ref9}刘多强. 高速图像压缩存储系统关键技术研究与实现[D].西南科技大学,2020.DOI:10.27415/d.cnki.gxngc.2020.001074.
+%   \bibitem{ref10}Rodrigues T, Vestias M. Using dyanamic revonfiguration to reduce the area of a JPEG decoder on FPGA[C]/2015 Euromicro Conference on Digital System Design. IEEE, 2015: 65-71 
+%   \bibitem{ref11}Shan J, Wang D, Yang E. High performance JPEG decoder based on FPGA[C]/2011 Asia Pacific conference on Postgraduate Research in Microelectronics \& Electonice. IEEE, 2011:57-60 \end{thebibliography}
 \end{spacing}
 \end{document}

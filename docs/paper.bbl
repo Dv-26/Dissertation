@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{ref10}
+Tiago Rodrigues and M{\'a}rio V{\'e}stias.
+\newblock Using dynamic reconfiguration to reduce the area of a jpeg decoder on fpga.
+\newblock In {\em 2015 Euromicro Conference on Digital System Design}, pages 65--71. IEEE, 2015.
+
+\bibitem{ref11}
+Junming Shan, Duyao Wang, and Eryan Yang.
+\newblock High performance jpeg decoder based on fpga.
+\newblock In {\em 2011 Asia Pacific Conference on Postgraduate Research in Microelectronics \& Electronics}, pages 57--60. IEEE, 2011.
+
+\bibitem{ref2}
+杜英杰.
+\newblock 基于fpga的jpeg图像压缩的自适应量化编码.
+\newblock Master's thesis, 西华大学, 2023.
+
+\bibitem{ref1}
+赵恒阳 and 刘华.
+\newblock Baseline jpeg压缩器在xilinx fpga上的设计与实现.
+\newblock {\em 电子设计工程}, 22(20):153--156, 2014.
+
+\end{thebibliography}
