@@ -1,4 +1,6 @@
 `include "interface.sv"
+`include "entropyCoder.svh"
+
 module JpegCode #(
     parameter DATA_WIDTH = 10,
     parameter ROW = 3
@@ -6,7 +8,7 @@ module JpegCode #(
     input logic clk,
     input logic rst_n,
     input dctPort_t in[ROW],
-    output logic [3:0] zeroNub[ROW]
+    output [$bits(tempCode_t)-1:0] out[ROW]
 );
 
 dctPort_t color[ROW];
@@ -17,23 +19,20 @@ generate
   genvar i;
   for(i=0; i<ROW; i++) begin: colorChannel
     ramWr_if #(DATA_WIDTH, 64) zigzag2quantizer (clk);
-    dctPort_t quantizerOut;
-    logic zigzagDone;
-    Zigzag #(DATA_WIDTH) zigzag (rst_n, y[i], zigzag2quantizer, zigzagDone);
-    Quantizer #(DATA_WIDTH, i) quantizer (zigzag2quantizer, quantizerOut);
+    codePort_t quantizerOut;
+
+    Zigzag #(DATA_WIDTH) zigzag (
+      clk, rst_n,
+      y[i], 
+      quantizerOut
+    );
 
     codePort_t quantizer2code;
-    logic [DATA_WIDTH-2:0] vli;
-    logic isDC, valid;
-    logic [$clog2(DATA_WIDTH-1)-1:0] size;
     EntropyCoder #(DATA_WIDTH) coder (
       clk, rst_n,
-      quantizer2code,
-      size, vli, zeroNub[i], isDC, valid
+      quantizerOut,
+      out[i]
     );
-    assign quantizer2code.data =  quantizerOut.data;
-    assign quantizer2code.valid =  quantizerOut.valid;
-    assign quantizer2code.done =  zigzagDone;
   end
 endgenerate
 

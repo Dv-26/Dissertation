@@ -20,11 +20,11 @@ module code_tb;
   always #(CYCLE/2) clk = ~clk;
   always #(CYCLE/4) pclk = ~pclk;
 
-  logic [3:0] zeroNub[3];
+  logic [$bits(tempCode_t)-1:0] out[3];
   top #(WIDTH, HEIGHT) top_tb (
     clk, rst_n,
     pclk, vsync, href, data,
-    zeroNub
+    out
   );
   logic [15:0]array[8][8];
   int i, j;

@@ -1,4 +1,6 @@
 `include "interface.sv"
+`include "entropyCoder.svh"
+
 module top #(
     parameter WIDTH = 1280,
     parameter HEIGHT = 720
@@ -11,7 +13,7 @@ module top #(
         input logic clk, rst_n,
         input logic pclk, vsync, href,
         input logic [7:0] data,
-        output logic [3:0] zeroNub[3]
+        output [$bits(tempCode_t)-1:0] out[3]
     // `endif
 );
 
@@ -27,7 +29,7 @@ module top #(
     //         .GPIO_0_0_tri_io ({rst, pwdn})
     //     );
     // `else
-        JpegCode #(10, 3) coder (clk, rst_n, pingpong2Code, zeroNub);
+        JpegCode #(10, 3) coder (clk, rst_n, pingpong2Code, out);
     // `endif
 
     PingpongBuf #(WIDTH, HEIGHT, "RGB565") pingpongBuf (
