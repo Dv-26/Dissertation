@@ -4,7 +4,7 @@
 module code_tb;
    
   localparam CYCLE = 80;
-  localparam WIDTH = 24;
+  localparam WIDTH = 16;
   localparam HEIGHT = 16;
 
   localparam TIME_2 = 5 * 2 * CYCLE;

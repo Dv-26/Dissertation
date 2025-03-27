@@ -10,7 +10,7 @@ module PingpongBuf #(
   output dctPort_t out[3] 
 );
 
-  localparam BUF_ADDR_W = $clog2(WIDTH) + $clog2(HEIGHT);
+  localparam BUF_ADDR_W = $clog2(WIDTH) + $clog2(HEIGHT) - 1;
   localparam BUF_DEPTH = 2**(BUF_ADDR_W-1);
   typedef struct {
     logic value;
