@@ -10,8 +10,8 @@ module PingpongBuf #(
   output dctPort_t out[3] 
 );
 
-  localparam BUF_ADDR_W = $clog2(WIDTH) + 3;
-  localparam BUF_DEPTH = 2**BUF_ADDR_W;
+  localparam BUF_ADDR_W = $clog2(WIDTH) + $clog2(HEIGHT);
+  localparam BUF_DEPTH = 2**(BUF_ADDR_W-1);
   typedef struct {
     logic value;
     logic set;
@@ -31,14 +31,14 @@ module PingpongBuf #(
   logic switch;
   assign switch = hCnt == WIDTH-1 && (&vCnt[2:0]) && dvpOut.valid;
 
-  ramRd_if #(16, WIDTH) buf0Out (clk);
-  ramWr_if #(16, WIDTH) buf0In (pclk);
+  ramRd_if #(16, BUF_DEPTH) buf0Out (clk);
+  ramWr_if #(16, BUF_DEPTH) buf0In (pclk);
   Full_t buf0Full, buf1Full;
   logic buf0FullSet, buf1FullSet;
   CdcPulse buf0Set (rst_n, pclk, buf0FullSet, clk, buf0Full.set);
 
-  ramRd_if #(16, WIDTH) buf1Out (clk);
-  ramWr_if #(16, WIDTH) buf1In (pclk);
+  ramRd_if #(16, BUF_DEPTH) buf1Out (clk);
+  ramWr_if #(16, BUF_DEPTH) buf1In (pclk);
   CdcPulse buf1Set (rst_n, pclk, buf1FullSet, clk, buf1Full.set);
 
   always_ff @(posedge clk or negedge rst_n) begin

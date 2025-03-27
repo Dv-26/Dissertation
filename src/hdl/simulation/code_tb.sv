@@ -37,7 +37,7 @@ module code_tb;
     rst_n = 0;
     for(i=0; i<8; i++) begin
       for(j=0; j<8; j++) begin
-        array[j][i] = j * 10 + i;
+        array[i][j] = i * 10 + j;
       end
     end
     #(2*CYCLE);

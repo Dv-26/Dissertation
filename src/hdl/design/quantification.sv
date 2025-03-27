@@ -1,5 +1,5 @@
 `include "interface.sv"
-odule Quantizer #(
+module Quantizer #(
   parameter DATA_WIDTH = 10,
   parameter CHROMA = 1
 ) (
