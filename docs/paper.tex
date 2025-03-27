@@ -769,7 +769,7 @@
         \vspace{1em}
         脉动阵列（Systolic Array）是一种由众多简单的运算元件（Processing 
         Element，PE）按照一定的规则排列的硬件架构。它最早由H.T.
-        Kung在1982年提出。一个脉动阵列具备一下特征：
+        Kung在1982年提出\cite{kung1982systolic}。一个脉动阵列具备一下特征：
 
         (1)由单一或多种构造的PE按照规则排列；
 
@@ -828,8 +828,6 @@
     module}，它接收ov5460CMOS图像传感器的vga格式的视频信号。输出jpeg格式的
     压缩码流。视频信号依次经过数据预处理缓存模块、DCT模块、熵编码模块、JPE
     G文件格式生成模块。下面的小节详细介绍这4个模块。
-  \subsection{数据预处理模块}
-    \vspace{1em}
   \subsection{DCT模块}
     \vspace{1em}
     DCT模块接收数据预处理模块输出的，Y、Cr、Cb三个颜色通道的8*
@@ -846,7 +844,7 @@
     根据2D-
     DCT原公式(\ref{8*8 2D-DCT})，对单个8×8单元进行运算，需要进行4096次乘法和40
     96次加法加法运算。需要使用较多的大量的乘法器资源，而乘法器资源在fpga中比较
-    稀缺。为了降低计算的复杂度，本设计使用了DA算法，通过行列分解2D-DCT运算。
+    稀缺。为了降低计算的复杂度，本设计使用了DA算法\cite{chen1977fast}，通过行列分解2D-DCT运算。
       \subsubsection{DA算法}
         \vspace{1em}
         根据式(\ref{8*8 2D-DCT})的特征可以根据行和列分解成两次一维的DCT变换，
@@ -1047,67 +1045,6 @@
         送回到移位寄存器，同时输入到加法器输出和项；当Y的第2行（$Z_{10}$到$
         Z_{17}$）输入时，偶行置位为1将该行输入到8拍的移位寄存器上，同时移位
         寄存器输出上一步骤计算的差项。其他行之间的和差项运算同理。
-        \subsubsection{DCT模块功能仿真结果}
-        \vspace{1em}
-        本设计使用systemverilog进行RTL级描述。在EDA软件vivado进行综合。DCT
-        模块中运算DCT的模块RTL视图如图\ref{DCTSchematice}所示。其中in[0]，
-        out[0]、in[1]，out[1]、in[2]，out[2]表示三个颜色通道的输出输出。
-        \begin{figure}[H]
-          \centering
-          \includegraphics[scale=0.5]{./pictures/DCTSchematice.png}
-          \caption{DCT运算部分RTL视图}
-          \label{DCTSchematice}
-        \end{figure}
-      下面以一个8×8单元输入为激励进行仿真，仿真后的波形如图\ref{DCTSimulationWave}
-      其中灰色波形为Y通道，绿色波形为Cr通道，蓝色波形为Cb通道。由图可知从X到Z的
-      时滞为7个时钟周期，从Z到Y的时滞为56个时钟周期，所以整模块的时滞为63。由公式
-      （\ref{8*8 2D-DCT}）可知输出$Y(u,v)$的每个元素都需要$X(i,j)$64个元素进行计算，
-      所以当数据串行输入时，理论极限最小时延为63个时钟周期，本设计时沿达到理论极限。
-        \begin{figure}[H]
-          \centering
-          \includegraphics[scale=0.375]{./pictures/DCT模块仿真.png}
-          \caption{DCT模块仿真波形}
-          \label{DCTSimulationWave}
-        \end{figure}
-
-        下面验证计算结果的准确性，以如表（\ref{testMatrix}）矩阵作为输入。与使用python的numpy库编写
-        的DCT计算结果进行对比。
-        \begin{table}[H]
-          \caption{测试8×8单元测试输入}
-          \label{testMatrix}
-          \centering
-          \begin{tabular}{cccccccc}
-            \toprule
-            \multicolumn{8}{c}{测试8×8单元测试输入}\\
-            \midrule
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
-            \bottomrule
-          \end{tabular}
-        \end{table}
-
-        \begin{figure}[H]
-          \centering
-          \includegraphics[scale=0.8]{./pictures/python脚本运行结果.png}
-          \caption{python脚本运行结果}
-          \label{py result}
-        \end{figure}
-        \begin{figure}[H]
-          \centering
-          \includegraphics[scale=0.3725]{./pictures/DCTSimulationResult.png}
-          \caption{ DCT仿真结果波形}
-          \label{result simulation}
-        \end{figure}
-
-        图\ref{py result}为python脚本运行结果，图\ref{result simulation}为DCT模块计算结果的波形，
-        可以粗略地估计模块的运算结果和实际的运算结果存在$\stackrel{+}{-}5$的误差。这是由于对定
-        点数运算结果进行截位导致的。本模块使用10位数据进行运算因此误差的
     \subsection{Zigzag扫描模块}
       \vspace{1em}
       由于DCT模块输出的$y_{ij}$的顺序为从左到右，从上到下。所以要进行zigzag排序，
@@ -1177,15 +1114,7 @@
 
         该模块的valid输出最终接入RAM模块的读使能。如果在清理之后直接跳转到DONE状态，会
         导致RAM的读数据有2个时钟周期的中断。如果RAM一直保持写入，就会导致RAM的吞吐
-        率不一致，进而导致数据丢失。所以增加清零后SCAN状态的跳转路径。zigzag扫描器的仿
-        真波形如图\ref{scannerWave}所示。
-        \begin{figure}[H]
-          \centering
-          \includegraphics[scale=0.4]{./pictures/scannerWave.png}
-          \caption{Zigzag 仿真波形图}
-          \label{scannerWave}
-        \end{figure}
-
+        率不一致，进而导致数据丢失。所以增加清零后SCAN状态的跳转路径。
   \subsection{量化模块}
       由于DCT模块的有些输出为组合逻辑输出，如第64个像素点。此时信号的建立时间会比较长
       ，为了不继续增加组合逻辑关键路径，就先把数据存在Zigzag扫描模块中进行缓存，再通过
@@ -1215,6 +1144,12 @@
         \label{quantizer wave}
       \end{figure}
 
+  \subsection{数据解析模块}
+    \vspace{1em}
+    上一章讲解了如何使用硬件实现JPEG格式编码中的DCT。本设计使用CMOS图像传感器OV5640作
+    输出的视频信号为原始图像数据输入。而数据解析模块的功能负责解析OV5640输出的视频信
+    号，再将其进行缓存排序得到符合DCT模块8×8像素单元输入的信号。数据解析模块的结构如下
+    图\ref{data }
 
 
   \subsection{熵编码模块}
@@ -1223,23 +1158,79 @@
     \vspace{1em}
 
 \newpage
-\section{JPEG编解码系统FPGA实现以及验证}
+\section{JPEG编码系统各模块仿真结果}
+  \subsection{DCT模块功能仿真}
+    \vspace{1em}
+    本设计使用systemverilog进行RTL级描述。在EDA软件vivado进行综合。DCT
+    模块中运算DCT的模块RTL视图如图\ref{DCTSchematice}所示。其中in[0]，
+    out[0]、in[1]，out[1]、in[2]，out[2]表示三个颜色通道的输出输出。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.5]{./pictures/DCTSchematice.png}
+      \caption{DCT运算部分RTL视图}
+      \label{DCTSchematice}
+    \end{figure}
+    下面以一个8×8单元输入为激励进行仿真，仿真后的波形如图\ref{DCTSimulationWave}
+    其中灰色波形为Y通道，绿色波形为Cr通道，蓝色波形为Cb通道。由图可知从X到Z的
+    时滞为7个时钟周期，从Z到Y的时滞为56个时钟周期，所以整模块的时滞为63。由公式
+    （\ref{8*8 2D-DCT}）可知输出$Y(u,v)$的每个元素都需要$X(i,j)$64个元素进行计算，
+    所以当数据串行输入时，理论极限最小时延为63个时钟周期，本设计时沿达到理论极限。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.375]{./pictures/DCT模块仿真.png}
+        \caption{DCT模块仿真波形}
+        \label{DCTSimulationWave}
+      \end{figure}
+
+    下面验证计算结果的准确性，以如表（\ref{testMatrix}）矩阵作为输入。与使用python的numpy库编写
+    的DCT计算结果进行对比。
+    \begin{table}[H]
+      \caption{测试8×8单元测试输入}
+      \label{testMatrix}
+      \centering
+      \begin{tabular}{cccccccc}
+        \toprule
+        \multicolumn{8}{c}{测试8×8单元测试输入}\\
+        \midrule
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        0 & 10 & 20 & 30 & 40 & 50 & 60 & 70 \\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.8]{./pictures/python脚本运行结果.png}
+      \caption{python脚本运行结果}
+      \label{py result}
+    \end{figure}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.3725]{./pictures/DCTSimulationResult.png}
+      \caption{ DCT仿真结果波形}
+      \label{result simulation}
+    \end{figure}
+
+    图\ref{py result}为python脚本运行结果，图\ref{result simulation}为DCT模块计算结果的波形，
+    可以粗略地估计模块的运算结果和实际的运算结果存在$\stackrel{+}{-}5$的误差。这是由于对定
+    点数运算结果进行截位导致的。本模块使用10位数据进行运算因此误差的
   \subsection{验证系统模块划分}
+    zigzag扫描器的仿真波形如图\ref{scannerWave}所示。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/scannerWave.png}
+        \caption{Zigzag 仿真波形图}
+        \label{scannerWave}
+      \end{figure}
 \newpage
 
 \bibliographystyle{plain}
 \bibliography{references}
-% \begin{thebibliography}{20}
-%   \bibitem{ref1}王成昊. 基于FPGA的低复杂度JPEG解码系统设计及实现[D].四川师范大学,2024.DOI:10.27347/d.cnki.gssdu.2024.000798.
-%   \bibitem{ref2}杜英杰. 基于FPGA的JPEG图像压缩的自适应量化编码[D].西华大学,2023.DOI:10.27411/d.cnki.gscgc.2023.000416. 
-%   \bibitem{ref3}赵恒阳, 刘华.Baseline JPEG压缩器在Xilinx FPGA上的设计与实现[J].电子设计工程,2014,22(20):153-156.DOI:10.14022/j.cnki.dzsjgc.2014.20.044
-%   \bibitem{ref4}季永国. 基于FPGA硬件JPEG压缩器的无线胶囊内窥镜系统[D].上海交通大学,2015.
-%   \bibitem{ref5}涂友钢. 单兵夜视眼镜视频信号处理技术研究[D].南京理工大学,2019.DOI:10.27241/d.cnki.gnjgu.2019.001490.
-%   \bibitem{ref6}董鑫怡. 不同应用场景下图像压缩方法的FPGA实现[D].南京理工大学,2023.DOI:10.27241/d.cnki.gnjgu.2023.002037. 
-%   \bibitem{ref7}郝亚喆. 基于高性能JPEG2000编码器的图像处理系统设计与实现[D].天津大学,2022.DOI:10.27356/d.cnki.gtjdu.2022.000903
-%   \bibitem{ref8}任静. 图像压缩编解码的FPGA设计与实现[D].南京林业大学,2020.DOI:10.27242/d.cnki.gnjlu.2020.000238.
-%   \bibitem{ref9}刘多强. 高速图像压缩存储系统关键技术研究与实现[D].西南科技大学,2020.DOI:10.27415/d.cnki.gxngc.2020.001074.
-%   \bibitem{ref10}Rodrigues T, Vestias M. Using dyanamic revonfiguration to reduce the area of a JPEG decoder on FPGA[C]/2015 Euromicro Conference on Digital System Design. IEEE, 2015: 65-71 
-%   \bibitem{ref11}Shan J, Wang D, Yang E. High performance JPEG decoder based on FPGA[C]/2011 Asia Pacific conference on Postgraduate Research in Microelectronics \& Electonice. IEEE, 2011:57-60 \end{thebibliography}
 \end{spacing}
 \end{document}

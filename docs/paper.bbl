@@ -1,5 +1,15 @@
 \begin{thebibliography}{1}
 
+\bibitem{chen1977fast}
+Wen-Hsiung Chen, CH~Smith, and Sam Fralick.
+\newblock A fast computational algorithm for the discrete cosine transform.
+\newblock {\em IEEE Transactions on communications}, 25(9):1004--1009, 1977.
+
+\bibitem{kung1982systolic}
+Hsiang-Tsung Kung.
+\newblock {\em Why systolic architecture?}
+\newblock Design Research Center, Carnegie-Mellon University, 1982.
+
 \bibitem{ref10}
 Tiago Rodrigues and M{\'a}rio V{\'e}stias.
 \newblock Using dynamic reconfiguration to reduce the area of a jpeg decoder on fpga.

@@ -184,6 +184,21 @@ INPUT ./pictures/和差项生成.png
 INPUT ./pictures/和差项生成步骤.png
 INPUT ./pictures/和差项生成步骤.png
 INPUT ./pictures/和差项生成步骤.png
+INPUT ./pictures/zigzagModule.png
+INPUT ./pictures/zigzagModule.png
+INPUT ./pictures/zigzagModule.png
+INPUT ./pictures/scanner.png
+INPUT ./pictures/scanner.png
+INPUT ./pictures/scanner.png
+INPUT ./pictures/zigzag ASM.png
+INPUT ./pictures/zigzag ASM.png
+INPUT ./pictures/zigzag ASM.png
+INPUT ./pictures/quantizer.png
+INPUT ./pictures/quantizer.png
+INPUT ./pictures/quantizer.png
+INPUT ./pictures/quantizerSim.png
+INPUT ./pictures/quantizerSim.png
+INPUT ./pictures/quantizerSim.png
 INPUT ./pictures/DCTSchematice.png
 INPUT ./pictures/DCTSchematice.png
 INPUT ./pictures/DCTSchematice.png
@@ -196,24 +211,9 @@ INPUT ./pictures/python脚本运行结果.png
 INPUT ./pictures/DCTSimulationResult.png
 INPUT ./pictures/DCTSimulationResult.png
 INPUT ./pictures/DCTSimulationResult.png
-INPUT ./pictures/zigzagModule.png
-INPUT ./pictures/zigzagModule.png
-INPUT ./pictures/zigzagModule.png
-INPUT ./pictures/scanner.png
-INPUT ./pictures/scanner.png
-INPUT ./pictures/scanner.png
-INPUT ./pictures/zigzag ASM.png
-INPUT ./pictures/zigzag ASM.png
-INPUT ./pictures/zigzag ASM.png
 INPUT ./pictures/scannerWave.png
 INPUT ./pictures/scannerWave.png
 INPUT ./pictures/scannerWave.png
-INPUT ./pictures/quantizer.png
-INPUT ./pictures/quantizer.png
-INPUT ./pictures/quantizer.png
-INPUT ./pictures/quantizerSim.png
-INPUT ./pictures/quantizerSim.png
-INPUT ./pictures/quantizerSim.png
 INPUT ./paper.bbl
 INPUT ./paper.bbl
 INPUT paper.bbl
