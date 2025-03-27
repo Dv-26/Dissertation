@@ -25,14 +25,16 @@
 \contentsline {subsection}{\numberline {3.2}编码模块划分}{17}{}%
 \contentsline {subsection}{\numberline {3.3}DCT模块}{17}{}%
 \contentsline {subsubsection}{\numberline {3.3.1}DA算法}{18}{}%
-\contentsline {subsubsection}{\numberline {3.3.2}DA算法的硬件实现}{19}{}%
-\contentsline {subsection}{\numberline {3.4}Zigzag扫描模块}{22}{}%
-\contentsline {subsubsection}{\numberline {3.4.1}zigzao扫描器}{23}{}%
-\contentsline {subsection}{\numberline {3.5}量化模块}{24}{}%
-\contentsline {subsection}{\numberline {3.6}数据解析模块}{25}{}%
-\contentsline {subsection}{\numberline {3.7}熵编码模块}{25}{}%
-\contentsline {subsection}{\numberline {3.8}JPEG文件格式生成模块}{25}{}%
-\contentsline {section}{\numberline {4}JPEG编码系统各模块仿真结果}{26}{}%
-\contentsline {subsection}{\numberline {4.1}DCT模块功能仿真}{26}{}%
-\contentsline {subsection}{\numberline {4.2}验证系统模块划分}{27}{}%
+\contentsline {subsubsection}{\numberline {3.3.2}DA算法的硬件实现}{20}{}%
+\contentsline {subsection}{\numberline {3.4}Zigzag扫描模块}{23}{}%
+\contentsline {subsubsection}{\numberline {3.4.1}zigzao扫描器}{24}{}%
+\contentsline {subsection}{\numberline {3.5}量化模块}{25}{}%
+\contentsline {subsection}{\numberline {3.6}数据解析模块}{26}{}%
+\contentsline {subsubsection}{\numberline {3.6.1}DVP解析模块}{27}{}%
+\contentsline {subsubsection}{\numberline {3.6.2}写状态机以及读状态机}{28}{}%
+\contentsline {subsection}{\numberline {3.7}熵编码模块}{29}{}%
+\contentsline {subsection}{\numberline {3.8}JPEG文件格式生成模块}{29}{}%
+\contentsline {section}{\numberline {4}JPEG编码系统各模块仿真结果}{30}{}%
+\contentsline {subsection}{\numberline {4.1}DCT模块功能仿真}{30}{}%
+\contentsline {subsection}{\numberline {4.2}zigzag扫描及量化模块}{31}{}%
 \contentsfinish 

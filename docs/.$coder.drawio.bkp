@@ -173,7 +173,7 @@
         </mxCell>
         <mxCell id="BmJWY2AKg1cVZ6z4mbPH-10" value="压缩码流" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontFamily=宋体;fontSize=21;" vertex="1" connectable="0" parent="znpCTFQyN_41QpBxiybe-41">
           <mxGeometry x="0.0241" y="3" relative="1" as="geometry">
-            <mxPoint x="2" y="-15" as="offset" />
+            <mxPoint x="-4" y="-16" as="offset" />
           </mxGeometry>
         </mxCell>
       </root>

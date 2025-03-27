@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  27 MAR 2025 13:02
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  28 MAR 2025 00:21
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -683,8 +683,15 @@ File: ./pictures/2Darray.png Graphic file (type bmp)
 [15]
 File: ./pictures/乒乓操作.png Graphic file (type bmp)
 <./pictures/乒乓操作.png>
-File: ./pictures/编码模块.png Graphic file (type bmp)
-<./pictures/编码模块.png>
+File: ./pictures/CoderTop.png Graphic file (type bmp)
+<./pictures/CoderTop.png>
+File: ./pictures/TopRTL.png Graphic file (type bmp)
+<./pictures/TopRTL.png>
+
+Overfull \hbox (15.2711pt too wide) in paragraph at lines 834--835
+ [][] 
+ []
+
 
 
 [16]
@@ -698,79 +705,98 @@ File: ./pictures/dct.png Graphic file (type bmp)
 File: ./pictures/DCT脉动阵列.png Graphic file (type bmp)
 <./pictures/DCT脉动阵列.png>
 
-Overfull \hbox (12.92992pt too wide) in paragraph at lines 977--978
+Overfull \hbox (12.92992pt too wide) in paragraph at lines 995--996
  [][] 
  []
 
-File: ./pictures/x2zPE.png Graphic file (type bmp)
-<./pictures/x2zPE.png>
 
 
 [19]
+File: ./pictures/x2zPE.png Graphic file (type bmp)
+<./pictures/x2zPE.png>
 File: ./pictures/z2yPE.png Graphic file (type bmp)
 <./pictures/z2yPE.png>
-File: ./pictures/PE时序.png Graphic file (type bmp)
-<./pictures/PE时序.png>
-
-Overfull \hbox (9.0865pt too wide) in paragraph at lines 1008--1009
- [][] 
- []
-
 
 
 [20]
+File: ./pictures/PE时序.png Graphic file (type bmp)
+<./pictures/PE时序.png>
+
+Overfull \hbox (9.0865pt too wide) in paragraph at lines 1026--1027
+ [][] 
+ []
+
 File: ./pictures/z输出时序.png Graphic file (type bmp)
 <./pictures/z输出时序.png>
+
+
+[21]
 File: ./pictures/和差项生成.png Graphic file (type bmp)
 <./pictures/和差项生成.png>
 File: ./pictures/和差项生成步骤.png Graphic file (type bmp)
 <./pictures/和差项生成步骤.png>
 
 
-[21]
+[22]
 File: ./pictures/zigzagModule.png Graphic file (type bmp)
 <./pictures/zigzagModule.png>
-
-
-[22]
 File: ./pictures/scanner.png Graphic file (type bmp)
 <./pictures/scanner.png>
+
+
+[23]
 File: ./pictures/zigzag ASM.png Graphic file (type bmp)
 <./pictures/zigzag ASM.png>
 
 
-[23]
-
 [24]
-File: ./pictures/quantizer.png Graphic file (type bmp)
-<./pictures/quantizer.png>
-File: ./pictures/quantizerSim.png Graphic file (type bmp)
-<./pictures/quantizerSim.png>
-
-
-LaTeX Warning: Reference `data ' on page 25 undefined on input line 1152.
-
-
 
 [25]
+File: ./pictures/quantizer.png Graphic file (type bmp)
+<./pictures/quantizer.png>
+File: ./pictures/数据解析模块.png Graphic file (type bmp)
+<./pictures/数据解析模块.png>
+File: ./pictures/dvp时序.png Graphic file (type bmp)
+<./pictures/dvp时序.png>
+
+
+[26]
+File: ./pictures/wrASM.png Graphic file (type bmp)
+<./pictures/wrASM.png>
+
+
+[27]
+File: ./pictures/rdASM.png Graphic file (type bmp)
+<./pictures/rdASM.png>
+File: ./pictures/脉冲同步器.png Graphic file (type bmp)
+<./pictures/脉冲同步器.png>
+
+
+[28]
+
+[29]
 File: ./pictures/DCTSchematice.png Graphic file (type bmp)
 <./pictures/DCTSchematice.png>
 File: ./pictures/DCT模块仿真.png Graphic file (type bmp)
 <./pictures/DCT模块仿真.png>
 
 
-[26]
+[30]
 File: ./pictures/python脚本运行结果.png Graphic file (type bmp)
 <./pictures/python脚本运行结果.png>
 File: ./pictures/DCTSimulationResult.png Graphic file (type bmp)
 <./pictures/DCTSimulationResult.png>
 File: ./pictures/scannerWave.png Graphic file (type bmp)
 <./pictures/scannerWave.png>
+File: ./pictures/quantizerSim.png Graphic file (type bmp)
+<./pictures/quantizerSim.png>
 
 
-[27] (./paper.bbl)
+[31]
 
-[28] (./paper.aux)
+[32] (./paper.bbl)
+
+[33] (./paper.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
@@ -781,19 +807,16 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.41063pt have occurred.
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10629 strings out of 475837
- 281856 string characters out of 5775514
- 678432 words of memory out of 5000000
- 33352 multiletter control sequences out of 15000+600000
+ 10698 strings out of 475837
+ 283995 string characters out of 5775514
+ 684634 words of memory out of 5000000
+ 33415 multiletter control sequences out of 15000+600000
  566593 words of font info for 127 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 93i,13n,112p,855b,559s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,13n,112p,855b,593s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.xdv (33 pages, 438308 bytes).
+Output written on paper.xdv (38 pages, 483076 bytes).
