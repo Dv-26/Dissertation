@@ -1,18 +1,18 @@
 # Fdb version 4
-["bibtex paper"] 1743089502.04708 "paper.aux" "paper.bbl" "paper" 1743092479.05798 0
+["bibtex paper"] 1743101193.44497 "paper.aux" "paper.bbl" "paper" 1743101198.91627 0
   "./references.bib" 1743045723.39318 2782 73ea66fdcf6d20cb4d842cddc437fe6f ""
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1742685315 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "paper.aux" 1743092475.28911 13000 6f8bfa488c0680f30187fb9e7518b622 "xelatex"
+  "paper.aux" 1743101194.9864 13935 6b903ba5634d64bca7e35e48527dfb83 "xelatex"
   (generated)
   "paper.bbl"
   "paper.blg"
   (rewritten before read)
-["xdvipdfmx"] 1743092475.62098 "paper.xdv" "paper.pdf" "paper" 1743092479.06135 0
-  "paper.xdv" 1743092475.29111 483076 12f0ae37b2d965811ef40c96f7d1df6a "xelatex"
+["xdvipdfmx"] 1743101195.31104 "paper.xdv" "paper.pdf" "paper" 1743101198.92366 0
+  "paper.xdv" 1743101194.98705 499444 670a84bfe397869d585de5e7751925aa "xelatex"
   (generated)
   "paper.pdf"
   (rewritten before read)
-["xelatex"] 1743092473.76925 "paper.tex" "paper.xdv" "paper" 1743092479.05812 0
+["xelatex"] 1743101193.54215 "paper.tex" "paper.xdv" "paper" 1743101198.91653 0
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1742685315 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1742685315 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1742685315 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -82,16 +82,17 @@
   "/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJKfntef.sty" 1742685315 39577 b470f8a1dbecc9c45c9bf05ca7db9188 ""
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1742685315 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/web2c/xetex/xelatex.fmt" 1743045153 4492516 352b6b3d876c35bb35467c6be33687d7 ""
-  "paper.aux" 1743092475.28911 13000 6f8bfa488c0680f30187fb9e7518b622 "xelatex"
-  "paper.bbl" 1743089502.14104 1226 9625b063a4b23450371e95f183cab88d "bibtex paper"
-  "paper.tex" 1743092478.46811 72842 880d8a03e8cf204f4ad3282444f77783 ""
-  "paper.toc" 1743092475.29111 2854 ebb5356a675109788c636e655e639ead "xelatex"
+  "paper.aux" 1743101194.9864 13935 6b903ba5634d64bca7e35e48527dfb83 "xelatex"
+  "paper.bbl" 1743101193.53605 1226 9625b063a4b23450371e95f183cab88d "bibtex paper"
+  "paper.tex" 1743101190.16905 74611 63629af28b91f36a3f16f974c794fccd ""
+  "paper.toc" 1743101194.98705 3107 719dafd333039f0f24198a22a0ce0adf "xelatex"
   "pictures/2Darray.png" 1741951104.872 61147 6a737bbfef42dfabba93fdc670b849dd ""
   "pictures/CoderTop.png" 1743058409.71278 68134 222f07c1891b66ef3c4ca04181c577a2 ""
   "pictures/DCTSchematice.png" 1741951104.873 54439 55caccfa7cf1d6bb57ec0d165681a59d ""
   "pictures/DCTSimulationResult.png" 1741951104.874 5133 64b895dafd3b18d98d1c3e0a2eef9768 ""
   "pictures/DCT模块仿真.png" 1741951104.877 74641 1f0c10a1d00bada46189194398db8e9c ""
   "pictures/DCT脉动阵列.png" 1741951104.878 34997 48249d8fc8e330e7949eba193fb04d06 ""
+  "pictures/DVP_simwave.png" 1743098856.92399 19080 a44a926e054e54d4975704f770d113bf ""
   "pictures/PE时序.png" 1741951104.879 97969 ca741f32eeaffbc78065143db1d8c4b4 ""
   "pictures/TopRTL.png" 1743055394.14968 64799 5bd0035e740364664e3d6e3052822470 ""
   "pictures/dct.png" 1741951104.886 50962 38de9675301d72e426ac9de9113a3689 ""
@@ -101,9 +102,11 @@
   "pictures/quantizer.png" 1741951104.888 28364 30866bc6339a83e232950a5b3a27b742 ""
   "pictures/quantizerSim.png" 1743055394.15068 16875 158ca90f653b13ee29ae53cc0b17da08 ""
   "pictures/rdASM.png" 1743092473.27611 792891 6f17fc2621fd8d7ffd3dfcd80f30fbcb ""
+  "pictures/rdFSMSim.png" 1743098856.92499 32860 a52bdace51feedd1278872243bd44b07 ""
   "pictures/scanner.png" 1741951104.89 62678 eb24c4bbbf03fa5529cb8ebaf57710e2 ""
   "pictures/scannerWave.png" 1741951104.89 22930 8453094659a3a7bc2677725684fa7b93 ""
   "pictures/wrASM.png" 1743078885.13509 755718 ab4a1714942f7dd22b0e238892e0ef69 ""
+  "pictures/wrFSMSim.png" 1743098856.92499 27400 24661d156ab1fd089e4ae0fab6c8902a ""
   "pictures/x2zPE.png" 1741951104.894 996083 cec935de284a6b92c2a21164b0964690 ""
   "pictures/z2yPE.png" 1741951104.898 996824 d9549915e0c2b2a9e554e0bc51615300 ""
   "pictures/zigzag ASM.png" 1741951104.903 1114042 d13c2c2b202330ddd8f4d79382ed5b7d ""

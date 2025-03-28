@@ -846,6 +846,116 @@
     zigzag扫描以及量化，熵编码模块对其进行编码压缩，JPEG数据生成模块对多个颜色
     通道的压缩模块进行拼接并且添加JPEG文件格式的关键帧；下面的小节详细介绍这4
     个模块。
+  \subsection{数据解析模块}
+    \vspace{1em}
+    上一章讲解了如何使用硬件实现JPEG格式编码中的DCT。本设计使用CMOS图像传感器OV5640作
+    输出的视频信号为原始图像数据输入。而数据解析模块的功能负责解析OV5640输出的视频信
+    号，再将其进行缓存排序得到符合DCT模块8×8像素单元输入的信号。数据解析模块的结构如
+    图\ref{data parser}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.35]{./pictures/数据解析模块.png}
+      \caption{数据解析模块结构图}
+      \label{data parser}
+    \end{figure}
+
+    由于DVP像素点的数据是以水平扫描的方式顺序进行输出的。所以要以8×8单元的顺序进行输
+    出就要先缓存8行数据。再进行读取输出，本设计采用乒乓操作的方式对数据进行缓存输出，
+    确保输出数据和输入数据的吞吐量能保持一致。写缓存部分的电路和读缓存部分的电路工作
+    在不同的时钟域下。写缓存部分的电路使用ov5640的pclk作为时钟输入。读缓存部分的时钟
+    采用FPGA内部PLL生成的时钟信号。由于ov5640输出的单个像素点的数据是以多个时钟周期
+    8位串行输入的。所以内部时钟域可以低于pclk的频率。
+    \subsubsection{DVP解析模块}
+      \vspace{1em}
+      DVP解析模块负责将OV5640输出的视频信号进行解析，以单个像素点的RGB值为单位进行输
+      出。DVP接口的时序如图\ref{dvp}所示,解析模块负责将OV5640输出的视频信号进行解析
+      DVP解析模块各个输入输出信号如表\ref{dvp io table}所示。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/dvp时序.png}
+        \caption{dvp接口时序}
+        \label{dvp}
+      \end{figure}
+
+      \begin{table}[H]
+        \caption{}
+        \label{dvp io table}
+        \centering
+        \begin{tabular}{ccc}
+          \toprule
+          信号名称 & 方向 & 功能\\
+          \midrule
+          dvpPclk & 输入 & 外部时钟信号\\
+          dvpVsync & 输入 & 场同步信号\\
+          dvpHref & 输入 & 行有效信号\\
+          dvpData & 输入 & 颜色数据输入信号\\
+          data & 输出 & 输出颜色数据\\
+          valid & 输出 & 输出数据有效信号\\
+          hCnt & 输出 & 行计数值\\
+          vCnt & 输出 & 列计数值\\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+      DVP接口信号的时序与VGA接口信号的时序类似。当场同步信号有效拉高一段时间
+      时间表示新的视频帧即将传输，HSYNC拉低一段时间表示新的一行数据即将传输，
+      在时钟信号pclk上升边沿时HREF有效，表示此时像素数据有效。由于数据输入只
+      有8位，单个像素点使用RGB565的格式的数据，所以会依次传输单个像素点数据的
+      高位以及低位。
+
+      由于本设计所采用的ov5640模块不提供HSYNC信号输出，所以只采用HREF信号加
+      行计数器作为定位每行信号的判断依据。该模块采用行计数器和列计数器判断当
+      前所在的像素位置。当捕捉到场同步信号有效时，对两个计数器进行清零。之后
+      在奇数次次HREF信号有效时，缓存数据高位。在偶数次HREF信号有效时，将输入
+      的低位和缓存的高位进行拼接输出，同时输出一个valid一个时钟周期信号有效
+      以及行计数器自增1。依次类推，当行计数器的值等于图像的宽度时，对其进行
+      清零同时自增列计数器。
+      
+      对行计数器和场计数器的计数值进行输出，作为后续缓存的写地址输入。数据
+      有效输出valid作为后续缓存RAM的写使能。
+
+      \subsubsection{写状态机以及读状态机}
+      写状态和读状态机分别控制写缓存和读缓存从而进行乒乓操作。它们都拥有BUF0
+      和BUF1两个状态分别代表对当前对应的BUF进行读写操作。
+      写状态机的ASM图如图\ref{wrASM}所示。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.45]{./pictures/wrASM.png}
+        \caption{写入状态机ASM图}
+        \label{wrASM}
+      \end{figure}
+      当行计数和列计数的值满足8行时，switch信号有效。同时对于BUF置位满信号。
+      接着跳转到另一个BUF所对应的状态。
+
+      读出状态机的ASM图如图\ref{rdASM}所示。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.45]{./pictures/rdASM.png}
+        \caption{读出状态机ASM图}
+        \label{rdASM}
+      \end{figure}
+      在RD\_IDLE状态下检查2个BUF的full标志位,如果对应的标志位有效则跳转到对应
+      BUF的状态,在RD\_BUF1满信号的优先级比RD\_BUF0的满信号高。同时启动读地址
+      生成器的start信号，在对应的RD\_BUF检测地址生成器完成的done信号。当done
+      有效时就跳转回RD\_IDLE状态，同时使能对应BUF满标志位的置零信号，将其置0。
+
+      由于写状态机和读状态机都工作在不同的时钟域下，所以满标志位JK寄存器的置1
+      信号需要通过脉冲同步器进行跨时域传输。脉冲同步器的内部结构如图
+      \ref{pulse synchronizer}所示。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.45]{./pictures/脉冲同步器.png}
+        \caption{脉冲同步器}
+        \label{pulse synchronizer}
+      \end{figure}
+      脉冲同步器将一个时钟域发出的窄脉冲信号传输到另一个时钟域，同时保证在另一
+      个时钟域。在空闲状态下所有D触发器的输出都为0。脉冲输入信号src\_sig拉高时，
+      由于mux的选择信号ack\_from\_dst初态为0。所以此时构成一个正反馈使src\_sig\_d
+      保持为1。进而使src\_sig\_d的1能同步目的时钟域src\_sig\_sync\_to\_dst信号，
+      ，再通过ack\_from\_dst反馈回ack\_from\_dst构成负反馈，使src\_sig\_d保持回
+      0。当高电平传输到src\_sig\_sync\_to\_dst时，通过延迟一拍取非再与次态相与捕捉
+      其上升沿，得到目的时钟域的窄脉冲信号。在单bit信号跨时钟域传输时为了防止出现
+      亚稳态，需要同dst\_sig\_sync以及ack\_from\_dst一样延迟两拍进行传输。
+
   \subsection{DCT模块}
     \vspace{1em}
     DCT模块接收数据预处理模块输出的，Y、Cr、Cb三个颜色通道的8*
@@ -1155,116 +1265,6 @@
         \label{quantizer}
       \end{figure}
 
-  \subsection{数据解析模块}
-    \vspace{1em}
-    上一章讲解了如何使用硬件实现JPEG格式编码中的DCT。本设计使用CMOS图像传感器OV5640作
-    输出的视频信号为原始图像数据输入。而数据解析模块的功能负责解析OV5640输出的视频信
-    号，再将其进行缓存排序得到符合DCT模块8×8像素单元输入的信号。数据解析模块的结构如
-    图\ref{data parser}
-    \begin{figure}[H]
-      \centering
-      \includegraphics[scale=0.35]{./pictures/数据解析模块.png}
-      \caption{数据解析模块结构图}
-      \label{data parser}
-    \end{figure}
-
-    由于DVP像素点的数据是以水平扫描的方式顺序进行输出的。所以要以8×8单元的顺序进行输
-    出就要先缓存8行数据。再进行读取输出，本设计采用乒乓操作的方式对数据进行缓存输出，
-    确保输出数据和输入数据的吞吐量能保持一致。写缓存部分的电路和读缓存部分的电路工作
-    在不同的时钟域下。写缓存部分的电路使用ov5640的pclk作为时钟输入。读缓存部分的时钟
-    采用FPGA内部PLL生成的时钟信号。由于ov5640输出的单个像素点的数据是以多个时钟周期
-    8位串行输入的。所以内部时钟域可以低于pclk的频率。
-    \subsubsection{DVP解析模块}
-      \vspace{1em}
-      DVP解析模块负责将OV5640输出的视频信号进行解析，以单个像素点的RGB值为单位进行输
-      出。DVP接口的时序如图\ref{dvp}所示,解析模块负责将OV5640输出的视频信号进行解析
-      DVP解析模块各个输入输出信号如表\ref{dvp io table}所示。
-      \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.4]{./pictures/dvp时序.png}
-        \caption{dvp接口时序}
-        \label{dvp}
-      \end{figure}
-
-      \begin{table}[H]
-        \caption{}
-        \label{dvp io table}
-        \centering
-        \begin{tabular}{ccc}
-          \toprule
-          信号名称 & 方向 & 功能\\
-          \midrule
-          dvpPclk & 输入 & 外部时钟信号\\
-          dvpVsync & 输入 & 场同步信号\\
-          dvpHref & 输入 & 行有效信号\\
-          dvpData & 输入 & 颜色数据输入信号\\
-          data & 输出 & 输出颜色数据\\
-          valid & 输出 & 输出数据有效信号\\
-          hCnt & 输出 & 行计数值\\
-          vCnt & 输出 & 列计数值\\
-          \bottomrule
-        \end{tabular}
-      \end{table}
-      DVP接口信号的时序与VGA接口信号的时序类似。当场同步信号有效拉高一段时间
-      时间表示新的视频帧即将传输，HSYNC拉低一段时间表示新的一行数据即将传输，
-      在时钟信号pclk上升边沿时HREF有效，表示此时像素数据有效。由于数据输入只
-      有8位，单个像素点使用RGB565的格式的数据，所以会依次传输单个像素点数据的
-      高位以及低位。
-
-      由于本设计所采用的ov5640模块不提供HSYNC信号输出，所以只采用HREF信号加
-      行计数器作为定位每行信号的判断依据。该模块采用行计数器和列计数器判断当
-      前所在的像素位置。当捕捉到场同步信号有效时，对两个计数器进行清零。之后
-      在奇数次次HREF信号有效时，缓存数据高位。在偶数次HREF信号有效时，将输入
-      的低位和缓存的高位进行拼接输出，同时输出一个valid一个时钟周期信号有效
-      以及行计数器自增1。依次类推，当行计数器的值等于图像的宽度时，对其进行
-      清零同时自增列计数器。
-      
-      对行计数器和场计数器的计数值进行输出，作为后续缓存的写地址输入。数据
-      有效输出valid作为后续缓存RAM的写使能。
-
-      \subsubsection{写状态机以及读状态机}
-      写状态和读状态机分别控制写缓存和读缓存从而进行乒乓操作。它们都拥有BUF0
-      和BUF1两个状态分别代表对当前对应的BUF进行读写操作。
-      写状态机的ASM图如图\ref{wrASM}所示。
-      \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.45]{./pictures/wrASM.png}
-        \caption{写入状态机ASM图}
-        \label{wrASM}
-      \end{figure}
-      当行计数和列计数的值满足8行时，switch信号有效。同时对于BUF置位满信号。
-      接着跳转到另一个BUF所对应的状态。
-
-      读出状态机的ASM图如图\ref{rdASM}所示。
-      \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.45]{./pictures/rdASM.png}
-        \caption{读出状态机ASM图}
-        \label{rdASM}
-      \end{figure}
-      在RD\_IDLE状态下检查2个BUF的full标志位,如果对应的标志位有效则跳转到对应
-      BUF的状态,在RD\_BUF1满信号的优先级比RD\_BUF0的满信号高。同时启动读地址
-      生成器的start信号，在对应的RD\_BUF检测地址生成器完成的done信号。当done
-      有效时就跳转回RD\_IDLE状态，同时使能对应BUF满标志位的置零信号，将其置0。
-
-      由于写状态机和读状态机都工作在不同的时钟域下，所以满标志位JK寄存器的置1
-      信号需要通过脉冲同步器进行跨时域传输。脉冲同步器的内部结构如图
-      \ref{pulse synchronizer}所示。
-      \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.45]{./pictures/脉冲同步器.png}
-        \caption{脉冲同步器}
-        \label{pulse synchronizer}
-      \end{figure}
-      脉冲同步器将一个时钟域发出的窄脉冲信号传输到另一个时钟域，同时保证在另一
-      个时钟域。在空闲状态下所有D触发器的输出都为0。脉冲输入信号src\_sig拉高时，
-      由于mux的选择信号ack\_from\_dst初态为0。所以此时构成一个正反馈使src\_sig\_d
-      保持为1。进而使src\_sig\_d的1能同步目的时钟域src\_sig\_sync\_to\_dst信号，
-      ，再通过ack\_from\_dst反馈回ack\_from\_dst构成负反馈，使src\_sig\_d保持回
-      0。当高电平传输到src\_sig\_sync\_to\_dst时，通过延迟一拍取非再与次态相与捕捉
-      其上升沿，得到目的时钟域的窄脉冲信号。在单bit信号跨时钟域传输时为了防止出现
-      亚稳态，需要同dst\_sig\_sync以及ack\_from\_dst一样延迟两拍进行传输。
-
 
   \subsection{熵编码模块}
     \vspace{1em}
@@ -1273,10 +1273,48 @@
 
 \newpage
 \section{JPEG编码系统各模块仿真结果}
+  \vspace{1em}
+  本设计使用systemverilog进行RTL级描述。在EDA软件vivado进行综合。
+  \subsection{数据解析模块功能仿真}
+    \vspace{1em}
+    \subsubsection{DVP解析模块功能仿真}
+      \vspace{1em}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.25]{./pictures/DVP_simwave.png}
+        \caption{DVP解析模块仿真波形}
+        \label{DVPSimWave}
+      \end{figure}
+      DVP解析模块的仿真波形如图\ref{DVPSimWave}所示， 其中橙色信号为DVP
+      接口输入，可以通过数据输出data信号每隔两个时钟周期对数据输入进行
+      拼接从而输出，同时vali信号有效。
+    \subsubsection{读写状态机功能仿真}
+      \vspace{1em}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.25]{./pictures/wrFSMSim.png}
+        \caption{写状态机仿真波形}
+        \label{WRFSMSimWave}
+      \end{figure}
+      写状态机的仿真波形如图\ref{WRFSMSimWave}所示，可以看出在WR\_BUF0
+      状态下对BUF0的写使能信号有效，对BUF0进行写入。switch信号有效后切
+      换到WR\_BUF1状态，同时输出窄脉冲信号buf0FullSet。BUF1跳转到BUF0
+      同理。
+      
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.25]{./pictures/rdFSMSim.png}
+        \caption{读状态机仿真波形}
+        \label{RdFSMSimWave}
+      \end{figure}
+      读状态机的仿真波形如图\ref{WRFSMSimWave}所示，可以看到在RD\_IDLE模式
+      下BUF0的满信号有效时，跳转到RD\_BUF0状态并输出start信号有效，对BUF0
+      进行读取。单读取完毕输出done信号有效是回到RD\_IDLE状态并将BUF0的满信
+      号置0。等待buf1写完毕满信号置1跳转到RD\_BUF1状态，在RD\_BUF1状态下与
+      RD\_BUF0状态同理。
   \subsection{DCT模块功能仿真}
     \vspace{1em}
-    本设计使用systemverilog进行RTL级描述。在EDA软件vivado进行综合。DCT
-    模块中运算DCT的模块RTL视图如图\ref{DCTSchematice}所示。其中in[0]，
+    DCT 模块中运算DCT的模块RTL视图如图\ref{DCTSchematice}所示。其中in[0]，
     out[0]、in[1]，out[1]、in[2]，out[2]表示三个颜色通道的输出输出。
     \begin{figure}[H]
       \centering
