@@ -6,8 +6,9 @@ module EntropyCoder #(
 ) (
   input clk, rst_n,
   input codePort_t in,
-  output logic [$bits(tempCode_t)-1:0] out
+  output logic [$bits(huffman_pkg::tempCode_t)-1:0] out
 );
+  import huffman_pkg::*;
   tempCode_t temp2EOBgen, EOBgen2temp;
   tempCoder #(DATA_WIDTH) temp (clk, rst_n, in, temp2EOBgen);
   EOBgen #(DATA_WIDTH) EOBgenator (clk, rst_n, temp2EOBgen, EOBgen2temp);
@@ -18,9 +19,10 @@ module EOBgen #(
   parameter DATA_WIDTH = 10
 ) (
   input clk, rst_n,
-  input tempCode_t  in,
-  output tempCode_t  out
+  input huffman_pkg::tempCode_t  in,
+  output huffman_pkg::tempCode_t  out
 );
+  import huffman_pkg::*;
   tempCode_t out_n;
   always_ff @(posedge clk or negedge rst_n)
     out <= !rst_n ? '0 : out_n ;
@@ -90,8 +92,9 @@ module tempCoder #(
 ) (
   input clk, rst_n,
   input codePort_t in,
-  output tempCode_t out
+  output huffman_pkg::tempCode_t out
 );
+  import huffman_pkg::*;
   typedef struct {
     logic [5:0] value;
     logic add, zero, eq;
