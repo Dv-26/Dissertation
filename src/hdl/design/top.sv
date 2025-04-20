@@ -1,5 +1,4 @@
 `include "interface.sv"
-`include "entropyCoder.svh"
 
 module top #(
     parameter WIDTH = 1280,
@@ -13,7 +12,7 @@ module top #(
         input logic clk, rst_n,
         input logic pclk, vsync, href,
         input logic [7:0] data,
-        output [$bits(tempCode_t)-1:0] out[3]
+        output [$bits(huffman_pkg::fixedLength_t)-1:0] out[3]
     // `endif
 );
 

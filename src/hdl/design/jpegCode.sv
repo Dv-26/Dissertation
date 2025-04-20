@@ -1,5 +1,4 @@
 `include "interface.sv"
-`include "entropyCoder.svh"
 
 module JpegCode #(
     parameter DATA_WIDTH = 10,
@@ -8,7 +7,7 @@ module JpegCode #(
     input logic clk,
     input logic rst_n,
     input dctPort_t in[ROW],
-    output [$bits(tempCode_t)-1:0] out[ROW]
+    output huffman_pkg::fixedLength_t out[ROW]
 );
 
 dctPort_t color[ROW];

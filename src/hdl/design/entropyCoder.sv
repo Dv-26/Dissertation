@@ -1,18 +1,20 @@
 `include "interface.sv"
-`include "entropyCoder.svh"
 
 module EntropyCoder #(
-  parameter DATA_WIDTH = 10
-) (
-  input clk, rst_n,
-  input codePort_t in,
-  output logic [$bits(huffman_pkg::tempCode_t)-1:0] out
-);
+  parameter DATA_WIDTH = 10,
+  parameter CHROMA = 0
+) (clk, rst_n, in, out);
   import huffman_pkg::*;
+  input logic clk, rst_n;
+  input codePort_t in;
+  output fixedLength_t  out;
+
   tempCode_t temp2EOBgen, EOBgen2temp;
   tempCoder #(DATA_WIDTH) temp (clk, rst_n, in, temp2EOBgen);
   EOBgen #(DATA_WIDTH) EOBgenator (clk, rst_n, temp2EOBgen, EOBgen2temp);
-  assign out = EOBgen2temp;
+  HuffmanBus_t huffman;
+  IndefiniteLengthCodeGen #(CHROMA) indefiniteLength (clk, rst_n, EOBgen2temp, huffman);
+  FixedLengthGen fixedLengthGen (clk, rst_n, huffman, out);
 endmodule
 
 module EOBgen #(
@@ -84,7 +86,21 @@ module EOBgen #(
     endcase
   end
 
-  assign out_n = outSel ? ZRLbuf : outInvalid ? '0 : in;
+  always_comb begin
+    if(outSel)
+      out_n = ZRLbuf;
+    else
+      if(outInvalid)
+        out_n = '0;
+      else
+        out_n = in;
+
+    if(isEOB) begin
+      out_n.valid = 1;
+      out_n.data.run = 0;
+      out_n.data.size = 0;
+    end
+  end
 endmodule
 
 module tempCoder #(

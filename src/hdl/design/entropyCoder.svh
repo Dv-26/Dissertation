@@ -15,13 +15,24 @@ package huffman_pkg;
     logic valid, done;
   } tempCode_t;
 
-  localparam CODE_W = 32;
-  localparam SIZE_W = $clog2(CODE_W);
+  localparam CODE_W = 36;
+  localparam SIZE_W = $clog2(CODE_W)+1;
 
   typedef struct packed {
     logic [CODE_W-1:0] code;
     logic [SIZE_W-1:0] size;
   } Huffman_t;
+
+  typedef struct packed {
+    Huffman_t data;
+    logic valid;
+    logic done;
+  } HuffmanBus_t;
+
+  typedef struct packed {
+    logic [CODE_W-1:0] data;
+    logic valid;
+  } fixedLength_t;
 endpackage
 
 `endif
