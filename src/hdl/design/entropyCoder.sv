@@ -7,14 +7,21 @@ module EntropyCoder #(
   import huffman_pkg::*;
   input logic clk, rst_n;
   input codePort_t in;
-  output fixedLength_t  out;
+  output huffmanBus_t out;
 
   tempCode_t temp2EOBgen, EOBgen2temp;
-  tempCoder #(DATA_WIDTH) temp (clk, rst_n, in, temp2EOBgen);
-  EOBgen #(DATA_WIDTH) EOBgenator (clk, rst_n, temp2EOBgen, EOBgen2temp);
-  HuffmanBus_t huffman;
-  IndefiniteLengthCodeGen #(CHROMA) indefiniteLength (clk, rst_n, EOBgen2temp, huffman);
-  FixedLengthGen fixedLengthGen (clk, rst_n, huffman, out);
+  tempCoder #(DATA_WIDTH) temp (
+    clk, rst_n,
+    in, temp2EOBgen
+  );
+  EOBgen #(DATA_WIDTH) EOBgenator (
+    clk, rst_n,
+    temp2EOBgen, EOBgen2temp
+  );
+  IndefiniteLengthCodeGen #(CHROMA) indefiniteLength (
+    clk, rst_n,
+    EOBgen2temp, out
+  );
 endmodule
 
 module EOBgen #(

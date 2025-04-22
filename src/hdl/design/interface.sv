@@ -73,8 +73,7 @@ interface fifoRd_if #(
 endinterface
 
 interface fifoWr_if #(
-  parameter DATA_WIDTH = 10,
-  parameter DEPTH = 8
+  parameter DATA_WIDTH = 10
 ) (input wire clk);
   logic [DATA_WIDTH-1:0] data;
   logic en, full; 
