@@ -12,7 +12,7 @@ module top #(
         input logic clk, rst_n,
         input logic pclk, vsync, href,
         input logic [7:0] data,
-        output [$bits(huffman_pkg::fixedLength_t)-1:0] out[3]
+        output huffman_pkg::HuffmanBus_t out
     // `endif
 );
 
@@ -28,7 +28,7 @@ module top #(
     //         .GPIO_0_0_tri_io ({rst, pwdn})
     //     );
     // `else
-        JpegCode #(10, 3) coder (clk, rst_n, pingpong2Code, out);
+        JpegCoder #(10, 3) coder (clk, rst_n, pingpong2Code, out);
     // `endif
 
     PingpongBuf #(WIDTH, HEIGHT, "RGB565") pingpongBuf (

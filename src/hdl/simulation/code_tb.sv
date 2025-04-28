@@ -4,8 +4,8 @@
 module code_tb;
    
   localparam CYCLE = 80;
-  localparam WIDTH = 16;
-  localparam HEIGHT = 16;
+  localparam WIDTH = 512;
+  localparam HEIGHT = 512;
 
   localparam TIME_2 = 5 * 2 * CYCLE;
   localparam TIME_3 = 10  * 2 * CYCLE;
@@ -20,48 +20,52 @@ module code_tb;
   always #(CYCLE/2) clk = ~clk;
   always #(CYCLE/4) pclk = ~pclk;
 
-  logic [$bits(tempCode_t)-1:0] out[3];
+  huffman_pkg::HuffmanBus_t out;
   top #(WIDTH, HEIGHT) top_tb (
     clk, rst_n,
     pclk, vsync, href, data,
     out
   );
-  logic [15:0]array[8][8];
+  logic [15:0]pixels[WIDTH*HEIGHT];
   int i, j;
 
   initial begin
+    $readmemh("/home/dv/jpeg/Dissertation/src/test_img.hex",pixels);
     clk = 1;
     pclk = 1;
     href = 0;
     vsync = 0; 
     rst_n = 0;
-    for(i=0; i<8; i++) begin
-      for(j=0; j<8; j++) begin
-        array[i][j] = i * 10 + j;
-      end
-    end
     #(2*CYCLE);
     rst_n = 1;
     #(2*CYCLE);
-    @(negedge pclk)
-      vsync = 1; 
-    #TIME_2;
-    vsync = 0; 
-    #TIME_3;
-    for(i =0; i<HEIGHT; i++)begin
-      href = 1;
-      for(j=0; j<WIDTH; j++) begin
-        @(negedge pclk)
-          data <= array[i%8][j%8][15:8];
-        @(negedge pclk)
-          data <= array[i%8][j%8][7:0];
-      end
+    repeat (1) begin
       @(negedge pclk)
-      data <= 'x;
-      href <= 0;
-      #TIME_7;
+        vsync = 1; 
+      #TIME_2;
+      vsync = 0; 
+      #TIME_3;
+      for(i =0; i<HEIGHT; i++)begin
+        href = 1;
+        for(j=0; j<WIDTH; j++) begin
+          logic [15:0] rgb565;
+          logic [7:0] r, g, b;
+          {r, g, b} = pixels[i*WIDTH + j];
+          rgb565 = {r[7:3], g[7:2], b[7:3]};
+          @(negedge pclk)
+            data <= rgb565[15:8];
+          @(negedge pclk)
+            data <= rgb565[7:0];
+        end
+        @(negedge pclk)
+        data <= 'x;
+        href <= 0;
+        #TIME_7;
+      end
+      #(TIME_5 - TIME_7);
     end
-    #(TIME_5 - TIME_7)
+    wait(out.eop == 1)
+    #(TIME_5 - TIME_7);
     $stop();
   end
   

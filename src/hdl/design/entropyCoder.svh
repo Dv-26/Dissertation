@@ -12,10 +12,11 @@ package huffman_pkg;
 
   typedef struct packed {
     tempCodeData_t data;
+    logic sop, eop;
     logic valid, done;
   } tempCode_t;
 
-  localparam CODE_W = 36;
+  localparam CODE_W = 64;
   localparam SIZE_W = $clog2(CODE_W)+1;
 
   typedef struct packed {
@@ -25,12 +26,14 @@ package huffman_pkg;
 
   typedef struct packed {
     Huffman_t data;
+    logic sop, eop;
     logic valid;
     logic done;
   } HuffmanBus_t;
 
   typedef struct packed {
     logic [CODE_W-1:0] data;
+    logic sop, eop;
     logic valid;
   } fixedLength_t;
 endpackage

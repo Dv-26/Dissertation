@@ -1,22 +1,25 @@
 `include "interface.sv"
 
-typedef struct {
+typedef struct packed {
   logic [9:0] data;
+  logic sop, eop;
   logic load;
 } in_t;
 
 typedef struct {
   logic [9:0] data;
+  logic sop, eop;
   logic sumDiffSel;
   logic load;
 } x2zX_t;
 
-typedef struct {
+typedef struct packed {
   logic [9:0] data;
+  logic sop, eop;
   logic valid;
 } result_t;
 
-typedef struct {
+typedef struct packed {
   in_t in;
   result_t result;
 } peRowPort_t;
@@ -44,11 +47,7 @@ module Dct #(
       if(i == 0) begin
         assign x[i] = in[i];
       end else begin
-        Delay #(DATA_WIDTH+1, i) inDelay (
-          clk, rst_n,
-          {in[i].data, in[i].valid},
-          {x[i].data, x[i].valid}
-        );
+        Delay #($bits(dctPort_t), i) inDelay (clk, rst_n, in[i], x[i]);
       end
     end
   endgenerate
@@ -74,86 +73,56 @@ module Array #(
 
 localparam CNT_WIDTH = $clog2(LENGHT*COL);
 
-genvar i,j;
 generate
-
+  genvar i,j;
   peColPort_t colPorts[ROW+1][COL];
   peRowPort_t rowPorts[ROW][COL+1];
   logic validDelay[COL];
 
   for(i=0; i<ROW; i++) begin: row
-      logic [CNT_WIDTH-1:0] cnt;
-      logic cntAdd;
-      always_ff @(posedge clk or negedge rst_n) begin
-        if(!rst_n)begin
-          cnt <= '0;
-        end else if(cntAdd) begin
-          cnt <= cnt + 1;
-        end
-      end
-      assign cntAdd = in[i].valid;
 
-      logic [DATA_WIDTH-1:0] sumDiff, sum, diff, diffRegIn, diffRegOut;
-      logic sumDiffSel, peLoad;
-      Delay #(DATA_WIDTH, LENGHT/2) diffReg (clk, rst_n, diffRegIn, diffRegOut); 
-      assign diff = diffRegOut -in[i].data;
-      assign sum = in[i].data + diffRegOut;
-      assign sumDiffSel = cnt[$clog2(LENGHT)-1] & in[i].valid;
-      assign diffRegIn = sumDiffSel? diff : in[i].data;
-      assign sumDiff = sumDiffSel? sum : diffRegOut;
+    sumDiffGen #(LENGHT, COL) sumDiffGen (
+      clk, rst_n,
+      in[i], rowPorts[i][0].in
+    );
+    // assign {rowPorts[i][0].result.data, rowPorts[i][0].result.valid} = {'0, '0};
+    assign rowPorts[i][0] = '0;
+    if (i==0)
+      Delay #(1, LENGHT/2) loadDelay ( clk, rst_n, in[i].valid, validDelay[0]);
 
-      if (i==0) begin
-        Delay #(2, LENGHT/2) loadDelay (
-          clk, rst_n,
-          {~|cnt[CNT_WIDTH-1:$clog2(LENGHT)] & in[i].valid, in[i].valid},
-          {peLoad, validDelay[0]}
-        );
-      end else begin
-        Delay #(1, LENGHT/2) loadDelay (
-          clk, rst_n,
-          ~|cnt[CNT_WIDTH-1:$clog2(LENGHT)] & in[i].valid,
-          peLoad
-        );
-      end
+    for(j=0; j<COL; j++)begin : col
 
-      assign {rowPorts[i][0].in.data, rowPorts[i][0].in.load} = {sumDiff, peLoad};
-      assign {rowPorts[i][0].result.data, rowPorts[i][0].result.valid} = {'0, '0};
-
-      for(j=0; j<COL; j++)begin : col
-
-        if(i == 0)begin
-          assign colPorts[0][j].data = coe[j].data;
-          logic [CNT_WIDTH-1:0] cnt;
-          logic cntAdd;
-          always @(posedge clk or negedge rst_n) begin
-            if(!rst_n) begin
-              cnt <= 0;
-            end else if (cntAdd) begin
-              cnt <= cnt + 1;
-            end
-          end
-          assign cntAdd = validDelay[j];
-          assign coe[j].en = validDelay[j];
-          assign coe[j].addr = (cnt >> $clog2(LENGHT)-1);
-          if(j != 0) begin
-            Delay #(1, LENGHT) validShift (clk, rst_n, validDelay[j-1], validDelay[j]);
+      if(i == 0)begin
+        assign colPorts[0][j].data = coe[j].data;
+        logic [CNT_WIDTH-1:0] cnt;
+        logic cntAdd;
+        always @(posedge clk or negedge rst_n) begin
+          if(!rst_n) begin
+            cnt <= 0;
+          end else if (cntAdd) begin
+            cnt <= cnt + 1;
           end
         end
-
-        Pe #(DATA_WIDTH, LENGHT, COL) pe (
-          clk, rst_n,
-          rowPorts[i][j],
-          rowPorts[i][j+1],
-          colPorts[i][j],
-          colPorts[i+1][j]
-        );
+        assign cntAdd = validDelay[j];
+        assign coe[j].en = validDelay[j];
+        assign coe[j].addr = (cnt >> $clog2(LENGHT)-1);
+        if(j != 0) begin
+          Delay #(1, LENGHT) validShift (clk, rst_n, validDelay[j-1], validDelay[j]);
+        end
       end
-      assign out[i].data = rowPorts[i][COL].result.data;
-      assign out[i].valid = rowPorts[i][COL].result.valid;
+
+      Pe #(DATA_WIDTH, LENGHT, COL) pe (
+        clk, rst_n,
+        rowPorts[i][j],
+        rowPorts[i][j+1],
+        colPorts[i][j],
+        colPorts[i+1][j]
+      );
+    end
+    assign out[i] = rowPorts[i][COL];
   end
 
 endgenerate
-
 endmodule 
 
 module Pe #(
@@ -170,11 +139,7 @@ module Pe #(
     output peColPort_t colOut
 );
 
-  Delay #(DATA_WIDTH+1, LENGHT) rowDelay (
-    clk, rst_n,
-    {rowIn.in.data,  rowIn.in.load},
-    {rowOut.in.data, rowOut.in.load}
-  );
+  Delay #($bits(in_t), LENGHT) rowDelay (clk, rst_n, rowIn.in, rowOut.in);
 
   Delay #(DATA_WIDTH, 1) colDelay (clk, rst_n, colIn.data, colOut.data);
 
@@ -186,17 +151,65 @@ module Pe #(
   assign acc = accDelayOut + product;
   assign accDelayIn = rowIn.in.load? product : acc;
 
-  logic resultSel;
+  logic resultSel, eopDelay, sopDelay;
   generate
     if(ACC_NUB > 2)begin
-      Delay #(1, LENGHT*(ACC_NUB-2)) loadDelay (clk, rst_n, rowOut.in.load, resultSel);
+      Delay #(3, LENGHT*(ACC_NUB-2)) loadDelay (
+        clk, rst_n,
+        {rowOut.in.load, rowOut.in.sop, rowOut.in.eop},
+        {resultSel, sopDelay, eopDelay}
+      );
     end else begin
-      assign resultSel = rowOut.in.load;
+      assign {resultSel, sopDelay, eopDelay} = {rowOut.in.load, sopDelay, eopDelay};
     end
   endgenerate
 
   assign rowOut.result.data = resultSel? acc : rowIn.result.data;
+  assign rowOut.result.eop = resultSel? eopDelay : rowIn.result.eop;
+  assign rowOut.result.sop = resultSel? sopDelay : rowIn.result.sop;
   assign rowOut.result.valid = resultSel | rowIn.result.valid;
+endmodule
+
+module sumDiffGen #(
+  parameter LENGHT = 4, 
+  parameter COL = 0
+) (clk, rst_n, in, out);
+
+  input logic clk, rst_n;
+  input dctPort_t in;
+  output in_t out;
+
+  struct {in_t current, next;} outReg;
+  always_ff @(posedge clk or negedge rst_n)
+    outReg.current <= !rst_n ? '0 : outReg.next;
+  assign out = outReg.current;
+
+  logic [$clog2(LENGHT*COL)-1:0] cnt;
+  always_ff @(posedge clk or negedge rst_n) begin
+    if(!rst_n)
+      cnt <= 0;
+    else if(in.valid)
+      cnt <= cnt + 1;
+  end
+
+  dctPort_t diffDelayIn, diffDelayOut; 
+  Delay #($bits(dctPort_t), LENGHT/2) Dealy (
+    clk, rst_n, diffDelayIn, diffDelayOut
+  );
+  logic sumDiffSel;
+  logic [$bits(in.data)-1:0] sum, diff;
+  always_comb begin
+    diff = diffDelayOut.data - in.data;
+    sum = diffDelayOut.data + in.data;
+    sumDiffSel = cnt[$clog2(LENGHT)-1] & in.valid;
+    diffDelayIn = in;
+    diffDelayIn.valid = ~|cnt[$bits(cnt)-1:$clog2(LENGHT)] & in.valid;
+    outReg.next = diffDelayOut;
+    if(sumDiffSel) begin
+      diffDelayIn.data = diff;
+      outReg.next.data = sum;
+    end
+  end
 endmodule
 
 module coefficientMap #(

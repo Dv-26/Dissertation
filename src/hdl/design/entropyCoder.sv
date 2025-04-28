@@ -7,7 +7,7 @@ module EntropyCoder #(
   import huffman_pkg::*;
   input logic clk, rst_n;
   input codePort_t in;
-  output huffmanBus_t out;
+  output HuffmanBus_t out;
 
   tempCode_t temp2EOBgen, EOBgen2temp;
   tempCoder #(DATA_WIDTH) temp (
@@ -32,9 +32,10 @@ module EOBgen #(
   output huffman_pkg::tempCode_t  out
 );
   import huffman_pkg::*;
-  tempCode_t out_n;
+  struct {tempCode_t current, next;} outReg;
   always_ff @(posedge clk or negedge rst_n)
-    out <= !rst_n ? '0 : out_n ;
+    outReg.current <= !rst_n ? '0 : outReg.next;
+  assign out = outReg.current;
 
   logic isZRL, notZRL, isEOB;
   assign isZRL = &{in.valid, !in.data.isDC, &in.data.run};
@@ -54,11 +55,11 @@ module EOBgen #(
   assign ZRLbuf = bufRd.data;
 
   logic outSel, outInvalid;
-  enum logic {NORMAL, RD_BUF} state, state_n;
+  struct {enum logic {NORMAL, RD_BUF} current, next;} state;
   always_ff @(posedge clk, negedge rst_n) 
-    state <= !rst_n ? NORMAL : state_n;
+    state.current <= !rst_n ? NORMAL : state.next;
   always_comb begin
-    state_n = state;
+    state.next = state.current;
     bufWr.en = 0;
     bufRd.en = 0;
     bufRst = 0;
@@ -66,7 +67,7 @@ module EOBgen #(
     outInvalid = 0;
     if(isZRL)
       bufWr.en = 1;
-    case(state)
+    case(state.current)
       NORMAL: begin
         if(isZRL)
           outInvalid = 1;
@@ -75,7 +76,7 @@ module EOBgen #(
         if(notZRL && !bufRd.empty) begin
           bufWr.en = 1;
           bufRd.en = 1;
-          state_n = RD_BUF;
+          state.next = RD_BUF;
           outSel = 1;
         end
       end
@@ -85,7 +86,7 @@ module EOBgen #(
         if(in.valid | isEOB)
           bufWr.en = 1;
         if(bufRd.empty) begin
-          state_n = NORMAL;
+          state.next = NORMAL;
           outSel = 0;
           bufRd.en = 0;
         end
@@ -94,18 +95,15 @@ module EOBgen #(
   end
 
   always_comb begin
+    outReg.next = in;
+    if(outInvalid)
+      outReg.next = '0;
     if(outSel)
-      out_n = ZRLbuf;
-    else
-      if(outInvalid)
-        out_n = '0;
-      else
-        out_n = in;
-
+      outReg.next = ZRLbuf;
     if(isEOB) begin
-      out_n.valid = 1;
-      out_n.data.run = 0;
-      out_n.data.size = 0;
+      outReg.next.valid = 1;
+      outReg.next.data.run = 0;
+      outReg.next.data.size = 0;
     end
   end
 endmodule
@@ -151,10 +149,14 @@ module tempCoder #(
       DC: begin  
         if(in.valid) begin
           valid_n = 1;
-          lastDC.load = 1;
+          if(!in.eop)
+            lastDC.load = 1;
+          else
+            lastDC.reset = 1;
           state_n = AC;
         end
-      end AC: begin
+      end
+      AC: begin
         if(in.valid) begin
           if(in.data == 0) begin
             if(zeroCnt.eq) begin
@@ -216,11 +218,17 @@ module tempCoder #(
       out.data.size <= '0;
       out.data.isDC <= 0;
       out.data.run <= '0;
-    end else if(valid_n) begin
-      out.data.isDC <= (state == DC);
-      out.data.vli <= vli_n;
-      out.data.size <= size_n;
-      out.data.run <= zeroCnt.value[3:0];
+      out.sop <= 1'b0;
+      out.eop <= 1'b0;
+    end else begin
+      out.sop <= in.sop;
+      out.eop <= in.eop;
+      if(valid_n) begin
+        out.data.isDC <= (state == DC);
+        out.data.vli <= vli_n;
+        out.data.size <= size_n;
+        out.data.run <= zeroCnt.value[3:0];
+      end
     end
   end
   always_ff @(posedge clk or negedge rst_n)

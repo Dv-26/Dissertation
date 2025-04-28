@@ -1,6 +1,6 @@
 `include "interface.sv"
 
-module JpegCode #(
+module JpegCoder #(
     parameter DATA_WIDTH = 10,
     parameter ROW = 3
 ) (
@@ -18,15 +18,12 @@ HuffmanBus_t coder2streamGenator[ROW];
 generate
   genvar i;
   for(i=0; i<ROW; i++) begin: colorChannel
-    ramWr_if #(DATA_WIDTH, 64) zigzag2quantizer (clk);
     codePort_t quantizerOut;
-
     Zigzag #(DATA_WIDTH) zigzag (
       clk, rst_n,
       y[i], 
       quantizerOut
     );
-
     codePort_t quantizer2code;
     EntropyCoder #(DATA_WIDTH) coder (
       clk, rst_n,

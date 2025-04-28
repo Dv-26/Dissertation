@@ -42,7 +42,7 @@ module FixedLengthGen (clk, rst_n, in, out);
     if(!rst_n) begin
       {up, low} <= '0;
     end else if(in.valid) begin
-      {up, low} <= {in.data.code, 36'b0} >> shiftCnt.current;
+      {up, low} <= {in.data.code, {CODE_W{1'b0}}} >> shiftCnt.current;
     end
   end
 
@@ -63,7 +63,7 @@ module FixedLengthGen (clk, rst_n, in, out);
   struct {
     enum logic[2:0] {NORMAL, DONE, OVERFLOW} next, current;
   } state;
-
+  struct {logic current, next;} sopFlag;
 
   always_comb begin
     splice = spliceReg.current | up;
@@ -72,6 +72,9 @@ module FixedLengthGen (clk, rst_n, in, out);
     spliceReg.next = spliceReg.current;
     outReg.next.valid = 0;
     outReg.next.done = 0;
+    outReg.next.eop = 0;
+    outReg.next.sop = 0;
+    sopFlag.next = sopFlag.current;
     case(state.current)
       NORMAL:begin
         if(inDelay.valid) begin
@@ -81,6 +84,10 @@ module FixedLengthGen (clk, rst_n, in, out);
             outReg.next.data.code = splice;
             outReg.next.data.size = CODE_W;
             outReg.next.valid = 1;
+            if(!sopFlag.current)begin
+              outReg.next.sop = 1;
+              sopFlag.next <= 1;
+            end
           end
         end
 
@@ -88,25 +95,36 @@ module FixedLengthGen (clk, rst_n, in, out);
           state.next = DONE;
       end
       DONE:begin
+        state.next = NORMAL;
         spliceReg.next = '0;
         outReg.next.data.code = splice;
         outReg.next.data.size = size.current;
         outReg.next.valid = 1;
         outReg.next.done = 1;
-        state.next = NORMAL;
+        if(sopFlag.current)begin
+          outReg.next.eop = 1;
+          sopFlag.next <= 0;
+        end
         if(inDelay.overflow) begin
           state.next = OVERFLOW;
           outReg.next.data.size = CODE_W;
           outReg.next.done = 0;
           spliceReg.next = low;
+          outReg.next.eop = 0;
+          sopFlag.next <= 1;
         end
       end
       OVERFLOW:begin
         state.next = NORMAL;
+        spliceReg.next = '0;
         outReg.next.data.code = spliceReg.current;
         outReg.next.data.size = size.current;
         outReg.next.valid = 1;
         outReg.next.done = 1;
+        if(sopFlag.current)begin
+          outReg.next.eop = 1;
+          sopFlag.next <= 0;
+        end
         if(inDelay.valid)
           spliceReg.next = up;
       end
@@ -120,13 +138,19 @@ module FixedLengthGen (clk, rst_n, in, out);
     if(!rst_n) begin
       outReg.current.valid <= 0;
       outReg.current.done <= 0;
+      outReg.current.eop <= 0;
+      outReg.current.sop <= 0;
       spliceReg.current <= '0;
       state.current <= NORMAL;
+      sopFlag.current <= 0;
     end else begin
       outReg.current.valid <= outReg.next.valid;
       outReg.current.done <= outReg.next.done;
+      outReg.current.eop <= outReg.next.eop;
+      outReg.current.sop <= outReg.next.sop;
       spliceReg.current <= spliceReg.next;
       state.current <= state.next;
+      sopFlag.current <= sopFlag.next;
     end
   end
   assign out = outReg.current;
@@ -147,20 +171,17 @@ module IndefiniteLengthCodeGen #(parameter CHROMA = 0) (clk, rst_n, tempCode, hu
   always_ff @(posedge clk or negedge rst_n)
     tempCodeDelay <= !rst_n ? '0 : tempCode;
 
-  struct packed {
-    HuffmanBus_t current;
-    HuffmanBus_t next;
-  } huffmanFF[2];
-
+  struct packed {HuffmanBus_t current, next;} huffmanFF[2];
   always_comb begin
     huffmanFF[0].next.data = huffmanFF[0].current.data;
-    huffmanFF[0].next.valid = tempCode.valid;
-    huffmanFF[0].next.done = tempCode.done;
+    huffmanFF[0].next.valid = tempCodeDelay.valid;
+    huffmanFF[0].next.done = tempCodeDelay.done;
+    huffmanFF[0].next.sop = tempCodeDelay.sop;
+    huffmanFF[0].next.eop = tempCodeDelay.eop;
     if(tempCodeDelay.valid)begin
       huffmanFF[0].next.data = tempCodeDelay.data.isDC ? dcHuffman : acHuffman;
       huffmanFF[0].next.data.code <<= tempCodeDelay.data.size;
-      huffmanFF[0].next.data.code |= (1 << tempCodeDelay.data.size) - 1;
-      huffmanFF[0].next.data.code &=  tempCodeDelay.data.vli;
+      huffmanFF[0].next.data.code |= tempCodeDelay.data.vli;
       huffmanFF[0].next.data.size += tempCodeDelay.data.size;
     end
   end
@@ -241,8 +262,9 @@ module ACHuffmanMap#(parameter CHROMA = 1) (clk, tempCode, huffman);
   input logic clk;
   input tempCode_t tempCode;
   output Huffman_t huffman;
+  localparam DEPTH = 2**8;
 
-  logic [ROM_CODE_W+ROM_SIZE_W-1:0] array [162];
+  logic [ROM_CODE_W+ROM_SIZE_W-1:0] array [DEPTH];
   always_ff @(posedge clk) begin
     if(tempCode.valid & !tempCode.data.isDC) begin
       {

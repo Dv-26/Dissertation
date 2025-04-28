@@ -42,6 +42,11 @@ module Dvp #(
       end
     end
   end
+
+  logic [8*SHIFT_WIDTH-1:0] dataHightReg;
+  logic lowLoad, load, valid;
+  logic [SHIFT_WIDTH-1:0] validDelay;
+
   always_ff @(posedge pclk or negedge rst_n) begin
     if(!rst_n) begin
       hCntFF <= 0;
@@ -49,15 +54,13 @@ module Dvp #(
     end else begin
       hCntFF <= hCnt;
       vCntFF <= vCnt;
+      out.sop <= (hCnt < 8 && vCnt < 8) & load;
+      out.eop <= (hCnt >= WIDTH - 8  && vCnt >= HEIGHT - 8) & load;
     end
   end
   
   assign hCntEqWidth = hCnt == WIDTH-1;
   assign vCntEqHeight = vCnt == HEIGHT-1;
-
-  logic [8*SHIFT_WIDTH-1:0] dataHightReg;
-  logic lowLoad, load, valid;
-  logic [SHIFT_WIDTH-1:0] validDelay;
 
   int i;
   always_ff @(posedge pclk) begin
@@ -84,13 +87,9 @@ module Dvp #(
     READ
   } state_t;
   
-  state_t state, state_n;
+  struct {state_t current, next;} state;
   always_ff @(posedge pclk or negedge rst_n)
-    if(!rst_n)
-      state <= IDLE;
-    else
-      state <= state_n;
-
+    state.current <= !rst_n ? IDLE : state.next;
   always_comb begin
     zero = 0;
     lowLoad = 0; 
@@ -98,14 +97,14 @@ module Dvp #(
     valid = 0;
     hCntAdd = 0;
     vCntAdd = 0;
-    state_n = state;
-    case(state)
+    state.next = state.current;
+    case(state.current)
       IDLE: begin
         if(vsyncFall)
-          state_n = WAIT; 
+          state.next = WAIT; 
       end WAIT: begin
         if(href) begin
-          state_n = READ;
+          state.next = READ;
           lowLoad = 1;
           valid = 1;
         end
@@ -122,9 +121,9 @@ module Dvp #(
         end else begin
           if(hCntEqWidth && vCntEqHeight) begin
             zero = 1;
-            state_n = IDLE;
+            state.next = IDLE;
           end else begin 
-            state_n = WAIT;
+            state.next = WAIT;
             vCntAdd = 1;
           end
         end

@@ -19,13 +19,13 @@ module Zigzag #(
   logic [2:0] scanX, scanY;
   logic scanValid, scanStart, scanDone;
   Scanner #(8, 8) scanner (clk, rst_n, scanStart, scanDone, scanX, scanY, scanValid);
-  ramRd_if #(DATA_WIDTH, 64) ram8x8Rd (clk);
-  ramWr_if #(DATA_WIDTH, 64) ram8x8Wr (clk);
+  ramRd_if #(DATA_WIDTH+2, 64) ram8x8Rd (clk);
+  ramWr_if #(DATA_WIDTH+2, 64) ram8x8Wr (clk);
   assign scanStart = cnt64 == 27;
 
   Ram #(DATA_WIDTH, 64) ram8x8 (ram8x8Wr, ram8x8Rd);
 
-  assign ram8x8Wr.data = in.data;
+  assign ram8x8Wr.data = {in.data, in.sop, in.eop};
   assign ram8x8Wr.addr = cnt64;
   assign ram8x8Wr.en = in.valid;
   assign ram8x8Rd.addr = {scanY, scanX};
@@ -33,7 +33,11 @@ module Zigzag #(
       
   ramWr_if #(DATA_WIDTH, 64) zigzag2quantizer (clk);
   
-  assign zigzag2quantizer.data = ram8x8Rd.data;
+  always_comb begin
+    {zigzag2quantizer.data, out.sop, out.eop} = ram8x8Rd.data;
+    out.sop &= out.valid;
+    out.eop &= out.valid;
+  end
   Delay #(
     2*$bits(scanY) + $bits(scanValid) + $bits(scanDone),
     1
@@ -132,8 +136,8 @@ module Scanner #(
         valid = 1;
         if(xEqCol && yEqRow)begin
           zero = 1;
+          done = 1;
           if(start) begin
-            done = 1;
           end else begin
             state_n = DONE;
           end
@@ -161,7 +165,6 @@ module Scanner #(
       end
       DONE:begin
         state_n = IDLE;
-        done = 1;
       end
     endcase
   end

@@ -10,8 +10,8 @@ module PingpongBuf #(
   output dctPort_t out[3] 
 );
 
-  localparam BUF_ADDR_W = $clog2(WIDTH) + $clog2(HEIGHT) - 1;
-  localparam BUF_DEPTH = 2**(BUF_ADDR_W-1);
+  localparam BUF_ADDR_W = $clog2(WIDTH) + 3;
+  localparam BUF_DEPTH = 2**BUF_ADDR_W;
   typedef struct {
     logic value;
     logic set;
@@ -31,14 +31,14 @@ module PingpongBuf #(
   logic switch;
   assign switch = hCnt == WIDTH-1 && (&vCnt[2:0]) && dvpOut.valid;
 
-  ramRd_if #(16, BUF_DEPTH) buf0Out (clk);
-  ramWr_if #(16, BUF_DEPTH) buf0In (pclk);
+  ramRd_if #($bits(dataPort_t)-1, BUF_DEPTH) buf0Out (clk);
+  ramWr_if #($bits(dataPort_t)-1, BUF_DEPTH) buf0In (pclk);
   Full_t buf0Full, buf1Full;
   logic buf0FullSet, buf1FullSet;
   CdcPulse buf0Set (rst_n, pclk, buf0FullSet, clk, buf0Full.set);
 
-  ramRd_if #(16, BUF_DEPTH) buf1Out (clk);
-  ramWr_if #(16, BUF_DEPTH) buf1In (pclk);
+  ramRd_if #($bits(dataPort_t)-1, BUF_DEPTH) buf1Out (clk);
+  ramWr_if #($bits(dataPort_t)-1, BUF_DEPTH) buf1In (pclk);
   CdcPulse buf1Set (rst_n, pclk, buf1FullSet, clk, buf1Full.set);
 
   always_ff @(posedge clk or negedge rst_n) begin
@@ -68,24 +68,27 @@ module PingpongBuf #(
   RdAddrGen #(WIDTH) rdAddrGen (clk, rst_n, rdStart, rdDone, rdValid, rdAddr);
 
   logic wrBufSel, rdBufSel;
-  assign buf1In.data = dvpOut.data;
+  assign buf1In.data = {dvpOut.data, dvpOut.sop, dvpOut.eop};
   assign buf1In.addr = {vCnt[2:0], hCnt};
-  assign buf0In.data = dvpOut.data;
+  assign buf0In.data = {dvpOut.data, dvpOut.sop, dvpOut.eop};
   assign buf0In.addr = {vCnt[2:0], hCnt};
   assign {buf0In.en, buf1In.en} = wrBufSel ?
-    {dvpOut.valid, 1'b0} :
-    {1'b0, dvpOut.valid};
+    {1'b0, dvpOut.valid} :
+    {dvpOut.valid, 1'b0};
   assign buf0Out.addr = rdAddr;
   assign buf1Out.addr = rdAddr;
   assign {buf0Out.en, buf1Out.en} = rdBufSel ?
-    {rdValid, 1'b0} :
-    {1'b0, rdValid};
+    {1'b0, rdValid}:
+    {rdValid, 1'b0};
 
   logic [4:0] r5,b5;
   logic [5:0] g6;
+  logic eop, sop;
   logic rdValidDelay;
-  assign {r5, g6, b5} = rdBufSel? buf0Out.data : buf1Out.data;
+  assign {r5, g6, b5, sop, eop} = rdBufSel? buf1Out.data : buf0Out.data;
   assign {out[0].valid, out[1].valid, out[2].valid} = {3{rdValidDelay}};
+  assign {out[0].sop, out[1].sop, out[2].sop} = {3{sop}};
+  assign {out[0].eop, out[1].eop, out[2].eop} = {3{eop}};
   Delay #(1, 1) validDelay (clk, rst_n, rdValid, rdValidDelay);
 
   assign out[0].data = b5 << 5 | b5 >> 2; 
@@ -214,7 +217,7 @@ module RdAddrGen #(
   assign row.update = col.eq;
 
   typedef struct {
-    logic [$clog2(WIDTH/8)-1:0] nub;
+    logic [$clog2(WIDTH):0] nub;
     logic update;
     logic eq;
   } mcu_t;
@@ -226,13 +229,14 @@ module RdAddrGen #(
     end else if (zero) begin 
       mcu.nub <= 0;
     end else if (mcu.update) begin 
-      mcu.nub <= mcu.nub + 1;
+        mcu.nub <= mcu.nub + 8;
     end
   end
-  assign mcu.eq = mcu.nub == WIDTH/8 - 1 && row.eq; 
+  assign mcu.eq = mcu.nub == WIDTH - 8 && row.eq; 
   assign mcu.update = row.eq;
-
-  assign addr = {row.nub, mcu.nub, col.nub};
+  logic [$clog2(WIDTH)-1:0] colAddr;
+  assign colAddr = mcu.nub + col.nub;
+  assign addr = {row.nub, colAddr};
 
   typedef enum logic [1:0] {
     IDLE,
@@ -276,19 +280,4 @@ module RdAddrGen #(
       end
     endcase
   end
-endmodule
-
-module rgb565torgb888 (
-  input logic [4:0] r5,
-  input logic [5:0] g6,
-  input logic [4:0] b5,
-  output logic [7:0] r8, g8, b8
-);
-
-always_comb begin
-  r8 = r5  << 5 | r5 >> 2;
-  g8 = g6 << 2 | g6 >> 4;
-  b8 = b5 << 5 | b5 >> 2;
-end
-
 endmodule

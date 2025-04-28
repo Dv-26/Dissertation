@@ -20,18 +20,20 @@ module RGB2YCbCr #(
       assign out[i].data = i == 0 ? sumOut : sumOut + 128;
     end
 
-    localparam Delay = $clog2(3)+1;
-    logic valid[Delay];
-    for(i=0; i<Delay; i++) begin
-        always_ff @(posedge clk or negedge rst_n)
-          if(!rst_n)
-            valid[i] <= 1'b0;
-          else
-            valid[i] <= i == 0 ?
-              &{in[2].valid, in[1].valid, in[0].valid} :
-              valid[i-1];
-    end
-    assign {out[2].valid, out[1].valid, out[0].valid} = {3{valid[Delay-1]}};
+    localparam DELAY = $clog2(3)+1;
+    logic valid, sop, eop;
+    Delay #(3, DELAY) ctrlDelay (
+      clk, rst_n, {
+        &{in[2].valid, in[1].valid, in[0].valid},
+        |{in[2].sop, in[1].sop, in[0].sop},
+        |{in[2].eop, in[1].eop, in[0].eop}
+      }, {
+        valid, sop, eop 
+      }
+    );
+    assign {out[2].valid, out[1].valid, out[0].valid} = {3{valid}};
+    assign {out[2].sop, out[1].sop, out[0].sop} = {3{sop}};
+    assign {out[2].eop, out[1].eop, out[0].eop} = {3{eop}};
   endgenerate
 
   initial begin
