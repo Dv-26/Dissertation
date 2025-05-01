@@ -28,7 +28,7 @@ module top #(
     //         .GPIO_0_0_tri_io ({rst, pwdn})
     //     );
     // `else
-        JpegCoder #(10, 3) coder (clk, rst_n, pingpong2Code, out);
+        JpegCoder #(11, 3) coder (clk, rst_n, pingpong2Code, out);
     // `endif
 
     PingpongBuf #(WIDTH, HEIGHT, "RGB565") pingpongBuf (

@@ -1,20 +1,20 @@
 `include "interface.sv"
 
 typedef struct packed {
-  logic [9:0] data;
+  logic [10:0] data;
   logic sop, eop;
   logic load;
 } in_t;
 
 typedef struct {
-  logic [9:0] data;
+  logic [10:0] data;
   logic sop, eop;
   logic sumDiffSel;
   logic load;
 } x2zX_t;
 
 typedef struct packed {
-  logic [9:0] data;
+  logic [10:0] data;
   logic sop, eop;
   logic valid;
 } result_t;
@@ -25,7 +25,7 @@ typedef struct packed {
 } peRowPort_t;
 
 typedef struct {
-  logic [9:0] data;
+  logic [10:0] data;
 }peColPort_t;
 
 module Dct #(
@@ -86,7 +86,7 @@ generate
       in[i], rowPorts[i][0].in
     );
     // assign {rowPorts[i][0].result.data, rowPorts[i][0].result.valid} = {'0, '0};
-    assign rowPorts[i][0] = '0;
+    assign rowPorts[i][0].result = '0;
     if (i==0)
       Delay #(1, LENGHT/2) loadDelay ( clk, rst_n, in[i].valid, validDelay[0]);
 

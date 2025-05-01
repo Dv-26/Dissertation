@@ -47,13 +47,14 @@ module FixedLengthGen (clk, rst_n, in, out);
   end
 
   struct packed{
-    logic valid, overflow;
-  } inDelay;
+    logic valid, overflow, sop, eop;
+  } inDelay[2];
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
-      inDelay <= '0;
+      inDelay[0] <= '0;
     end else begin
-      inDelay <= {in.valid, overflow};
+      inDelay[0] <= {in.valid, overflow, in.sop, in.eop};
+      inDelay[1] <= inDelay[0];
     end
   end
 
@@ -63,7 +64,6 @@ module FixedLengthGen (clk, rst_n, in, out);
   struct {
     enum logic[2:0] {NORMAL, DONE, OVERFLOW} next, current;
   } state;
-  struct {logic current, next;} sopFlag;
 
   always_comb begin
     splice = spliceReg.current | up;
@@ -74,20 +74,17 @@ module FixedLengthGen (clk, rst_n, in, out);
     outReg.next.done = 0;
     outReg.next.eop = 0;
     outReg.next.sop = 0;
-    sopFlag.next = sopFlag.current;
     case(state.current)
       NORMAL:begin
-        if(inDelay.valid) begin
+        if(inDelay[0].valid) begin
           spliceReg.next = splice;
-          if(inDelay.overflow) begin
+          if(inDelay[0].overflow) begin
             spliceReg.next = low;
             outReg.next.data.code = splice;
             outReg.next.data.size = CODE_W;
+            outReg.next.eop = inDelay[0].eop;
+            outReg.next.sop = inDelay[0].sop;
             outReg.next.valid = 1;
-            if(!sopFlag.current)begin
-              outReg.next.sop = 1;
-              sopFlag.next <= 1;
-            end
           end
         end
 
@@ -101,31 +98,34 @@ module FixedLengthGen (clk, rst_n, in, out);
         outReg.next.data.size = size.current;
         outReg.next.valid = 1;
         outReg.next.done = 1;
-        if(sopFlag.current)begin
-          outReg.next.eop = 1;
-          sopFlag.next <= 0;
-        end
-        if(inDelay.overflow) begin
+        outReg.next.eop = inDelay[0].eop;
+        outReg.next.sop = inDelay[0].sop;
+        
+        // if(outReg.next.data.size % 8 != 0)
+        //   outReg.next.data.size += (1 << 3) - outReg.next.data.size[2:0];
+
+        if(inDelay[0].overflow) begin
           state.next = OVERFLOW;
           outReg.next.data.size = CODE_W;
           outReg.next.done = 0;
           spliceReg.next = low;
+          outReg.next.sop = 0;
           outReg.next.eop = 0;
-          sopFlag.next <= 1;
         end
       end
       OVERFLOW:begin
         state.next = NORMAL;
         spliceReg.next = '0;
         outReg.next.data.code = spliceReg.current;
-        outReg.next.data.size = size.current;
         outReg.next.valid = 1;
         outReg.next.done = 1;
-        if(sopFlag.current)begin
-          outReg.next.eop = 1;
-          sopFlag.next <= 0;
-        end
-        if(inDelay.valid)
+        outReg.next.eop = inDelay[1].eop;
+        outReg.next.sop = inDelay[1].sop;
+        outReg.next.data.size = size.current;
+        // if(outReg.next.data.size % 8 != 0)
+        //   outReg.next.data.size += (1 << 3) - outReg.next.data.size[2:0];
+
+        if(inDelay[0].valid)
           spliceReg.next = up;
       end
     endcase
@@ -142,7 +142,6 @@ module FixedLengthGen (clk, rst_n, in, out);
       outReg.current.sop <= 0;
       spliceReg.current <= '0;
       state.current <= NORMAL;
-      sopFlag.current <= 0;
     end else begin
       outReg.current.valid <= outReg.next.valid;
       outReg.current.done <= outReg.next.done;
@@ -150,7 +149,6 @@ module FixedLengthGen (clk, rst_n, in, out);
       outReg.current.sop <= outReg.next.sop;
       spliceReg.current <= spliceReg.next;
       state.current <= state.next;
-      sopFlag.current <= sopFlag.next;
     end
   end
   assign out = outReg.current;

@@ -1,0 +1,157 @@
+from PIL import Image
+import io
+
+def wrap_jpeg_and_display(raw_path, width, height):
+    # 1. 读取原始压缩码流
+    with open(raw_path, 'rb') as f:
+       scan_data = f.read()
+    # scan_data = b'\xE2\xE8'
+
+    luminance_quant_table = [
+        16, 11, 10, 16, 24, 40, 51, 61,
+        12, 12, 14, 19, 26, 58, 60, 55,
+        14, 13, 16, 24, 40, 57, 69, 56,
+        14, 17, 22, 29, 51, 87, 80, 62,
+        18, 22, 37, 56, 68, 109, 103, 77,
+        24, 35, 55, 64, 81, 104, 113, 92,
+        49, 64, 78, 87, 103, 121, 120, 101,
+        72, 92, 95, 98, 112, 100, 103, 99
+    ]
+
+    # 色度量化表 (Table 2-2)
+    chrominance_quant_table = [
+        17, 18, 24, 47, 99, 99, 99, 99,
+        18, 21, 26, 66, 99, 99, 99, 99,
+        24, 26, 56, 99, 99, 99, 99, 99,
+        47, 66, 99, 99, 99, 99, 99, 99,
+        99, 99, 99, 99, 99, 99, 99, 99,
+        99, 99, 99, 99, 99, 99, 99, 99,
+        99, 99, 99, 99, 99, 99, 99, 99,
+        99, 99, 99, 99, 99, 99, 99, 99
+    ]
+
+    # 亮度huffman表
+    luminance_dc_table = [
+        0x00,0x01,0x05,0x01,0x01,0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+        0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b
+    ]
+
+    luminance_ac_table = [
+         0x00,0x02,0x01,0x03,0x03,0x02,0x04,0x03,0x05,0x05,0x04,0x04,0x00,0x00,0x01,0x7d, 
+         0x01,0x02,0x03,0x00,0x04,0x11,0x05,0x12,0x21,0x31,0x41,0x06,0x13,0x51,0x61,0x07, 
+         0x22,0x71,0x14,0x32,0x81,0x91,0xa1,0x08,0x23,0x42,0xb1,0xc1,0x15,0x52,0xd1,0xf0,
+         0x24,0x33,0x62,0x72,0x82,0x09,0x0a,0x16,0x17,0x18,0x19,0x1a,0x25,0x26,0x27,0x28,
+         0x29,0x2a,0x34,0x35,0x36,0x37,0x38,0x39,0x3a,0x43,0x44,0x45,0x46,0x47,0x48,0x49,
+         0x4a,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5a,0x63,0x64,0x65,0x66,0x67,0x68,0x69,
+         0x6a,0x73,0x74,0x75,0x76,0x77,0x78,0x79,0x7a,0x83,0x84,0x85,0x86,0x87,0x88,0x89,
+         0x8a,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9a,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,
+         0xa8,0xa9,0xaa,0xb2,0xb3,0xb4,0xb5,0xb6,0xb7,0xb8,0xb9,0xba,0xc2,0xc3,0xc4,0xc5,
+         0xc6,0xc7,0xc8,0xc9,0xca,0xd2,0xd3,0xd4,0xd5,0xd6,0xd7,0xd8,0xd9,0xda,0xe1,0xe2,
+         0xe3,0xe4,0xe5,0xe6,0xe7,0xe8,0xe9,0xea,0xf1,0xf2,0xf3,0xf4,0xf5,0xf6,0xf7,0xf8,
+         0xf9,0xfa
+    ]
+    # 2. 硬编码JPEG头/尾（基线JPEG示例）
+    # SOI (Start of Image)
+    soi = b'\xFF\xD8'
+
+    # APP0 (JFIF标识)
+    app0 = (
+        b'\xFF\xE0' +
+        b'\x00\x10' + 
+        b'JFIF' + 
+        b'\x00' +   # 主版本号
+        b'\x01' +   # 次版本号
+        b'\x01' +  # 密度单位 0=无单位 1=点数/英寸 2=点数/厘米
+        b'\x00\x00' + # 水平像素密度
+        b'\x01\x00' + # 垂直像素密度
+        b'\x01'+ # 缩略图水平数目
+        b'\x00\x00' # 缩略图垂直数目
+    )
+
+    # DQT (Define Quantization Table)
+    # 亮度量化表 (Pq=0, Tq=0, 8-bit精度)
+    dqt_luminance = (
+        b'\xFF\xDB' +
+        b'\x00\x43' +
+        b'\x00' +  # 0-3位：量化表编号 4-7位：QT精度（0=8bit否则为16bit）
+        bytes(luminance_quant_table)  # 亮度量化表数据
+    )
+
+    # 色度量化表 (Pq=0, Tq=1, 8-bit精度)
+    dqt_chrominance = (
+        b'\xFF\xDB' +
+        b'\x00\x43' +
+        b'\x01' +  # 0-3位：量化表编号 4-7位：QT精度（0=8bit否则为16bit）
+        bytes(chrominance_quant_table)  # 色度量化表数据
+    )
+
+    # SOF0 (Start of Frame, Baseline DCT)
+    sof0 = (
+        b'\xFF\xC0' +
+        b'\x00\x0B' +
+        # b'\x00\x11' +
+        b'\x08' + #精度(8-bit)
+        bytes([height >> 8, height & 0xFF]) +  # 图像高度
+        bytes([width >> 8, width & 0xFF]) +    # 图像宽度
+        # b'\x03' +  # 组件数量
+        # b'\x01\x11\x00' +  # Y分量 (ID=1, 水平/垂直采样因子=1x1, 量化表ID=0)
+        # b'\x02\x11\x01' +  # Cb分量 (ID=2, 1x1, 量化表ID=1)
+        # b'\x03\x11\x01'    # Cr分量 (ID=3, 1x1, 量化表ID=1)
+        b'\x01' + # 组件数量
+        b'\x01' + # Y分量
+        b'\x11' + # 0-3位：水平采样系数 4-7位：垂直采样系数
+        b'\x00' # 量化表编号
+    )
+
+    # DHT (Define Huffman Table)
+    dht_luminance_dc = (
+        b'\xFF\xC4' +
+        b'\x00\x1F' +
+        b'\x00' + #0-3位：编号 4-7位：0=DC表，1=AC表
+        bytes(luminance_dc_table)
+    )
+
+    dht_luminance_ac = (
+        b'\xFF\xC4' +
+        b'\x00\xB5' +
+        b'\x11' + #0-3位：编号 4-7位：0=DC表，1=AC表
+        bytes(luminance_ac_table)
+    )
+    # SOS (Start of Scan)
+    sos = (
+        b'\xFF\xDA' +
+        b'\x00\x08' +
+        b'\x01' + # 1个分量
+        b'\x01' + # Y分量
+        b'\x01' + # 0-3位：AC huffman表号，4-7位：DC huffman表号
+        b'\x00\x3F\x00'
+    )
+
+    # EOI (End of Image)
+    eoi = b'\xFF\xD9'
+
+    # 3. 拼接完整JPEG文件
+    full_jpeg = (
+        soi + app0 + 
+        dqt_luminance +
+        sof0 + 
+        dht_luminance_dc + dht_luminance_ac +
+        sos +
+        scan_data + eoi
+    )
+    with open("./out.jpg", 'wb') as f:
+        f.write(full_jpeg)
+
+    # 4. 解码显示
+    try:
+        img = Image.open(io.BytesIO(full_jpeg))
+        print(f"Image size: {img.size}")
+        img.show()
+    except Exception as e:
+        print(f"Decode failed: {e}")
+        # 调试：检查关键标记
+        print(f"Header: {full_jpeg[:4].hex(' ')}")
+        print(f"Footer: {full_jpeg[-2:].hex()}")
+
+# 示例调用（需指定图像分辨率）
+wrap_jpeg_and_display("./jpeg_stream.bin", width=16, height=8)

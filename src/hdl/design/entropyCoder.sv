@@ -9,18 +9,27 @@ module EntropyCoder #(
   input codePort_t in;
   output HuffmanBus_t out;
 
-  tempCode_t temp2EOBgen, EOBgen2temp;
+  tempCode_t temp2EOBgen, EOBgen2indefiniteLength;
+  HuffmanBus_t FixedLengthGenPort[2]; 
   tempCoder #(DATA_WIDTH) temp (
     clk, rst_n,
     in, temp2EOBgen
   );
   EOBgen #(DATA_WIDTH) EOBgenator (
     clk, rst_n,
-    temp2EOBgen, EOBgen2temp
+    temp2EOBgen, EOBgen2indefiniteLength
   );
   IndefiniteLengthCodeGen #(CHROMA) indefiniteLength (
     clk, rst_n,
-    EOBgen2temp, out
+    EOBgen2indefiniteLength, FixedLengthGenPort[0]
+  );
+  always_comb begin
+    FixedLengthGenPort[1] = FixedLengthGenPort[0];
+    FixedLengthGenPort[1].done &= FixedLengthGenPort[0].eop;
+  end
+  FixedLengthGen FixedLengthGen (
+    clk, rst_n,
+    FixedLengthGenPort[1], out 
   );
 endmodule
 
@@ -88,6 +97,8 @@ module EOBgen #(
         if(bufRd.empty) begin
           state.next = NORMAL;
           outSel = 0;
+          bufWr.en = 0;
+          outSel = 0;
           bufRd.en = 0;
         end
       end
@@ -104,6 +115,7 @@ module EOBgen #(
       outReg.next.valid = 1;
       outReg.next.data.run = 0;
       outReg.next.data.size = 0;
+      outReg.next.data.vli = '0;
     end
   end
 endmodule

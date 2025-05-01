@@ -4,8 +4,8 @@
 module code_tb;
    
   localparam CYCLE = 80;
-  localparam WIDTH = 512;
-  localparam HEIGHT = 512;
+  localparam WIDTH = 16;
+  localparam HEIGHT = 8;
 
   localparam TIME_2 = 5 * 2 * CYCLE;
   localparam TIME_3 = 10  * 2 * CYCLE;
@@ -64,10 +64,28 @@ module code_tb;
       end
       #(TIME_5 - TIME_7);
     end
-    wait(out.eop == 1)
+    wait(out.done & out.eop)
     #(TIME_5 - TIME_7);
     $stop();
   end
-  
+
+  integer file; 
+  initial begin
+      file=$fopen("/home/dv/jpeg/Dissertation/src/hdl/simulation/jpeg_stream.bin", "wb");   
+      if(file == 0) 
+        $error("Failed to open file");
+  end
+  always @(posedge clk or negedge rst_n) begin
+    if(out.valid) begin
+      for(int i=0; i<out.data.size; i+=8)begin
+        logic [7:0] byte_val = out.data.code[8*(7-i/8)+:8];
+        $fwrite(file, "%c", byte_val);
+      end
+      if(out.done & out.eop) begin
+        $fclose(file);
+        $display("Raw JPEG data saved");
+      end
+    end
+  end
 
 endmodule
