@@ -1,18 +1,18 @@
 # Fdb version 4
-["bibtex paper"] 1743101193.44497 "paper.aux" "paper.bbl" "paper" 1743101198.91627 0
+["bibtex paper"] 1746188543.4226 "paper.aux" "paper.bbl" "paper" 1746188590.37954 0
   "./references.bib" 1743045723.39318 2782 73ea66fdcf6d20cb4d842cddc437fe6f ""
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1742685315 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "paper.aux" 1743101194.9864 13935 6b903ba5634d64bca7e35e48527dfb83 "xelatex"
+  "paper.aux" 1746188585.75797 16436 871cd9c296698898fae8590811acd880 "xelatex"
   (generated)
   "paper.bbl"
   "paper.blg"
   (rewritten before read)
-["xdvipdfmx"] 1743101195.31104 "paper.xdv" "paper.pdf" "paper" 1743101198.92366 0
-  "paper.xdv" 1743101194.98705 499444 670a84bfe397869d585de5e7751925aa "xelatex"
+["xdvipdfmx"] 1746188586.08429 "paper.xdv" "paper.pdf" "paper" 1746188590.38769 0
+  "paper.xdv" 1746188585.76071 586064 d27bee553bdc64ceda82130f2c13ca9d "xelatex"
   (generated)
   "paper.pdf"
   (rewritten before read)
-["xelatex"] 1743101193.54215 "paper.tex" "paper.xdv" "paper" 1743101198.91653 0
+["xelatex"] 1746188584.16165 "paper.tex" "paper.xdv" "paper" 1746188590.37994 0
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1742685315 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1742685315 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1742685315 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -82,10 +82,10 @@
   "/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJKfntef.sty" 1742685315 39577 b470f8a1dbecc9c45c9bf05ca7db9188 ""
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1742685315 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/web2c/xetex/xelatex.fmt" 1743045153 4492516 352b6b3d876c35bb35467c6be33687d7 ""
-  "paper.aux" 1743101194.9864 13935 6b903ba5634d64bca7e35e48527dfb83 "xelatex"
-  "paper.bbl" 1743101193.53605 1226 9625b063a4b23450371e95f183cab88d "bibtex paper"
-  "paper.tex" 1743101190.16905 74611 63629af28b91f36a3f16f974c794fccd ""
-  "paper.toc" 1743101194.98705 3107 719dafd333039f0f24198a22a0ce0adf "xelatex"
+  "paper.aux" 1746188585.75797 16436 871cd9c296698898fae8590811acd880 "xelatex"
+  "paper.bbl" 1746188543.51797 1226 9625b063a4b23450371e95f183cab88d "bibtex paper"
+  "paper.tex" 1746188582.58097 87097 6ea1dd1f2101565e3a0298d51a946c45 ""
+  "paper.toc" 1746188585.76071 3558 eea57ec4848abc19f02c685a0ff0b062 "xelatex"
   "pictures/2Darray.png" 1741951104.872 61147 6a737bbfef42dfabba93fdc670b849dd ""
   "pictures/CoderTop.png" 1743058409.71278 68134 222f07c1891b66ef3c4ca04181c577a2 ""
   "pictures/DCTSchematice.png" 1741951104.873 54439 55caccfa7cf1d6bb57ec0d165681a59d ""
@@ -93,8 +93,11 @@
   "pictures/DCT模块仿真.png" 1741951104.877 74641 1f0c10a1d00bada46189194398db8e9c ""
   "pictures/DCT脉动阵列.png" 1741951104.878 34997 48249d8fc8e330e7949eba193fb04d06 ""
   "pictures/DVP_simwave.png" 1743098856.92399 19080 a44a926e054e54d4975704f770d113bf ""
+  "pictures/EOBGenASM.png" 1746145991.286 1065636 4f1f386a1fb48e0c016b397ba5100169 ""
+  "pictures/EOB生成模块.png" 1746145867.116 19659 46dc0313b8dbb2575a8bcbe8ba3c2268 ""
+  "pictures/HuffmanCoder.png" 1746146093.807 36126 b2b053f426b0ff4322c3cf2448ceacc6 ""
   "pictures/PE时序.png" 1741951104.879 97969 ca741f32eeaffbc78065143db1d8c4b4 ""
-  "pictures/TopRTL.png" 1743055394.14968 64799 5bd0035e740364664e3d6e3052822470 ""
+  "pictures/TOPrtl.png" 1746120458.43818 16813 738588d12b0ed7075b20574e89164c41 ""
   "pictures/dct.png" 1741951104.886 50962 38de9675301d72e426ac9de9113a3689 ""
   "pictures/deCodeTree.png" 1741951104.887 167306 235c8655330cfbd2c3422869f93c59f8 ""
   "pictures/dvp时序.png" 1743067102.40799 111136 8cfbbc7db44a588996aa29374785a196 ""
@@ -105,6 +108,8 @@
   "pictures/rdFSMSim.png" 1743098856.92499 32860 a52bdace51feedd1278872243bd44b07 ""
   "pictures/scanner.png" 1741951104.89 62678 eb24c4bbbf03fa5529cb8ebaf57710e2 ""
   "pictures/scannerWave.png" 1741951104.89 22930 8453094659a3a7bc2677725684fa7b93 ""
+  "pictures/spliceASM.png" 1746179028.50096 1118737 833ef159e2dd29a0229c101c169d6725 ""
+  "pictures/tmepCodeASm.png" 1746145829.1 1060588 49e90b2b74709429a878dc259c48dbb6 ""
   "pictures/wrASM.png" 1743078885.13509 755718 ab4a1714942f7dd22b0e238892e0ef69 ""
   "pictures/wrFSMSim.png" 1743098856.92499 27400 24661d156ab1fd089e4ae0fab6c8902a ""
   "pictures/x2zPE.png" 1741951104.894 996083 cec935de284a6b92c2a21164b0964690 ""
@@ -113,11 +118,16 @@
   "pictures/zigzag.png" 1741951104.905 107947 d62cdde4a765f534fbc6d3f171dcbb8e ""
   "pictures/zigzagModule.png" 1741951104.91 47331 19797dd983d471fe801f38a493a20110 ""
   "pictures/z输出时序.png" 1741951104.91 20312 2081aec9c0f520a435699708b45a1051 ""
+  "pictures/中间码生成模块.png" 1746124435.04175 32087 79cb2ed5bc5cb44b17cd4c870699b5f6 ""
   "pictures/乒乓操作.png" 1741951104.911 368859 e065ceb0403cefa590db5b03e296cd4f ""
   "pictures/和差项生成.png" 1741951104.912 57336 4208259adfbfaaacf877e676fbf10257 ""
   "pictures/和差项生成步骤.png" 1741951104.914 88345 2511ca800712fee8c2d04e74607f681b ""
+  "pictures/彩色空间转换模块.png" 1746185778.94799 21831 ca2e450679c18c56d5c5c365207c415d ""
+  "pictures/拼接模块.png" 1746157636.51794 53149 a6410af8df91f311f25737f08d780006 ""
+  "pictures/数据生成模块.png" 1746183928.682 18786 96806d3711304d86512937480aa74c8b ""
   "pictures/数据解析模块.png" 1743082054.73617 78808 34c4a1dc175e5df148052a1c0d6e9b9d ""
   "pictures/流水线.png" 1741951104.915 316055 cd9ca1496a9221bcd2fdd65b95736484 ""
+  "pictures/熵编码模块.png" 1746121695.35776 21497 b7bcb35365a4e69a9fb2c96f997b460e ""
   "pictures/编解码流程.png" 1741951104.916 181211 364133d8df0b70f02d55413437df782c ""
   "pictures/脉冲同步器.png" 1743089366.34304 21176 6ac8bb002e3eebc531aa381a5c3eba4b ""
   (generated)

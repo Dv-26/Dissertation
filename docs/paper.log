@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  28 MAR 2025 02:46
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  2 MAY 2025 20:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -614,7 +614,12 @@ Package fontspec Info:
 
 [2] (./paper.toc
 
-[3])
+[3]
+Overfull \hbox (1.80669pt too wide) detected at line 42
+\TU/TimesNewRoman(0)/m/n/12.045 3.10 
+ []
+
+)
 \tf@toc=\write3
 \openout3 = `paper.toc'.
 
@@ -685,13 +690,8 @@ File: ./pictures/乒乓操作.png Graphic file (type bmp)
 <./pictures/乒乓操作.png>
 File: ./pictures/CoderTop.png Graphic file (type bmp)
 <./pictures/CoderTop.png>
-File: ./pictures/TopRTL.png Graphic file (type bmp)
-<./pictures/TopRTL.png>
-
-Overfull \hbox (15.2711pt too wide) in paragraph at lines 834--835
- [][] 
- []
-
+File: ./pictures/TOPrtl.png Graphic file (type bmp)
+<./pictures/TOPrtl.png>
 
 
 [16]
@@ -714,42 +714,44 @@ File: ./pictures/rdASM.png Graphic file (type bmp)
 [19]
 File: ./pictures/脉冲同步器.png Graphic file (type bmp)
 <./pictures/脉冲同步器.png>
+File: ./pictures/彩色空间转换模块.png Graphic file (type bmp)
+<./pictures/彩色空间转换模块.png>
+
+
+[20]
 File: ./pictures/dct.png Graphic file (type bmp)
 <./pictures/dct.png>
 
 
-[20]
-
 [21]
+
+[22]
 File: ./pictures/DCT脉动阵列.png Graphic file (type bmp)
 <./pictures/DCT脉动阵列.png>
 
-Overfull \hbox (12.92992pt too wide) in paragraph at lines 1105--1106
+Overfull \hbox (12.92992pt too wide) in paragraph at lines 1117--1118
  [][] 
  []
 
-
-
-[22]
 File: ./pictures/x2zPE.png Graphic file (type bmp)
 <./pictures/x2zPE.png>
-File: ./pictures/z2yPE.png Graphic file (type bmp)
-<./pictures/z2yPE.png>
 
 
 [23]
+File: ./pictures/z2yPE.png Graphic file (type bmp)
+<./pictures/z2yPE.png>
 File: ./pictures/PE时序.png Graphic file (type bmp)
 <./pictures/PE时序.png>
 
-Overfull \hbox (9.0865pt too wide) in paragraph at lines 1136--1137
+Overfull \hbox (9.0865pt too wide) in paragraph at lines 1148--1149
  [][] 
  []
 
-File: ./pictures/z输出时序.png Graphic file (type bmp)
-<./pictures/z输出时序.png>
 
 
 [24]
+File: ./pictures/z输出时序.png Graphic file (type bmp)
+<./pictures/z输出时序.png>
 File: ./pictures/和差项生成.png Graphic file (type bmp)
 <./pictures/和差项生成.png>
 File: ./pictures/和差项生成步骤.png Graphic file (type bmp)
@@ -759,11 +761,11 @@ File: ./pictures/和差项生成步骤.png Graphic file (type bmp)
 [25]
 File: ./pictures/zigzagModule.png Graphic file (type bmp)
 <./pictures/zigzagModule.png>
-File: ./pictures/scanner.png Graphic file (type bmp)
-<./pictures/scanner.png>
 
 
 [26]
+File: ./pictures/scanner.png Graphic file (type bmp)
+<./pictures/scanner.png>
 File: ./pictures/zigzag ASM.png Graphic file (type bmp)
 <./pictures/zigzag ASM.png>
 
@@ -773,9 +775,47 @@ File: ./pictures/zigzag ASM.png Graphic file (type bmp)
 [28]
 File: ./pictures/quantizer.png Graphic file (type bmp)
 <./pictures/quantizer.png>
+File: ./pictures/熵编码模块.png Graphic file (type bmp)
+<./pictures/熵编码模块.png>
+File: ./pictures/中间码生成模块.png Graphic file (type bmp)
+<./pictures/中间码生成模块.png>
 
 
 [29]
+File: ./pictures/tmepCodeASm.png Graphic file (type bmp)
+<./pictures/tmepCodeASm.png>
+
+
+[30]
+Missing character: There is no 増 (U+5897) in font [FandolSong-Regular.otf]/OT:script=hani;language=dflt;!
+File: ./pictures/EOB生成模块.png Graphic file (type bmp)
+<./pictures/EOB生成模块.png>
+File: ./pictures/EOBGenASM.png Graphic file (type bmp)
+<./pictures/EOBGenASM.png>
+
+
+[31]
+File: ./pictures/HuffmanCoder.png Graphic file (type bmp)
+<./pictures/HuffmanCoder.png>
+
+
+[32]
+File: ./pictures/拼接模块.png Graphic file (type bmp)
+<./pictures/拼接模块.png>
+File: ./pictures/spliceASM.png Graphic file (type bmp)
+<./pictures/spliceASM.png>
+
+
+[33]
+
+[34]
+File: ./pictures/数据生成模块.png Graphic file (type bmp)
+<./pictures/数据生成模块.png>
+
+
+[35]
+
+[36]
 File: ./pictures/DVP_simwave.png Graphic file (type bmp)
 <./pictures/DVP_simwave.png>
 File: ./pictures/wrFSMSim.png Graphic file (type bmp)
@@ -784,30 +824,30 @@ File: ./pictures/rdFSMSim.png Graphic file (type bmp)
 <./pictures/rdFSMSim.png>
 
 
-[30]
+[37]
 File: ./pictures/DCTSchematice.png Graphic file (type bmp)
 <./pictures/DCTSchematice.png>
 File: ./pictures/DCT模块仿真.png Graphic file (type bmp)
 <./pictures/DCT模块仿真.png>
 
 
-[31]
+[38]
 File: ./pictures/python脚本运行结果.png Graphic file (type bmp)
 <./pictures/python脚本运行结果.png>
 File: ./pictures/DCTSimulationResult.png Graphic file (type bmp)
 <./pictures/DCTSimulationResult.png>
 
 
-[32]
+[39]
 File: ./pictures/scannerWave.png Graphic file (type bmp)
 <./pictures/scannerWave.png>
 File: ./pictures/quantizerSim.png Graphic file (type bmp)
 <./pictures/quantizerSim.png>
 
 
-[33] (./paper.bbl)
+[40] (./paper.bbl)
 
-[34] (./paper.aux)
+[41] (./paper.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
@@ -822,12 +862,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10728 strings out of 475837
- 284794 string characters out of 5775514
- 685721 words of memory out of 5000000
- 33442 multiletter control sequences out of 15000+600000
+ 10828 strings out of 475837
+ 287322 string characters out of 5775514
+ 679011 words of memory out of 5000000
+ 33532 multiletter control sequences out of 15000+600000
  566593 words of font info for 127 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  93i,13n,112p,855b,593s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.xdv (39 pages, 499444 bytes).
+Output written on paper.xdv (46 pages, 586064 bytes).

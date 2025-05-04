@@ -831,7 +831,7 @@
     \end{figure}
     \begin{figure}[H]
       \centering
-      \includegraphics[scale=0.3]{./pictures/TopRTL.png}
+      \includegraphics[scale=0.3]{./pictures/TOPrtl.png}
       \caption{编码模块rtl视图}
       \label{code module rtl}
     \end{figure}
@@ -955,6 +955,18 @@
       0。当高电平传输到src\_sig\_sync\_to\_dst时，通过延迟一拍取非再与次态相与捕捉
       其上升沿，得到目的时钟域的窄脉冲信号。在单bit信号跨时钟域传输时为了防止出现
       亚稳态，需要同dst\_sig\_sync以及ack\_from\_dst一样延迟两拍进行传输。
+
+  \subsection{色彩空间变换模块}
+    色彩空间变换模块，将RGB颜色空间转换为YCrCb颜色空间。由式(\ref{RGB2YCbCr})可知,
+    对于Y颜色分量其中为R、G、B三个颜色分量的乘积和。因此可以使用图\ref{tree}。所示
+    的树性流水线的得到变换结果。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.5]{./pictures/彩色空间转换模块.png}
+      \caption{树形计算结构}
+      \label{tree}
+    \end{figure}
+    对于其他2个分量也是如此，不同之处在于。色度分量还需加上常数128来得到结果。
 
   \subsection{DCT模块}
     \vspace{1em}
@@ -1267,9 +1279,177 @@
 
 
   \subsection{熵编码模块}
+    熵编码模块读取颜色通道量化后的数据并生成压缩码流。该模块的结构如图\ref{enropyCoder}
+    所示数据依次进入中间码生成模块、EOB生成模块、Huffman编码模块以及不定长数据拼接模块。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.4]{./pictures/熵编码模块.png}
+      \caption{熵编码模块}
+      \label{enropyCoder}
+    \end{figure}
+    \subsubsection{中间码生成模块}
+      \vspace{1em}
+      如第二章所述，在进行霍夫码编码前需要将数据转换成一种中间格式，对与DC直流系数。需要
+      上一个8乘8单元的差值的VLI码，即如果数值为负取其绝对值的反码，为正则取其原码。同时
+      要获取数据的有效长度。对应AC交流系数，还需要改系数前0值的数量。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/中间码生成模块.png}
+        \caption{中间码模块}
+        \label{tempGen}
+      \end{figure}
+
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/tmepCodeASm.png}
+        \caption{中间码模块ASM图}
+        \label{tempGenASM}
+      \end{figure}
+
+      该模块的数据通路如图\ref{tempGen}，控制状态机的ASM图如图\ref{tempGenASM}所示。通过
+      一个MUX选择VLI编码模块的输入是来自于DC系数和AC系数。VLI模块解析数据获取其有效长度和
+      VLI码。
+
+      在VLI编码模块中，为了获取数据的尺寸,即绝对值的有效长度。可以利用与二进制值与自身的
+      补码按位相与得到低位到高位的第一个1的独热码的特点。将绝对值的高低颠倒进行此操作的到
+      高位到低 位到最高有效位为1的独热码，再将其输入到编码器得到其尺寸。
+      
+      在未收到数据前，状态机处于DC状态 在该状态下MUX选择数据输入与DC寄存器的差值。
+      当数据有效时，则为8乘8单元的第一个数据即DC值，将其值与上一个DC值作差。再将差值送入
+      VLI编码模块中得到有效长度size和其VLI码，同时判断帧尾有效信号eop是否有效，如果有效
+      则将DC寄存器置0，否则加载当前DC系数，供下一个8乘8单元使用，同时使能信号isDC有效，
+      表示当前输出为DC系数，接着在下一个时钟周期跳转到AC状态。
+
+      在AC状态下，当输入数据有效时，判断其是否为0。如果为0检查零值计数器是否为15，如果为15
+      则时能输出有效信号，表示输出ZRL。如果不为15则使能0值计数器自増信号。如果输入数据不为
+      0值，使能输出有效信号输出该值的VIL和size，再使能零值清零信号，零值计数器将在下一个时钟
+      周期清零。当输入信号done有效时说明此时为8x8单元最后一个数据，跳转回DC状态同时清零值
+      计数器，输出done信号有效此时输入为零时，则不输出使能。表示当前为EOB。
+
+    \subsubsection{EOB生成模块}
+      \vspace{1em}
+      EOB生成模块需要将EOB前的ZRL进行清除，以符合正确的编码规则，否则将导致数据解码失败。
+      图\ref{EOBGen}为EOB生成模块，由图可知输出数据来自模块输入或FIFO。其中FIFO的输入来自模
+      块输入。FIFO的写入写出以及模块输出的选择由一个状态机进行控制,图\ref{EOBGenASM}为其ASM图。
+
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.6]{./pictures/EOB生成模块.png}
+        \caption{EOB生成模块}
+        \label{EOBGen}
+      \end{figure}
+
+      状态机接收数据解析器的三个输出以及FIFO的空信号，当数据有效时，数据解析器对应的信号便会
+      使能。数据解器的三个输出isZRL，isEOB，NotZRL。分别表示此时输入数据为ZRL，EOB，以及其余
+      情况。
+
+      状态机的初态为NORMAL状态，在该状态下如果数据为ZRL则会写入到FIFO中同时控制outInvalid时
+      输出数据无效。当数据为EOB时则会FIFO进行复位清除掉之前存入的ZRL。当输入为不为ZRL和EOB时
+      将检查FIFO是否为空，若为空则输出该数据。否则应先输出FIFO中的ZRL，进而跳转到RD\_FIFO状态
+      同时将当前输入存入FIFO。
+
+      在FIFO\_RD状态下，将保持FIFO读出有效。当FIFO不为空时输出FIFO的输出，当输入数据有效时将 
+      会存进FIFO。当FIFO为空时，则输出则选择来自模块输入的数据同时在下一个时钟周期跳转回NORMAL
+      状态。
+
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/EOBGenASM.png}
+        \caption{EOB生成模块ASM图}
+        \label{EOBGenASM}
+      \end{figure}
+
+    \subsubsection{Huffman编码模块}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/HuffmanCoder.png}
+        \caption{Huffman编码模块}
+        \label{HuffmanCoder}
+      \end{figure}
+
+      Huffman编码模块如图\ref{HuffmanCoder},该模块将输入VLI码的有效大小size和游程值作为DC、AC
+      Huffman表的输入得到其Huffman码值code和码长size。再通isDC信号选择其对应的Huffman表。由于
+      Huffman表采用ROM存储同时为了保证关键路径，输出会晚一个时钟周期，所以需要对其他信号也进行一次
+      打拍延时以对齐时序。接着使用桶形移位寄存器将Huffman编码的按照VLI码的有效长度进行左移，再
+      与VLI码进行按位相或进行拼接。由于JPEG编码是按照高位往低位的方式进行解码。因此将huffman码长
+      和VLI码长相加，再使用该值对先前拼接后的编码对齐进行环形右移。将编码进行高位对齐最后将该值
+      和总长度输出，得到变长编码。
+     
+    \subsubsection{不定长数据拼接模块}
     \vspace{1em}
-  \subsection{JPEG文件格式生成模块}
+      Huffman编码模块的输出数据是由编码和码长构成的不定长不数据。在最终输出的压缩码流中是没有对应
+      的码长数据的。各个数据是通过解高位的Huffman编码获取对应的码长和中间的零值，因此需要将对应每个
+      8乘8单元每个部分对应的编码进行从高位到低位的拼接。因此需要一个该模块对变长码进行拼接得到定
+      长码。
+
+      该模块输出宽度为64位的定长编码。考虑到之后的JPEG数据生成模块需要接收三个颜色通道，并且整合到
+      一个输出，为了提高其吞吐量,该模块对输入数据进行了依次串并转换。对数据进行了一定地缓存,防止
+      了后级模块的吞吐量不足导致的数据丢失。
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.4]{./pictures/拼接模块.png}
+        \caption{不定长数据拼接模块}
+        \label{spliceModule}
+      \end{figure}
+
+      图\ref{spliceModule}为该模块的数据通路。该模块向使用桶形移位寄存器来对数据进行移位，使用一个
+      累加器定位当前输入编码的移位值。其桶形移位器的输入为64×2=128位。高64为连接输入数据，低64位补
+      0。移位后的高64位和低64位分别存入高位寄存器和低位寄存器。使用一个拼接寄存器存储目前所拼接
+      的编码。以及一个输出寄存器占存上次输出的64位定长码。由一个控制状态机来操作这些寄存器的加载和
+      数据的输出。
+
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.5]{./pictures/spliceASM.png}
+        \caption{不定长数据拼接模块ASM图}
+        \label{spliceASM}
+      \end{figure}
+      
+      当输入数据有效时，移位器根据当前的移位累加值，对其进行右移。如果当将的累加值加输入数据的累加值小
+      于64。累加器会在下一个时钟周期更新与当前码长的累加值。当输入码长加累加值大于等于64时，移位后高
+      位寄存器以满64位，会溢出一部分数据到低位寄存器（大于64时）,这时累加器在下一个时钟周期会更新溢出
+      的比特数，即输入码长加累加值减64，同时输出溢出信号overflow有效。当输入端口的done信号有效时，则
+      代8乘8单元的最后一个编码输入，在下一个时钟周期累加值清零,供下一个8乘8单元定位当前移位长度，同时
+      更新一个寄存输出size，供后续输出未满64位编码时，编码的有效长度，当输入编码长度加累加值小于等于
+      64时，更新其值。否则更新输入码长加累加值减64。
+
+      控制状态机有两个状态NORMAL和OVERFLOW。其初态为NORMAL状态，当移位器的输出有效时，输出spliceRegLoad
+      有效。拼接寄存器在下一个时钟周期将会更新，当溢出信号overflow无效同时done无效时，spliceSel使拼接寄
+      存器的次态选通现态与高位寄存器按位相或，与存储在高位寄存器的输入编码进行拼接下面称该信号为拼接值。
+      当溢出信号overflow无效同时done有效时，输出寄存器次态选通拼接值，拼接寄存器次态选通低位寄存器。由于
+      目前高位寄存器未溢出，所以低位寄存器为0。将其送入拼接寄存器使其清零，以供拼接后续输入数据。当overfolw
+      有效时，拼接寄存器次态接通包含溢出数据的低位寄存器。outRegLoad有效输出寄存器下个时钟周期加载拼接值，
+      当done有效时需要在输出拼接值后再输出溢出值，将状态跳转到OVERFLOW。
+
+      在OVERFLOW状态下，模块输出此时输出满64位的拼接值，下一个时钟周期输出寄存器需要加载位于拼接寄存器
+      的溢出值，因此使能outRegLoad和outSel。同时输出OutDone和size有效表示8乘以8单元最后一个数据和有效长度。
+      在该状态下拼接寄存器也需要使能spliceRegLoad进行加载，如果此时移位器输出有效，使能spliceSet加载高位寄
+      存器。否则则加载低位寄存器进行清零。
+
+  \subsection{JPEG数据生成模块}
     \vspace{1em}
+    jpeg数据生成模块负责将3个颜色通道整合到一个输出端口进行输出，本设计采用采样格式为YCbCr444，所以一个MUC
+    中包含三个颜色通道各一个8乘8单元。
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.4]{./pictures/数据生成模块.png}
+      \caption{JPEG数据生成模块}
+      \label{数据生成模块}
+    \end{figure}
+
+    图\ref{数据生成模块}为该模块的大致结构。每个颜色通道都是用一个FIFO进行缓存，当对应的颜色通道不被后级模块
+    读取时能够即使缓存，以免数据丢失。当选中的fifo输出读到对应的done信号有效时则，将选择计数器加一切换到另一
+    代表该通道的8乘8单元读取完毕，切换到下个颜色通道，进行轮转读取进而拼接。当Cr通道的FIFO读取到eop和done信号同时有效
+    时代表读取了完整的一帧数据，使能不定长数据的done信号。
+
+  \subsection{本章总结}
+    \vspace{1em}
+    本章系统地阐述了JPEG编码系统的硬件架构设计与实现方法。在整体设计思路上，通引入流水线技术将复杂的编码流程分解
+    为多级处理单元。显著提升了数据的吞吐量力；在DCT的实现上采用了二维脉动阵列优化了计数效率。器规则化的处理单元
+    保持了较高的运算并行度；针对数据缓存需求设计的乒乓操作机制。有效地解决了跨时域传输中的速率匹配问题。熵编码模块
+    构建了完整压缩数据生成流水线。其模块化的设计思路和优化方法也为其他实时图像处理系统的开发提供了有价值的参考。
+  
 
 \newpage
 \section{JPEG编码系统各模块仿真结果}
