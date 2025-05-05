@@ -7,151 +7,108 @@ module FixedLengthGen (clk, rst_n, in, out);
   input HuffmanBus_t in;
   output HuffmanBus_t out;
 
-  struct {
-    logic [$clog2(CODE_W):0] current, next;
-  } shiftCnt, size; 
-  logic [CODE_W-1:0] up, low;
-  logic overflow;
+  struct {HuffmanBus_t next, current;} outReg;
+  always_ff @(posedge clk or negedge)
+    outReg.current <= !rst_n ? '0 : outReg.next;
 
-  always_ff @(posedge clk or negedge rst_n) begin
-    if(!rst_n) begin
-      size.current <= 0;
-      shiftCnt.current <= 0;
-    end else begin
-      size.current <= size.next;
-      shiftCnt.current <= shiftCnt.next;
-    end
+  struct {logic [$clog2(CODE_W)-1:0] next, current;} shiftReg;
+  struct {logic [$clog2(CODE_W)-1:0] next, current, last;} sizeReg;
+  logic overflow;
+  always_ff @(posedge clk or negedge rst_n) 
+    shiftReg.current <= !rst_n ? 0 : shiftReg.next;
+  always_ff @(posedge clk) begin
+    sizeReg.current <= sizeReg.next;
+    sizeReg.last <= sizeReg.current;
   end
   always_comb begin
-    shiftCnt.next = shiftCnt.current;
-    size.next = size.current;
+    shiftReg.next = shiftReg.current;
+    sizeReg.next = sizeReg.current;
     overflow = 0;
-    if(in.valid) begin
-      shiftCnt.next += in.data.size;
-      overflow = shiftCnt.next >= CODE_W;
-      if(overflow)
-        shiftCnt.next -= CODE_W;
+    if(in.vlid) begin
+      shiftReg.next = in.data.size + shiftReg.current;
+      if(shiftReg.next >= CODE_W) begin
+        shiftReg.next = 64 - shiftReg.next;
+        overflow = 1;
+      end
       if(in.done) begin
-        size.next = shiftCnt.next;
-        shiftCnt.next = 0;
+        sizeReg.next = shiftReg.next;
+        if(sizeReg.next == CODW_W)
+          overflow = 0;
+        shiftReg.next = 0;
       end
     end
   end
 
-  always_ff @(posedge clk or negedge rst_n) begin
-    if(!rst_n) begin
-      {up, low} <= '0;
-    end else if(in.valid) begin
-      {up, low} <= {in.data.code, {CODE_W{1'b0}}} >> shiftCnt.current;
-    end
+  struct packed {logic done, valid, overflow} inDelay;
+  logic [$clog2(CODE_W)-1:0] up, low;
+  always_ff @(posedge clk) begin
+    inDelay <= {in.done, in.valid, overflow};
+    {up, low} <= {in.data.code, {CODE_W{1'b0}}  >> shiftReg.current;
   end
 
-  struct packed{
-    logic valid, overflow, sop, eop;
-  } inDelay[2];
+  struct {logic [$clog2(CODW_W)-1:0] current, next;} spliceReg;
+  struct {enum logic {NORMAL, OVERFLOW} current, next, last;} state;
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
-      inDelay[0] <= '0;
+      splliceReg.current <= '0;
+      outReg.current <= '0;
+      state.cuurent <= NORMAL;
     end else begin
-      inDelay[0] <= {in.valid, overflow, in.sop, in.eop};
-      inDelay[1] <= inDelay[0];
+      spliceReg.current <= spliceReg.current;
+      outReg.current <= outReg.current;
+      state.current <= state.next;
+      state.last <= state.current;
     end
   end
-
-  logic [CODE_W-1:0] splice;
-  struct {logic [CODE_W-1:0] next, current;} spliceReg;
-  struct {HuffmanBus_t next, current;} outReg;
-  struct {
-    enum logic[2:0] {NORMAL, DONE, OVERFLOW} next, current;
-  } state;
-
+  logic [$clog2[CODE_W]-1:0] splice;
   always_comb begin
-    splice = spliceReg.current | up;
-    state.next = state.current;
-    outReg.next.data = outReg.current.data;
     spliceReg.next = spliceReg.current;
+    outReg.next = outReg.current;
     outReg.next.valid = 0;
     outReg.next.done = 0;
-    outReg.next.eop = 0;
-    outReg.next.sop = 0;
+    state.next = state.current;
     case(state.current)
-      NORMAL:begin
-        if(inDelay[0].valid) begin
-          spliceReg.next = splice;
-          if(inDelay[0].overflow) begin
-            spliceReg.next = low;
-            outReg.next.data.code = splice;
+      NORMAL: begin
+        if(inDelay.valid) begin
+          spliceReg.next |= up; 
+
+          if(inDealy.done | inDelay.overflow) begin
+            outReg.next.data.code = spliceReg;
             outReg.next.data.size = CODE_W;
-            outReg.next.eop = inDelay[0].eop;
-            outReg.next.sop = inDelay[0].sop;
             outReg.next.valid = 1;
+            spliceReg.next = low;
+          end
+
+          if(inDelay.done) begin
+            if(!inDelay.overflow) begin
+              outReg.next.data.size = sizeReg.current;
+              outReg.next.done = 1;
+            end else begin
+              state.next = OVERFLOW;
+            end
           end
         end
-
-        if(in.valid & in.done)
-          state.next = DONE;
       end
-      DONE:begin
-        state.next = NORMAL;
-        spliceReg.next = '0;
-        outReg.next.data.code = splice;
-        outReg.next.data.size = size.current;
-        outReg.next.valid = 1;
-        outReg.next.done = 1;
-        outReg.next.eop = inDelay[0].eop;
-        outReg.next.sop = inDelay[0].sop;
-        
-        // if(outReg.next.data.size % 8 != 0)
-        //   outReg.next.data.size += (1 << 3) - outReg.next.data.size[2:0];
-
-        if(inDelay[0].overflow) begin
-          state.next = OVERFLOW;
-          outReg.next.data.size = CODE_W;
-          outReg.next.done = 0;
-          spliceReg.next = low;
-          outReg.next.sop = 0;
-          outReg.next.eop = 0;
-        end
-      end
-      OVERFLOW:begin
-        state.next = NORMAL;
-        spliceReg.next = '0;
+      OVERFLOW: begin
         outReg.next.data.code = spliceReg.current;
+        outReg.next.data.size = CODE_W;
         outReg.next.valid = 1;
-        outReg.next.done = 1;
-        outReg.next.eop = inDelay[1].eop;
-        outReg.next.sop = inDelay[1].sop;
-        outReg.next.data.size = size.current;
-        // if(outReg.next.data.size % 8 != 0)
-        //   outReg.next.data.size += (1 << 3) - outReg.next.data.size[2:0];
+        spliceReg.next = low;
 
-        if(inDelay[0].valid)
+        if(state.last == NORMAL | inDelay.done) begin
+          outReg.next.data.size = sizeReg.last;
+          outReg.next.done = 1;
+        end
+
+        if(inDelay.valid)
           spliceReg.next = up;
+        
+        if(!inDelay.overflow)
+          state.next = NORMAL;
       end
     endcase
   end
-
-  always_ff @(posedge clk)begin
-    outReg.current.data <= outReg.next.data;
-  end
-  always_ff @(posedge clk or negedge rst_n) begin
-    if(!rst_n) begin
-      outReg.current.valid <= 0;
-      outReg.current.done <= 0;
-      outReg.current.eop <= 0;
-      outReg.current.sop <= 0;
-      spliceReg.current <= '0;
-      state.current <= NORMAL;
-    end else begin
-      outReg.current.valid <= outReg.next.valid;
-      outReg.current.done <= outReg.next.done;
-      outReg.current.eop <= outReg.next.eop;
-      outReg.current.sop <= outReg.next.sop;
-      spliceReg.current <= spliceReg.next;
-      state.current <= state.next;
-    end
-  end
-  assign out = outReg.current;
+  
 endmodule
 
 module IndefiniteLengthCodeGen #(parameter CHROMA = 0) (clk, rst_n, tempCode, huffman);
