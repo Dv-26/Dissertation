@@ -1,14 +1,38 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{2004vlsi数字信号处理系统}
+{\em VLSI数字信号处理系统: 设计与实现}.
+\newblock 电子与电气工程丛书. 机械工业出版社, 2004.
+
+\bibitem{ahmed2006discrete}
+Nasir Ahmed, T\_ Natarajan, and Kamisetty~R Rao.
+\newblock Discrete cosine transform.
+\newblock {\em IEEE transactions on Computers}, 100(1):90--93, 2006.
 
 \bibitem{chen1977fast}
 Wen-Hsiung Chen, CH~Smith, and Sam Fralick.
 \newblock A fast computational algorithm for the discrete cosine transform.
 \newblock {\em IEEE Transactions on communications}, 25(9):1004--1009, 1977.
 
+\bibitem{huffman1952method}
+David~A Huffman.
+\newblock A method for the construction of minimum-redundancy codes.
+\newblock {\em Proceedings of the IRE}, 40(9):1098--1101, 1952.
+
 \bibitem{kung1982systolic}
 Hsiang-Tsung Kung.
 \newblock {\em Why systolic architecture?}
 \newblock Design Research Center, Carnegie-Mellon University, 1982.
+
+\bibitem{pennebaker1992jpeg}
+William~B Pennebaker and Joan~L Mitchell.
+\newblock {\em JPEG: Still image data compression standard}.
+\newblock Springer Science \& Business Media, 1992.
+
+\bibitem{rao2014discrete}
+K~Ramamohan Rao and Ping Yip.
+\newblock {\em Discrete cosine transform: algorithms, advantages, applications}.
+\newblock Academic press, 2014.
 
 \bibitem{ref10}
 Tiago Rodrigues and M{\'a}rio V{\'e}stias.
@@ -20,10 +44,30 @@ Junming Shan, Duyao Wang, and Eryan Yang.
 \newblock High performance jpeg decoder based on fpga.
 \newblock In {\em 2011 Asia Pacific Conference on Postgraduate Research in Microelectronics \& Electronics}, pages 57--60. IEEE, 2011.
 
+\bibitem{sze2014high}
+Vivienne Sze, Madhukar Budagavi, and Gary~J Sullivan.
+\newblock High efficiency video coding (hevc).
+\newblock {\em Integrated circuit and systems, algorithms and architectures}, 39:40, 2014.
+
+\bibitem{teja2015verilog}
+G~Ravi Teja, R~Sri Sruthi, Kavita~Singh Tomar, S~Sivanantham, and K~Sivasankaran.
+\newblock Verilog implementation of fully pipelined and multiplierless 2d dct/idct jpeg architecture.
+\newblock In {\em 2015 Online International Conference on Green Engineering and Technologies (IC-GET)}, pages 1--5. IEEE, 2015.
+
+\bibitem{可重构}
+李丹青.
+\newblock 面向dct和idct的可重构阵列设计与优化.
+\newblock Master's thesis, 东南大学, 2019.
+
 \bibitem{ref2}
 杜英杰.
 \newblock 基于fpga的jpeg图像压缩的自适应量化编码.
 \newblock Master's thesis, 西华大学, 2023.
+
+\bibitem{JFIF}
+王成昊.
+\newblock 基于fpga的低复杂度jpeg解码系统设计及实现.
+\newblock Master's thesis, 四川师范大学, 2024.
 
 \bibitem{ref1}
 赵恒阳 and 刘华.

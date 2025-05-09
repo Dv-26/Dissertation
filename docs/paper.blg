@@ -3,44 +3,47 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: paper.aux
 The style file: plain.bst
 Database file #1: references.bib
-You've used 6 entries,
+Warning--to sort, need author, editor, or key in 2004vlsi数字信号处理系统
+Warning--empty author and editor in 2004vlsi数字信号处理系统
+You've used 15 entries,
             2118 wiz_defined-function locations,
-            536 strings with 4855 characters,
-and the built_in function-call counts, 2021 in all, are:
-= -- 207
-> -- 76
-< -- 2
-+ -- 31
-- -- 24
-* -- 126
-:= -- 332
-add.period$ -- 20
-call.type$ -- 6
-change.case$ -- 29
+            586 strings with 6148 characters,
+and the built_in function-call counts, 4547 in all, are:
+= -- 457
+> -- 188
+< -- 3
++ -- 77
+- -- 60
+* -- 285
+:= -- 768
+add.period$ -- 48
+call.type$ -- 15
+change.case$ -- 71
 chr.to.int$ -- 0
-cite$ -- 6
-duplicate$ -- 84
-empty$ -- 169
-format.name$ -- 24
-if$ -- 437
+cite$ -- 17
+duplicate$ -- 189
+empty$ -- 375
+format.name$ -- 60
+if$ -- 964
 int.to.chr$ -- 0
-int.to.str$ -- 6
-missing$ -- 6
-newline$ -- 33
-num.names$ -- 12
-pop$ -- 35
+int.to.str$ -- 15
+missing$ -- 15
+newline$ -- 77
+num.names$ -- 28
+pop$ -- 85
 preamble$ -- 1
-purify$ -- 24
+purify$ -- 60
 quote$ -- 0
-skip$ -- 58
+skip$ -- 122
 stack$ -- 0
-substring$ -- 131
-swap$ -- 21
-text.length$ -- 2
+substring$ -- 249
+swap$ -- 34
+text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 22
-warning$ -- 0
-while$ -- 21
-width$ -- 7
-write$ -- 69
+type$ -- 52
+warning$ -- 2
+while$ -- 45
+width$ -- 17
+write$ -- 165
+(There were 2 warnings)

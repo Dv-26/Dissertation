@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  2 MAY 2025 20:23
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  10 MAY 2025 03:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -648,7 +648,7 @@ File: ./pictures/zigzag.png Graphic file (type bmp)
 [7]
 
 LaTeX Font Warning: Font shape `OMX/cmex/m/n' in size <10.53937> not available
-(Font)              size <10.95> substituted on input line 496.
+(Font)              size <10.95> substituted on input line 499.
 
 
 
@@ -662,12 +662,12 @@ File: ./pictures/deCodeTree.png Graphic file (type bmp)
 [10]
 
 [11]
-Overfull \hbox (1.65572pt too wide) in paragraph at lines 644--660
+Overfull \hbox (1.65572pt too wide) in paragraph at lines 647--663
  [][] 
  []
 
 
-Overfull \hbox (19.38797pt too wide) in paragraph at lines 665--678
+Overfull \hbox (19.38797pt too wide) in paragraph at lines 668--681
  [][] 
  []
 
@@ -729,7 +729,7 @@ File: ./pictures/dct.png Graphic file (type bmp)
 File: ./pictures/DCT脉动阵列.png Graphic file (type bmp)
 <./pictures/DCT脉动阵列.png>
 
-Overfull \hbox (12.92992pt too wide) in paragraph at lines 1117--1118
+Overfull \hbox (12.92992pt too wide) in paragraph at lines 1121--1122
  [][] 
  []
 
@@ -743,7 +743,7 @@ File: ./pictures/z2yPE.png Graphic file (type bmp)
 File: ./pictures/PE时序.png Graphic file (type bmp)
 <./pictures/PE时序.png>
 
-Overfull \hbox (9.0865pt too wide) in paragraph at lines 1148--1149
+Overfull \hbox (9.0865pt too wide) in paragraph at lines 1152--1153
  [][] 
  []
 
@@ -862,12 +862,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10828 strings out of 475837
- 287322 string characters out of 5775514
- 679011 words of memory out of 5000000
- 33532 multiletter control sequences out of 15000+600000
+ 10837 strings out of 475837
+ 287456 string characters out of 5775514
+ 679044 words of memory out of 5000000
+ 33541 multiletter control sequences out of 15000+600000
  566593 words of font info for 127 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 93i,13n,112p,855b,593s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,13n,112p,855b,595s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.xdv (46 pages, 586064 bytes).
+Output written on paper.xdv (46 pages, 599516 bytes).
