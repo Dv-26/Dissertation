@@ -4,8 +4,8 @@
 module code_tb;
    
   localparam CYCLE = 80;
-  localparam WIDTH = 16;
-  localparam HEIGHT = 8;
+  localparam WIDTH = 512;
+  localparam HEIGHT = 512;
 
   localparam TIME_2 = 5 * 2 * CYCLE;
   localparam TIME_3 = 10  * 2 * CYCLE;
@@ -26,11 +26,11 @@ module code_tb;
     pclk, vsync, href, data,
     out
   );
-  logic [15:0]pixels[WIDTH*HEIGHT];
+  logic [23:0]pixels[WIDTH*HEIGHT];
   int i, j;
 
   initial begin
-    $readmemh("/home/dv/jpeg/Dissertation/src/test_img.hex",pixels);
+    $readmemh("/home/dv/jpeg/Dissertation/src/test/test_img.hex",pixels);
     clk = 1;
     pclk = 1;
     href = 0;
@@ -53,9 +53,11 @@ module code_tb;
           {r, g, b} = pixels[i*WIDTH + j];
           rgb565 = {r[7:3], g[7:2], b[7:3]};
           @(negedge pclk)
-            data <= rgb565[15:8];
+            data <= r;
           @(negedge pclk)
-            data <= rgb565[7:0];
+            data <= g;
+          @(negedge pclk)
+            data <= b;
         end
         @(negedge pclk)
         data <= 'x;
@@ -64,14 +66,15 @@ module code_tb;
       end
       #(TIME_5 - TIME_7);
     end
-    wait(out.done & out.eop)
+
+    wait(out.done)
     #(TIME_5 - TIME_7);
     $stop();
   end
 
   integer file; 
   initial begin
-      file=$fopen("/home/dv/jpeg/Dissertation/src/hdl/simulation/jpeg_stream.bin", "wb");   
+      file=$fopen("/home/dv/jpeg/Dissertation/src/test/jpeg_stream.bin", "wb");   
       if(file == 0) 
         $error("Failed to open file");
   end
@@ -81,7 +84,7 @@ module code_tb;
         logic [7:0] byte_val = out.data.code[8*(7-i/8)+:8];
         $fwrite(file, "%c", byte_val);
       end
-      if(out.done & out.eop) begin
+      if(out.done) begin
         $fclose(file);
         $display("Raw JPEG data saved");
       end

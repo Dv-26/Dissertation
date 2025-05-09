@@ -28,10 +28,10 @@ module top #(
     //         .GPIO_0_0_tri_io ({rst, pwdn})
     //     );
     // `else
-        JpegCoder #(11, 3) coder (clk, rst_n, pingpong2Code, out);
+        JpegCoder #(12, 3) coder (clk, rst_n, pingpong2Code, out);
     // `endif
 
-    PingpongBuf #(WIDTH, HEIGHT, "RGB565") pingpongBuf (
+    PingpongBuf #(WIDTH, HEIGHT, "RGB888") pingpongBuf (
         clk, rst_n,
         pclk, vsync, href, data,
         pingpong2Code

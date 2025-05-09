@@ -49,7 +49,7 @@ module EOBgen #(
   logic isZRL, notZRL, isEOB;
   assign isZRL = &{in.valid, !in.data.isDC, &in.data.run};
   assign notZRL = &{in.valid, !isZRL, !in.data.isDC};
-  assign isEOB = &{in.done, !in.valid};
+  assign isEOB = &{in.done, !in.valid|isZRL};
   logic bufRst;
 
   tempCode_t ZRLbuf;
@@ -98,7 +98,6 @@ module EOBgen #(
           state.next = NORMAL;
           outSel = 0;
           bufWr.en = 0;
-          outSel = 0;
           bufRd.en = 0;
         end
       end
@@ -116,6 +115,8 @@ module EOBgen #(
       outReg.next.data.run = 0;
       outReg.next.data.size = 0;
       outReg.next.data.vli = '0;
+      outReg.next.done = 1;
+      outReg.next.eop = in.eop;
     end
   end
 endmodule
@@ -205,7 +206,7 @@ module tempCoder #(
   assign zeroCnt.eq = zeroCnt.value == 15;
 
   reg_t lastDC;
-  logic [DATA_WIDTH-1:0] dcDiff;
+  logic signed [DATA_WIDTH-1:0] dcDiff;
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
       lastDC.data <= '0;
@@ -269,6 +270,7 @@ module VliCode #(
     reverse = (~reverse + 1) & reverse;
     for(int i=0; i<DATA_WIDTH-1; i++)
       hotOne[i] = reverse[DATA_WIDTH-2-i];
+    vli &= {hotOne[DATA_WIDTH-3:0],hotOne[DATA_WIDTH-2]} - 1;
   end
   logic [$clog2(DATA_WIDTH-1)-1:0]  bin;
   encode #(DATA_WIDTH-1) hot2bin (hotOne, bin);

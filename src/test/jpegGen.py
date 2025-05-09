@@ -3,10 +3,10 @@ from PIL import Image
 
 def create_y_only_jpeg(output_path):
     # 创建8x8的随机灰度数据
-    # y_data = np.random.randint(0, 256, (16, 16), dtype=np.uint8)
-    black_array = np.zeros((16, 16), dtype=np.uint8)
+    y_data = np.random.randint(0, 256, (16, 8), dtype=np.uint8)
+    # black_array = np.zeros((16, 16), dtype=np.uint8)
     # 转换为PIL图像
-    img = Image.fromarray(black_array, mode='L')  # 'L'表示灰度
+    img = Image.fromarray(y_data, mode='L')  # 'L'表示灰度
     
     # 标准亮度量化表
     luma_table = [

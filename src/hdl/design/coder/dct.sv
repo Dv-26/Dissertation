@@ -1,20 +1,20 @@
 `include "interface.sv"
 
 typedef struct packed {
-  logic [10:0] data;
+  logic [11:0] data;
   logic sop, eop;
   logic load;
 } in_t;
 
 typedef struct {
-  logic [10:0] data;
+  logic [11:0] data;
   logic sop, eop;
   logic sumDiffSel;
   logic load;
 } x2zX_t;
 
 typedef struct packed {
-  logic [10:0] data;
+  logic [11:0] data;
   logic sop, eop;
   logic valid;
 } result_t;
@@ -25,7 +25,7 @@ typedef struct packed {
 } peRowPort_t;
 
 typedef struct {
-  logic [10:0] data;
+  logic [11:0] data;
 }peColPort_t;
 
 module Dct #(
@@ -52,7 +52,7 @@ module Dct #(
     end
   endgenerate
 
-  coefficientMap #(DATA_WIDTH, 8) coefficientMap (x2zCoe, z2yCoe);
+  coefficientMap #(DATA_WIDTH, 8) coefficientMap (clk, x2zCoe, z2yCoe);
   Array #(DATA_WIDTH, 2, 4, ROW) x2zArray (clk, rst_n, x2zCoe, x, z);
   Array #(DATA_WIDTH, 16, 4, ROW) z2yArray (clk, rst_n, z2yCoe, z, y);
 
@@ -217,6 +217,7 @@ module coefficientMap #(
   parameter DEPTH = 8,
   parameter COL = 4
 ) (
+  input logic clk,
   rom_if.tx a[4],
   rom_if.tx b[4]
 );
@@ -225,8 +226,14 @@ module coefficientMap #(
   generate
     genvar i;
     for(i=0; i<COL; i++) begin
-      assign a[i].data = a[i].en? memoryArray[a[i].addr][i] : '0;
-      assign b[i].data = b[i].en? memoryArray[b[i].addr][i] : '0;
+      always_ff @(posedge clk)
+        if(a[i].en)
+          a[i].data <= memoryArray[a[i].addr][i];
+      always_ff @(posedge clk)
+        if(b[i].en)
+          b[i].data <= memoryArray[b[i].addr][i];
+      // assign a[i].data = a[i].en? memoryArray[a[i].addr][i] : '0;
+      // assign b[i].data = b[i].en? memoryArray[b[i].addr][i] : '0;
     end
   endgenerate
 

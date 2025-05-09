@@ -50,7 +50,7 @@ module PingpongBuf #(
       buf0Full.value <= 1'b1;
     end
   end
-  Ram #(16, BUF_DEPTH) buf0 (buf0In, buf0Out);
+  Ram #($bits(dataPort_t)-1, BUF_DEPTH) buf0 (buf0In, buf0Out);
 
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
@@ -61,7 +61,7 @@ module PingpongBuf #(
       buf1Full.value <= 1'b1;
     end
   end
-  Ram #(16, BUF_DEPTH) buf1 (buf1In, buf1Out);
+  Ram #($bits(dataPort_t)-1, BUF_DEPTH) buf1 (buf1In, buf1Out);
 
   logic rdStart, rdDone, rdValid;
   logic [BUF_ADDR_W-1:0] rdAddr; 
@@ -81,19 +81,23 @@ module PingpongBuf #(
     {1'b0, rdValid}:
     {rdValid, 1'b0};
 
-  logic [4:0] r5,b5;
-  logic [5:0] g6;
+  logic [7:0] r, g, b;
   logic eop, sop;
   logic rdValidDelay;
-  assign {r5, g6, b5, sop, eop} = rdBufSel? buf1Out.data : buf0Out.data;
+  assign {r, g, b, sop, eop} = rdBufSel? buf1Out.data : buf0Out.data;
+  assign {out[0].data, out[1].data, out[2].data, sop, eop} = rdBufSel? buf1Out.data : buf0Out.data;
   assign {out[0].valid, out[1].valid, out[2].valid} = {3{rdValidDelay}};
   assign {out[0].sop, out[1].sop, out[2].sop} = {3{sop}};
   assign {out[0].eop, out[1].eop, out[2].eop} = {3{eop}};
   Delay #(1, 1) validDelay (clk, rst_n, rdValid, rdValidDelay);
-
-  assign out[0].data = b5 << 5 | b5 >> 2; 
-  assign out[1].data = g6 << 2 | g6 >> 4; 
-  assign out[2].data = r5 << 5 | r5 >> 2; 
+  always_comb begin
+    out[0].data = '0;
+    out[1].data = '0;
+    out[2].data = '0;
+    out[0].data[7:0] = r; 
+    out[1].data[7:0] = g; 
+    out[2].data[7:0] = b; 
+  end
 
   typedef enum logic {
     WR_BUF0,
@@ -281,3 +285,4 @@ module RdAddrGen #(
     endcase
   end
 endmodule
+

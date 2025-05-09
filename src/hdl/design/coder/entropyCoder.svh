@@ -5,7 +5,7 @@ package huffman_pkg;
 
   typedef struct packed {
     logic [3:0] size;
-    logic [8:0] vli;
+    logic [9:0] vli;
     logic [3:0] run;
     logic isDC;
   } tempCodeData_t;

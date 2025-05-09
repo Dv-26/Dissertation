@@ -8,11 +8,11 @@ module FixedLengthGen (clk, rst_n, in, out);
   output HuffmanBus_t out;
 
   struct {HuffmanBus_t next, current;} outReg;
-  always_ff @(posedge clk or negedge)
+  always_ff @(posedge clk or negedge rst_n)
     outReg.current <= !rst_n ? '0 : outReg.next;
-
-  struct {logic [$clog2(CODE_W)-1:0] next, current;} shiftReg;
-  struct {logic [$clog2(CODE_W)-1:0] next, current, last;} sizeReg;
+  assign out = outReg.current; 
+  struct {logic [$clog2(CODE_W):0] next, current;} shiftReg;
+  struct {logic [$clog2(CODE_W):0] next, current, last;} sizeReg;
   logic overflow;
   always_ff @(posedge clk or negedge rst_n) 
     shiftReg.current <= !rst_n ? 0 : shiftReg.next;
@@ -24,63 +24,80 @@ module FixedLengthGen (clk, rst_n, in, out);
     shiftReg.next = shiftReg.current;
     sizeReg.next = sizeReg.current;
     overflow = 0;
-    if(in.vlid) begin
+    if(in.valid) begin
       shiftReg.next = in.data.size + shiftReg.current;
+
       if(shiftReg.next >= CODE_W) begin
-        shiftReg.next = 64 - shiftReg.next;
+        shiftReg.next -= CODE_W;
         overflow = 1;
       end
+
       if(in.done) begin
         sizeReg.next = shiftReg.next;
-        if(sizeReg.next == CODW_W)
+        if(sizeReg.next == 0)begin
           overflow = 0;
+          sizeReg.next = CODE_W;
+        end
         shiftReg.next = 0;
       end
     end
   end
 
-  struct packed {logic done, valid, overflow} inDelay;
-  logic [$clog2(CODE_W)-1:0] up, low;
-  always_ff @(posedge clk) begin
-    inDelay <= {in.done, in.valid, overflow};
-    {up, low} <= {in.data.code, {CODE_W{1'b0}}  >> shiftReg.current;
-  end
+  struct packed {logic done, valid, overflow, eop, sop;} inDelay[2];
+  logic [CODE_W-1:0] up, low;
 
-  struct {logic [$clog2(CODW_W)-1:0] current, next;} spliceReg;
+  always_ff @(posedge clk or negedge rst_n)
+    if(!rst_n)begin
+      inDelay[0] <= '0;
+      inDelay[1] <= '0;
+    end else begin
+      inDelay[0] <= {in.done, in.valid, overflow, in.eop, in.sop};
+      inDelay[1] <= inDelay[0];
+    end
+  
+  always_ff @(posedge clk)
+    if(in.valid)
+      {up, low} <= {in.data.code, {CODE_W{1'b0}}}  >> shiftReg.current;
+
+  struct {logic [CODE_W-1:0] current, next;} spliceReg;
   struct {enum logic {NORMAL, OVERFLOW} current, next, last;} state;
   always_ff @(posedge clk or negedge rst_n) begin
     if(!rst_n) begin
-      splliceReg.current <= '0;
+      spliceReg.current <= '0;
       outReg.current <= '0;
-      state.cuurent <= NORMAL;
+      state.current <= NORMAL;
     end else begin
-      spliceReg.current <= spliceReg.current;
-      outReg.current <= outReg.current;
+      spliceReg.current <= spliceReg.next;
+      outReg.current <= outReg.next;
       state.current <= state.next;
       state.last <= state.current;
     end
   end
-  logic [$clog2[CODE_W]-1:0] splice;
+  logic [$clog2(CODE_W)-1:0] splice;
   always_comb begin
     spliceReg.next = spliceReg.current;
     outReg.next = outReg.current;
     outReg.next.valid = 0;
     outReg.next.done = 0;
+    outReg.next.sop = 0;
+    outReg.next.eop = 0;
     state.next = state.current;
     case(state.current)
       NORMAL: begin
-        if(inDelay.valid) begin
+        if(inDelay[0].valid) begin
           spliceReg.next |= up; 
 
-          if(inDealy.done | inDelay.overflow) begin
-            outReg.next.data.code = spliceReg;
+          if(inDelay[0].done | inDelay[0].overflow) begin
+            outReg.next.data.code = spliceReg.next;
+            outReg.next.sop = inDelay[0].sop;
+            outReg.next.eop = inDelay[0].eop;
             outReg.next.data.size = CODE_W;
             outReg.next.valid = 1;
             spliceReg.next = low;
           end
 
-          if(inDelay.done) begin
-            if(!inDelay.overflow) begin
+          if(inDelay[0].done) begin
+            if(!inDelay[0].overflow) begin
               outReg.next.data.size = sizeReg.current;
               outReg.next.done = 1;
             end else begin
@@ -92,18 +109,20 @@ module FixedLengthGen (clk, rst_n, in, out);
       OVERFLOW: begin
         outReg.next.data.code = spliceReg.current;
         outReg.next.data.size = CODE_W;
+        outReg.next.sop = inDelay[1].sop;
+        outReg.next.eop = inDelay[1].eop;
         outReg.next.valid = 1;
         spliceReg.next = low;
 
-        if(state.last == NORMAL | inDelay.done) begin
+        if(state.last == NORMAL | inDelay[0].done) begin
           outReg.next.data.size = sizeReg.last;
           outReg.next.done = 1;
         end
 
-        if(inDelay.valid)
+        if(inDelay[0].valid)
           spliceReg.next = up;
         
-        if(!inDelay.overflow)
+        if(!inDelay[0].overflow)
           state.next = NORMAL;
       end
     endcase

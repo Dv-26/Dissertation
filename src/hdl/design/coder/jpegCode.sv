@@ -24,17 +24,17 @@ module JpegCoder #(
         y[i], 
         quantizer2code
       );
-      EntropyCoder #(DATA_WIDTH) coder (
+      EntropyCoder #(DATA_WIDTH, i) coder (
         clk, rst_n,
         quantizer2code,
         coder2streamGenator[i]
       );
     end
   endgenerate
-  // assign out = coder2streamGenator[0];
-  compressStreamGenator #(ROW) compressStreamGenator (
-    clk, rst_n,
-    coder2streamGenator, out
-  );
+  assign out = coder2streamGenator[1];
+  // compressStreamGenator #(ROW) compressStreamGenator (
+  //   clk, rst_n,
+  //   coder2streamGenator, out
+  // );
 
 endmodule

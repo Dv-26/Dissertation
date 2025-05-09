@@ -121,19 +121,19 @@ interface rom_if #(
 endinterface
 
 typedef struct packed {
-  logic [10:0] data;
+  logic [11:0] data;
   logic sop, eop;
   logic valid;
 } dctPort_t;
 
 typedef struct packed {
-  logic [15:0] data;
+  logic [23:0] data;
   logic sop, eop;
   logic valid;
 } dataPort_t;
 
 typedef struct packed {
-  logic [10:0] data;
+  logic [11:0] data;
   logic sop, eop;
   logic valid;
   logic done;

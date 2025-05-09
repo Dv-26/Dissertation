@@ -23,7 +23,7 @@ module Zigzag #(
   ramWr_if #(DATA_WIDTH+2, 64) ram8x8Wr (clk);
   assign scanStart = cnt64 == 27;
 
-  Ram #(DATA_WIDTH, 64) ram8x8 (ram8x8Wr, ram8x8Rd);
+  Ram #(DATA_WIDTH+2, 64) ram8x8 (ram8x8Wr, ram8x8Rd);
 
   assign ram8x8Wr.data = {in.data, in.sop, in.eop};
   assign ram8x8Wr.addr = cnt64;

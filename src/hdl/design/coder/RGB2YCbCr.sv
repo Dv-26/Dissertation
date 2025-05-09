@@ -43,7 +43,7 @@ module RGB2YCbCr #(
 
     ConstAaary[1][2] = 0.5 * 2**8;
     ConstAaary[1][1] = -0.419 * 2**8;
-    ConstAaary[1][0] = -0.169 * 2**8;
+    ConstAaary[1][0] = -0.081 * 2**8;
 
     ConstAaary[2][2] = -0.169 * 2**8;
     ConstAaary[2][1] = -0.331 * 2**8;

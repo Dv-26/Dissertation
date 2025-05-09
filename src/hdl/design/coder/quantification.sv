@@ -6,14 +6,23 @@ module Quantizer #(
   ramWr_if.Rx in,
   output logic [DATA_WIDTH-1:0] out
 );
-  logic signed [15 : 0] coefficientMap [64];
+  logic signed [16 : 0] coefficientMap [64];
 
-  wire signed [DATA_WIDTH-1 : 0] dataIn, dataOut;
-  wire signed [DATA_WIDTH+16 : 0] product;
+  logic signed [DATA_WIDTH-1 : 0] dataIn, dataOut;
+  logic signed [DATA_WIDTH+16 : 0] product;
   assign dataIn = in.data;
-  assign product = dataIn * coefficientMap[in.addr];
-  assign dataOut = product >>> 16;
+  // assign dataOut = product >>> 16;
   assign out = dataOut;
+  logic nagetive;
+
+  always_comb begin
+    product = dataIn * coefficientMap[in.addr];
+    nagetive = product[DATA_WIDTH+16];
+    product = nagetive ? ~(product-1) : product;
+    dataOut = product >>> 16;
+    if(dataOut != 0 && nagetive)
+      dataOut = (~dataOut)+1;
+  end
 
   int n;
   initial begin
@@ -21,20 +30,6 @@ module Quantizer #(
       coefficientMap [n] = 2**16 / 99;
 
     if(CHROMA) begin
-      coefficientMap [0] = 2**16 / 17;
-      coefficientMap [1] = 2**16 / 18;
-      coefficientMap [3] = 2**16 / 24;
-      coefficientMap [4] = 2**16 / 47;
-      coefficientMap [8] = 2**16 / 18;
-      coefficientMap [9] = 2**16 / 21;
-      coefficientMap [10] = 2**16 / 26;
-      coefficientMap [11] = 2**16 / 66;
-      coefficientMap [16] = 2**16 / 24;
-      coefficientMap [17] = 2**16 / 26;
-      coefficientMap [18] = 2**16 / 56;
-      coefficientMap [24] = 2**16 / 47;
-      coefficientMap [25] = 2**16 / 66;
-    end else begin
       coefficientMap[0] = 2**16 / 16;
       coefficientMap[1] = 2**16 / 11;
       coefficientMap[2] = 2**16 / 10;
@@ -99,6 +94,20 @@ module Quantizer #(
       coefficientMap[61] = 2**16 / 100;
       coefficientMap[62] = 2**16 / 103;
       coefficientMap[63] = 2**16 / 99;
+    end else begin
+      coefficientMap [0] = 2**16 / 17;
+      coefficientMap [1] = 2**16 / 18;
+      coefficientMap [3] = 2**16 / 24;
+      coefficientMap [4] = 2**16 / 47;
+      coefficientMap [8] = 2**16 / 18;
+      coefficientMap [9] = 2**16 / 21;
+      coefficientMap [10] = 2**16 / 26;
+      coefficientMap [11] = 2**16 / 66;
+      coefficientMap [16] = 2**16 / 24;
+      coefficientMap [17] = 2**16 / 26;
+      coefficientMap [18] = 2**16 / 56;
+      coefficientMap [24] = 2**16 / 47;
+      coefficientMap [25] = 2**16 / 66;
     end
   end
 endmodule
