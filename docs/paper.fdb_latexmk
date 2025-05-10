@@ -1,18 +1,22 @@
 # Fdb version 4
-["bibtex paper"] 1746818596.23077 "paper.aux" "paper.bbl" "paper" 1746818602.95405 0
+["bibtex paper"] 1746841522.86412 "paper.aux" "paper.bbl" "paper" 1746841568.86759 0
   "./references.bib" 1746818593.77768 4953 c37099c95a9a2852f032c3f532a6e9ea ""
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1742685315 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "paper.aux" 1746818598.03649 16996 090f4e66ee63688150fa37c4ec61af20 "xelatex"
+  "paper.aux" 1746841563.95901 18407 b9c6f1831c8939a2d8f8f0bd8f22dbdd "xelatex"
   (generated)
   "paper.bbl"
   "paper.blg"
   (rewritten before read)
-["xdvipdfmx"] 1746818598.3618 "paper.xdv" "paper.pdf" "paper" 1746818602.95779 0
-  "paper.xdv" 1746818598.03849 599516 ebf8af4244b7b70757abde6172851a26 "xelatex"
+["xdvipdfmx"] 1746841564.32189 "paper.xdv" "paper.pdf" "paper" 1746841568.87675 0
+  "paper.xdv" 1746841563.96101 611808 402cf209be21c70e3b56f96507c4e92a "xelatex"
   (generated)
   "paper.pdf"
   (rewritten before read)
-["xelatex"] 1746818596.33135 "paper.tex" "paper.xdv" "paper" 1746818602.95424 0
+["xelatex"] 1746841562.3575 "paper.tex" "paper.xdv" "paper" 1746841568.86798 0
+  "../src/test/Cb_channal.jpg" 1746824452.98478 6591 056110becd207453fe1ff6d08d4d345e ""
+  "../src/test/Cr_channal.jpg" 1746824452.98511 6661 d24ff28bd3b0dbcbb77aa689d4984283 ""
+  "../src/test/Y_channal.jpg" 1746824452.98511 17752 7c4d3bbf6af3ac98f8fc8b73ab51e331 ""
+  "../src/test/test_img512x512.png" 1746824453.01011 719641 e3459eef047c09096f9e5d7f50efd8c8 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1742685315 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1742685315 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1742685315 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -82,10 +86,10 @@
   "/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJKfntef.sty" 1742685315 39577 b470f8a1dbecc9c45c9bf05ca7db9188 ""
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1742685315 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/web2c/xetex/xelatex.fmt" 1743045153 4492516 352b6b3d876c35bb35467c6be33687d7 ""
-  "paper.aux" 1746818598.03649 16996 090f4e66ee63688150fa37c4ec61af20 "xelatex"
-  "paper.bbl" 1746818596.32449 2952 d4b6850f95934e2658db944456c45262 "bibtex paper"
-  "paper.tex" 1746818589.56249 87448 38cde877ff584f943a75ab95d9a2c7fa ""
-  "paper.toc" 1746818598.03849 3558 eea57ec4848abc19f02c685a0ff0b062 "xelatex"
+  "paper.aux" 1746841563.95901 18407 b9c6f1831c8939a2d8f8f0bd8f22dbdd "xelatex"
+  "paper.bbl" 1746841522.95801 2952 d4b6850f95934e2658db944456c45262 "bibtex paper"
+  "paper.tex" 1746841561.26701 89837 2bf2d4c126d2f3b3fc4cf075f201786d ""
+  "paper.toc" 1746841563.96101 3640 04c71ca3dc9f12979c6cb1a5aa9598fe "xelatex"
   "pictures/2Darray.png" 1741951104.872 61147 6a737bbfef42dfabba93fdc670b849dd ""
   "pictures/CoderTop.png" 1743058409.71278 68134 222f07c1891b66ef3c4ca04181c577a2 ""
   "pictures/DCTSchematice.png" 1741951104.873 54439 55caccfa7cf1d6bb57ec0d165681a59d ""
@@ -109,7 +113,9 @@
   "pictures/scanner.png" 1741951104.89 62678 eb24c4bbbf03fa5529cb8ebaf57710e2 ""
   "pictures/scannerWave.png" 1741951104.89 22930 8453094659a3a7bc2677725684fa7b93 ""
   "pictures/spliceASM.png" 1746179028.50096 1118737 833ef159e2dd29a0229c101c169d6725 ""
+  "pictures/test_ele.png" 1746823220.06108 53598 08636f3f043e77cd8a2166f68f5dd661 ""
   "pictures/tmepCodeASm.png" 1746145829.1 1060588 49e90b2b74709429a878dc259c48dbb6 ""
+  "pictures/top_wave.png" 1746841412.623 19492 a437d31f1923e20abe3db43100fb85a9 ""
   "pictures/wrASM.png" 1743078885.13509 755718 ab4a1714942f7dd22b0e238892e0ef69 ""
   "pictures/wrFSMSim.png" 1743098856.92499 27400 24661d156ab1fd089e4ae0fab6c8902a ""
   "pictures/x2zPE.png" 1741951104.894 996083 cec935de284a6b92c2a21164b0964690 ""

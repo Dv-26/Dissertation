@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  10 MAY 2025 03:23
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  10 MAY 2025 09:46
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -816,38 +816,58 @@ File: ./pictures/数据生成模块.png Graphic file (type bmp)
 [35]
 
 [36]
+File: ./pictures/test_ele.png Graphic file (type bmp)
+<./pictures/test_ele.png>
+File: ../src/test/test_img512x512.png Graphic file (type bmp)
+<../src/test/test_img512x512.png>
+File: ../src/test/Y_channal.jpg Graphic file (type bmp)
+<../src/test/Y_channal.jpg>
+File: ../src/test/Cb_channal.jpg Graphic file (type bmp)
+<../src/test/Cb_channal.jpg>
+
+
+[37]
+File: ../src/test/Cr_channal.jpg Graphic file (type bmp)
+<../src/test/Cr_channal.jpg>
+
+
+[38]
+File: ./pictures/top_wave.png Graphic file (type bmp)
+<./pictures/top_wave.png>
 File: ./pictures/DVP_simwave.png Graphic file (type bmp)
 <./pictures/DVP_simwave.png>
 File: ./pictures/wrFSMSim.png Graphic file (type bmp)
 <./pictures/wrFSMSim.png>
+
+
+[39]
 File: ./pictures/rdFSMSim.png Graphic file (type bmp)
 <./pictures/rdFSMSim.png>
-
-
-[37]
 File: ./pictures/DCTSchematice.png Graphic file (type bmp)
 <./pictures/DCTSchematice.png>
+
+
+[40]
 File: ./pictures/DCT模块仿真.png Graphic file (type bmp)
 <./pictures/DCT模块仿真.png>
 
 
-[38]
+[41]
 File: ./pictures/python脚本运行结果.png Graphic file (type bmp)
 <./pictures/python脚本运行结果.png>
 File: ./pictures/DCTSimulationResult.png Graphic file (type bmp)
 <./pictures/DCTSimulationResult.png>
-
-
-[39]
 File: ./pictures/scannerWave.png Graphic file (type bmp)
 <./pictures/scannerWave.png>
 File: ./pictures/quantizerSim.png Graphic file (type bmp)
 <./pictures/quantizerSim.png>
 
 
-[40] (./paper.bbl)
+[42]
 
-[41] (./paper.aux)
+[43] (./paper.bbl)
+
+[44] (./paper.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
@@ -862,12 +882,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10837 strings out of 475837
- 287456 string characters out of 5775514
- 679044 words of memory out of 5000000
- 33541 multiletter control sequences out of 15000+600000
+ 10900 strings out of 475837
+ 289169 string characters out of 5775514
+ 679246 words of memory out of 5000000
+ 33596 multiletter control sequences out of 15000+600000
  566593 words of font info for 127 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  93i,13n,112p,855b,595s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.xdv (46 pages, 599516 bytes).
+Output written on paper.xdv (49 pages, 611808 bytes).

@@ -98,7 +98,7 @@
   JPEG编码系统。完成JPEG编码在FPGA上的实现。
 
   本论文的结构首先阐述了JPEG格式的编码FPGA实现的研究背景与意义国内外研究
-  现状，并以此提出了一种新型的基于脉动阵列实现DCT算法的流水线结构。接着描
+  现状，并以此使用了一种的基于脉动阵列实现DCT算法的流水线结构。接着描
   述了JPEG格式编码和解码算法的实现步骤。然后采用SOC的设计思想，给出整个硬
   件系统的内部结构、层次划分，对每个运算步骤进行了详细的描述。最后完成整体
   的验证。 
@@ -1456,9 +1456,74 @@
   
 
 \newpage
-\section{JPEG编码系统各模块仿真结果}
+\section{JPEG编码系统仿真结果与指标分析}
   \vspace{1em}
-  本设计使用systemverilog进行RTL级描述。在EDA软件vivado进行综合。
+  \subsubsection{编码模块仿真}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{./pictures/test_ele.png}
+    \caption{测试环境}
+    \label{test}
+  \end{figure}
+  本设计使用systemverilog进行RTL级描述和测试。在EDA软件vivado进行综合和仿真。编码模块的测试环境如图\ref{test}。
+  验证平台读取有含有图像rgb数据的16进制的字符文件，并将其转换为符合编码模块输入的信号激励。同时读取并解析模块
+  输出的压缩码流，并将其内容写入到二进制文件中。在使用python脚本添加符合JFIF格式的识别段最终输出jpg格式的文件
+  使用的图片查看器进行查看。
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{../src/test/test_img512x512.png}
+    \caption{测试原图像}
+    \label{origin image}
+  \end{figure}
+
+  作为测试输入的原图像如图\ref{origin image}所示。
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{../src/test/Y_channal.jpg}
+    \caption{编码后的图像Y通道}
+    \label{Y channal image}
+  \end{figure}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{../src/test/Cb_channal.jpg}
+    \caption{编码后的图像Cb通道}
+    \label{Cb channal image}
+  \end{figure}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{../src/test/Cr_channal.jpg}
+    \caption{编码后的图像Cr通道}
+    \label{Cr channal image}
+  \end{figure}
+
+  最终模块输出并解码的三个颜色通道的图片如图\ref{Y channal image},\ref{Cb channal image},\ref{Cr channal image}
+  所示。表统计了压缩前后的各项参数指标。
+
+  \begin{table}[H]
+    \caption{压缩图像的各个属性指标}
+    \label{image vs}
+    \centering
+    \begin{tabular}{ccccc}
+      \toprule
+      图片名称 & 分辨率 & 文件大小(bytes) & 压缩比 & 每像素比特数\\
+      \midrule
+      原图像 & 512*512 & 786,432 & 1 & 24\\
+      Y通道压缩图像 & 512*512 & 18,432 & 42 & 0.571\\
+      Cb通道压缩图像 & 512*512 & 6,656 & 118 & 0.203\\
+      Cb通道压缩图像 & 512*512 & 6,758 & 116 & 0.206\\
+      压缩后的图像 & 512*512 & 31,846 & 25 & 0.96\\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.30]{./pictures/top_wave.png}
+    \caption{编码模块仿真波形}
+    \label{top_wave}
+  \end{figure}
+  编码模块仿真波形如图\ref{top_wave}所示
   \subsection{数据解析模块功能仿真}
     \vspace{1em}
     \subsubsection{DVP解析模块功能仿真}

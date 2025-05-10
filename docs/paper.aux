@@ -155,32 +155,47 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {3{}-35}{\ignorespaces JPEG数据生成模块}}{35}{}\protected@file@percent }
 \newlabel{数据生成模块}{{3{}-35}{35}{}{figure.35}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.10}本章总结}{35}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}JPEG编码系统各模块仿真结果}{37}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}数据解析模块功能仿真}{37}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}DVP解析模块功能仿真}{37}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-36}{\ignorespaces DVP解析模块仿真波形}}{37}{}\protected@file@percent }
-\newlabel{DVPSimWave}{{4{}-36}{37}{}{figure.36}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}读写状态机功能仿真}{37}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-37}{\ignorespaces 写状态机仿真波形}}{37}{}\protected@file@percent }
-\newlabel{WRFSMSimWave}{{4{}-37}{37}{}{figure.37}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-38}{\ignorespaces 读状态机仿真波形}}{37}{}\protected@file@percent }
-\newlabel{RdFSMSimWave}{{4{}-38}{37}{}{figure.38}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}DCT模块功能仿真}{38}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-39}{\ignorespaces DCT运算部分RTL视图}}{38}{}\protected@file@percent }
-\newlabel{DCTSchematice}{{4{}-39}{38}{}{figure.39}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-40}{\ignorespaces DCT模块仿真波形}}{39}{}\protected@file@percent }
-\newlabel{DCTSimulationWave}{{4{}-40}{39}{}{figure.40}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4{}-15}{\ignorespaces 测试8×8单元测试输入}}{39}{}\protected@file@percent }
-\newlabel{testMatrix}{{4{}-15}{39}{}{table.15}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-41}{\ignorespaces python脚本运行结果}}{39}{}\protected@file@percent }
-\newlabel{py result}{{4{}-41}{39}{}{figure.41}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-42}{\ignorespaces  DCT仿真结果波形}}{39}{}\protected@file@percent }
-\newlabel{result simulation}{{4{}-42}{39}{}{figure.42}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}zigzag扫描及量化模块}{40}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-43}{\ignorespaces Zigzag 仿真波形图}}{40}{}\protected@file@percent }
-\newlabel{scannerWave}{{4{}-43}{40}{}{figure.43}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-44}{\ignorespaces 量化器输出波形}}{40}{}\protected@file@percent }
-\newlabel{quantizer wave}{{4{}-44}{40}{}{figure.44}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}JPEG编码系统仿真结果与指标分析}{37}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.0.1}编码模块仿真}{37}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-36}{\ignorespaces 测试环境}}{37}{}\protected@file@percent }
+\newlabel{test}{{4{}-36}{37}{}{figure.36}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-37}{\ignorespaces 测试原图像}}{37}{}\protected@file@percent }
+\newlabel{origin image}{{4{}-37}{37}{}{figure.37}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-38}{\ignorespaces 编码后的图像Y通道}}{38}{}\protected@file@percent }
+\newlabel{Y channal image}{{4{}-38}{38}{}{figure.38}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-39}{\ignorespaces 编码后的图像Cb通道}}{38}{}\protected@file@percent }
+\newlabel{Cb channal image}{{4{}-39}{38}{}{figure.39}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-40}{\ignorespaces 编码后的图像Cr通道}}{38}{}\protected@file@percent }
+\newlabel{Cr channal image}{{4{}-40}{38}{}{figure.40}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4{}-15}{\ignorespaces 压缩图像的各个属性指标}}{39}{}\protected@file@percent }
+\newlabel{image vs}{{4{}-15}{39}{}{table.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-41}{\ignorespaces 编码模块仿真波形}}{39}{}\protected@file@percent }
+\newlabel{top_wave}{{4{}-41}{39}{}{figure.41}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}数据解析模块功能仿真}{39}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}DVP解析模块功能仿真}{39}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-42}{\ignorespaces DVP解析模块仿真波形}}{39}{}\protected@file@percent }
+\newlabel{DVPSimWave}{{4{}-42}{39}{}{figure.42}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}读写状态机功能仿真}{40}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-43}{\ignorespaces 写状态机仿真波形}}{40}{}\protected@file@percent }
+\newlabel{WRFSMSimWave}{{4{}-43}{40}{}{figure.43}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-44}{\ignorespaces 读状态机仿真波形}}{40}{}\protected@file@percent }
+\newlabel{RdFSMSimWave}{{4{}-44}{40}{}{figure.44}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}DCT模块功能仿真}{40}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-45}{\ignorespaces DCT运算部分RTL视图}}{41}{}\protected@file@percent }
+\newlabel{DCTSchematice}{{4{}-45}{41}{}{figure.45}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-46}{\ignorespaces DCT模块仿真波形}}{41}{}\protected@file@percent }
+\newlabel{DCTSimulationWave}{{4{}-46}{41}{}{figure.46}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4{}-16}{\ignorespaces 测试8×8单元测试输入}}{42}{}\protected@file@percent }
+\newlabel{testMatrix}{{4{}-16}{42}{}{table.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-47}{\ignorespaces python脚本运行结果}}{42}{}\protected@file@percent }
+\newlabel{py result}{{4{}-47}{42}{}{figure.47}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-48}{\ignorespaces  DCT仿真结果波形}}{42}{}\protected@file@percent }
+\newlabel{result simulation}{{4{}-48}{42}{}{figure.48}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}zigzag扫描及量化模块}{42}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-49}{\ignorespaces Zigzag 仿真波形图}}{42}{}\protected@file@percent }
+\newlabel{scannerWave}{{4{}-49}{42}{}{figure.49}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-50}{\ignorespaces 量化器输出波形}}{43}{}\protected@file@percent }
+\newlabel{quantizer wave}{{4{}-50}{43}{}{figure.50}{}}
 \bibstyle{plain}
 \bibdata{references}
 \bibcite{2004vlsi数字信号处理系统}{1}
@@ -199,4 +214,4 @@
 \bibcite{JFIF}{14}
 \bibcite{ref1}{15}
 \ttl@finishall
-\gdef \@abspage@last{46}
+\gdef \@abspage@last{49}

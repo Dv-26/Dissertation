@@ -40,10 +40,11 @@
 \contentsline {subsubsection}{\numberline {3.8.4}不定长数据拼接模块}{33}{}%
 \contentsline {subsection}{\numberline {3.9}JPEG数据生成模块}{35}{}%
 \contentsline {subsection}{\numberline {3.10}本章总结}{35}{}%
-\contentsline {section}{\numberline {4}JPEG编码系统各模块仿真结果}{37}{}%
-\contentsline {subsection}{\numberline {4.1}数据解析模块功能仿真}{37}{}%
-\contentsline {subsubsection}{\numberline {4.1.1}DVP解析模块功能仿真}{37}{}%
-\contentsline {subsubsection}{\numberline {4.1.2}读写状态机功能仿真}{37}{}%
-\contentsline {subsection}{\numberline {4.2}DCT模块功能仿真}{38}{}%
-\contentsline {subsection}{\numberline {4.3}zigzag扫描及量化模块}{40}{}%
+\contentsline {section}{\numberline {4}JPEG编码系统仿真结果与指标分析}{37}{}%
+\contentsline {subsubsection}{\numberline {4.0.1}编码模块仿真}{37}{}%
+\contentsline {subsection}{\numberline {4.1}数据解析模块功能仿真}{39}{}%
+\contentsline {subsubsection}{\numberline {4.1.1}DVP解析模块功能仿真}{39}{}%
+\contentsline {subsubsection}{\numberline {4.1.2}读写状态机功能仿真}{40}{}%
+\contentsline {subsection}{\numberline {4.2}DCT模块功能仿真}{40}{}%
+\contentsline {subsection}{\numberline {4.3}zigzag扫描及量化模块}{42}{}%
 \contentsfinish 
