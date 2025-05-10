@@ -31,7 +31,7 @@ module JpegCoder #(
       );
     end
   endgenerate
-  assign out = coder2streamGenator[1];
+  assign out = coder2streamGenator[2];
   // compressStreamGenator #(ROW) compressStreamGenator (
   //   clk, rst_n,
   //   coder2streamGenator, out
