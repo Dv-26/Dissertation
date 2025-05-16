@@ -20,6 +20,7 @@ module compressStreamGenator #(
         clk, rst_n, 1'b0,
         bufIn, bufOut
       );
+
       assign bufIn.data = {in[i].data, in[i].sop, in[i].eop, in[i].done};
       assign bufIn.en = in[i].valid;
       assign bufOut.en = !bufOut.empty & channalSel == i;
@@ -30,6 +31,7 @@ module compressStreamGenator #(
       always_ff @(posedge clk)
         if(in[i].valid & in[i].done)
           doneCounter[i] ++;
+
     end
   endgenerate
 

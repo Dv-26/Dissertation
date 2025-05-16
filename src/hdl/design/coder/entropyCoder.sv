@@ -25,7 +25,7 @@ module EntropyCoder #(
   );
   always_comb begin
     FixedLengthGenPort[1] = FixedLengthGenPort[0];
-    FixedLengthGenPort[1].done &= FixedLengthGenPort[0].eop;
+    // FixedLengthGenPort[1].done &= FixedLengthGenPort[0].eop;
   end
   FixedLengthGen FixedLengthGen (
     clk, rst_n,

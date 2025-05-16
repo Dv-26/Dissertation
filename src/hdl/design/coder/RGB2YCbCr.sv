@@ -17,7 +17,8 @@ module RGB2YCbCr #(
         {in[2].data, in[1].data, in[0].data},
         ConstAaary[i], sumOut
       );  
-      assign out[i].data = i == 0 ? sumOut : sumOut + 128;
+      // assign out[i].data = sumOut;
+      assign out[i].data = i == 0 ? sumOut : sumOut + 2**(DATA_WIDTH-1);
     end
 
     localparam DELAY = $clog2(3)+1;
@@ -41,13 +42,13 @@ module RGB2YCbCr #(
     ConstAaary[0][1] = 0.587 * 2**8;
     ConstAaary[0][0] = 0.144 * 2**8;
 
-    ConstAaary[1][2] = 0.5 * 2**8;
-    ConstAaary[1][1] = -0.419 * 2**8;
-    ConstAaary[1][0] = -0.081 * 2**8;
+    ConstAaary[1][2] = -0.169 * 2**8;
+    ConstAaary[1][1] = -0.331 * 2**8;
+    ConstAaary[1][0] = 0.5 * 2**8;
 
-    ConstAaary[2][2] = -0.169 * 2**8;
-    ConstAaary[2][1] = -0.331 * 2**8;
-    ConstAaary[2][0] = 0.5 * 2**8;
+    ConstAaary[2][2] = 0.5 * 2**8;
+    ConstAaary[2][1] = -0.419 * 2**8;
+    ConstAaary[2][0] = -0.081 * 2**8;
   end
 endmodule
 
