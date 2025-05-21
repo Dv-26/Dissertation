@@ -1,19 +1,23 @@
 `include "interface.sv"
 
 module JpegCoder #(
-    parameter DATA_WIDTH = 10,
-    parameter ROW = 3
+  parameter WIDTH = 1280,
+  parameter HEIGHT = 720,
+  parameter DATA_WIDTH = 10,
+  parameter ROW = 3
 ) (
-    input logic clk,
-    input logic rst_n,
-    input dctPort_t in[ROW],
-    output huffman_pkg::HuffmanBus_t out
+  input logic pclk, clk, rst_n,
+  input dataPort_t in,
+  output huffman_pkg::HuffmanBus_t out
 );
   import huffman_pkg::HuffmanBus_t;
-  dctPort_t color[ROW];
-  RGB2YCbCr #(DATA_WIDTH) rgb2ycbcr (clk, rst_n, in, color);
+
+  dctPort_t rgb[ROW];
+  PingpongBuf #(WIDTH, HEIGHT) pingpong (pclk, clk, rst_n, in, rgb);
+  dctPort_t ycbcr[ROW];
+  RGB2YCbCr #(DATA_WIDTH) rgb2ycbcr (clk, rst_n, rgb, ycbcr);
   dctPort_t y[ROW];
-  Dct #(DATA_WIDTH, ROW) dct (clk, rst_n, color, y);
+  Dct #(DATA_WIDTH, ROW) dct (clk, rst_n, ycbcr, y);
   HuffmanBus_t coder2streamGenator[ROW];
   generate
     genvar i;
@@ -31,10 +35,12 @@ module JpegCoder #(
       );
     end
   endgenerate
-  assign out = coder2streamGenator[2];
-  // compressStreamGenator #(ROW) compressStreamGenator (
-  //   clk, rst_n,
-  //   coder2streamGenator, out
-  // );
+
+  // assign out = coder2streamGenator[2];
+  compressStreamGenator #(ROW) compressStreamGenator (
+    clk, rst_n,
+    coder2streamGenator,
+    out
+  );
 
 endmodule

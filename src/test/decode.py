@@ -111,26 +111,26 @@ def wrap_jpeg_and_display(raw_path, width, height):
     # SOF0 (Start of Frame, Baseline DCT)
     sof0 = (
         b'\xFF\xC0' +
-        # b'\x00\x11' +
-        b'\x00\x0B' +
+        b'\x00\x11' +
+        # b'\x00\x0B' +
         b'\x08' + #精度(8-bit)
         bytes([height >> 8, height & 0xFF]) +  # 图像高度
         bytes([width >> 8, width & 0xFF]) +    # 图像宽度
 
-        # b'\x03' + # 组件数量
-        b'\x01' + # 组件数量
+        b'\x03' + # 组件数量
+        # b'\x01' + # 组件数量
 
-        # b'\x01' + # Y分量
-        # b'\x11' + # 0-3位：水平采样系数 4-7位：垂直采样系数
-        # b'\x00' # 量化表编号
-        #
-        # b'\x02' + # Cb分量
-        # b'\x11' + # 0-3位：水平采样系数 4-7位：垂直采样系数
-        # b'\x01' # 量化表编号
-        #
+        b'\x01' + # Y分量
+        b'\x11' + # 0-3位：水平采样系数 4-7位：垂直采样系数
+        b'\x00' + # 量化表编号
+
+        b'\x02' + # Cb分量
+        b'\x11' + # 0-3位：水平采样系数 4-7位：垂直采样系数
+        b'\x01' + # 量化表编号
+
         b'\x03' + # Cr分量
         b'\x11' + # 0-3位：水平采样系数 4-7位：垂直采样系数
-        b'\x01' # 量化表编号
+        b'\x01'  # 量化表编号
     )
 
     # DHT (Define Huffman Table)
@@ -165,16 +165,16 @@ def wrap_jpeg_and_display(raw_path, width, height):
     # SOS (Start of Scan)
     sos = (
         b'\xFF\xDA' +
-        # b'\x00\x0C' +
-        b'\x00\x08' +
-        # b'\x03' + # 1个分量
-        b'\x01' + # 1个分量
+        b'\x00\x0C' +
+        # b'\x00\x08' +
+        b'\x03' + # 1个分量
+        # b'\x01' + # 1个分量
 
-        # b'\x01' + # Y分量
-        # b'\x00' + # 0-3位：AC huffman表号，4-7位：DC huffman表号
-        #
-        # b'\x02' + # Cb分量
-        # b'\x11' + # 0-3位：AC huffman表号，4-7位：DC huffman表号
+        b'\x01' + # Y分量
+        b'\x00' + # 0-3位：AC huffman表号，4-7位：DC huffman表号
+
+        b'\x02' + # Cb分量
+        b'\x11' + # 0-3位：AC huffman表号，4-7位：DC huffman表号
         #
         b'\x03' + # Cr分量
         b'\x11' + # 0-3位：AC huffman表号，4-7位：DC huffman表号

@@ -158,14 +158,13 @@ module tempCoder #(
     zeroCnt.add = 0;
     zeroCnt.zero = 0;
     valid_n = 0;
+    if(in.eop)
+      lastDC.reset = 1;
     case(state)
       DC: begin  
         if(in.valid) begin
           valid_n = 1;
-          if(!in.eop)
-            lastDC.load = 1;
-          else
-            lastDC.reset = 1;
+          lastDC.load = 1;
           state_n = AC;
         end
       end

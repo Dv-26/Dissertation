@@ -139,34 +139,48 @@ module Pe #(
     output peColPort_t colOut
 );
 
-  Delay #($bits(in_t), LENGHT) rowDelay (clk, rst_n, rowIn.in, rowOut.in);
-
+  Delay #($bits(in_t)-1, LENGHT) rowDelay (
+    clk, rst_n,
+    {rowIn.in.data, rowIn.in.eop, rowIn.in.load},
+    {rowOut.in.data, rowOut.in.eop, rowOut.in.load}
+  );
+  assign rowOut.in.sop = 1'b0;
   Delay #(DATA_WIDTH, 1) colDelay (clk, rst_n, colIn.data, colOut.data);
 
-  logic [DATA_WIDTH-1:0] product;
-  multiplier #(DATA_WIDTH, DATA_WIDTH) multiplier (colIn.data, rowIn.in.data, product);
-  
-  logic [DATA_WIDTH-1:0] accDelayIn, accDelayOut, acc;
-  Delay #(DATA_WIDTH+1, LENGHT) accDelay (clk, rst_n, accDelayIn, accDelayOut);
-  assign acc = accDelayOut + product;
+
+  struct packed {
+    logic [DATA_WIDTH-1:0] data;
+    logic sop;
+  } product, accDelayIn, accDelayOut, acc;
+
+  multiplier #(DATA_WIDTH, DATA_WIDTH) multiplier (
+    colIn.data, rowIn.in.data,
+    product.data
+  );
+  assign product.sop = rowIn.in.sop;
+
+  Delay #(DATA_WIDTH+1, LENGHT) accDelay (
+    clk, rst_n,
+    accDelayIn,
+    accDelayOut
+  );
+  assign acc.data = accDelayOut.data + product.data;
+  assign acc.sop = accDelayOut.sop;
+
   assign accDelayIn = rowIn.in.load? product : acc;
 
-  logic resultSel, eopDelay, sopDelay;
+  logic resultSel;
   generate
     if(ACC_NUB > 2)begin
-      Delay #(3, LENGHT*(ACC_NUB-2)) loadDelay (
-        clk, rst_n,
-        {rowOut.in.load, rowOut.in.sop, rowOut.in.eop},
-        {resultSel, sopDelay, eopDelay}
-      );
+      Delay #(1, LENGHT*(ACC_NUB-2)) loadDelay (clk, rst_n, rowOut.in.load, resultSel);
     end else begin
-      assign {resultSel, sopDelay, eopDelay} = {rowOut.in.load, sopDelay, eopDelay};
+      assign resultSel = rowOut.in.load;
     end
   endgenerate
 
-  assign rowOut.result.data = resultSel? acc : rowIn.result.data;
-  assign rowOut.result.eop = resultSel? eopDelay : rowIn.result.eop;
-  assign rowOut.result.sop = resultSel? sopDelay : rowIn.result.sop;
+  assign rowOut.result.data = resultSel? acc.data : rowIn.result.data;
+  assign rowOut.result.eop = rowIn.in.eop;
+  assign rowOut.result.sop = resultSel? acc.sop : rowIn.result.sop;
   assign rowOut.result.valid = resultSel | rowIn.result.valid;
 endmodule
 

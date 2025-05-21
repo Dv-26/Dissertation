@@ -1,4 +1,4 @@
-import numpy as np
+mport numpy as np
 from PIL import Image
 
 def create_y_only_jpeg(output_path):

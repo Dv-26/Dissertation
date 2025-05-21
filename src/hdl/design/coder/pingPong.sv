@@ -1,12 +1,10 @@
 `include "interface.sv"
 module PingpongBuf #(
   parameter WIDTH = 1280,
-  parameter HEIGHT = 720,
-  parameter DATA_FORMAT = "RGB888"
+  parameter HEIGHT = 720
 ) (
-  input logic clk, rst_n,
-  input logic pclk, vsync, href,
-  input logic [7:0] data,
+  input logic pclk, clk, rst_n,
+  input dataPort_t in,
   output dctPort_t out[3] 
 );
 
@@ -18,18 +16,45 @@ module PingpongBuf #(
     logic reset;
   } Full_t;
 
-  dataPort_t dvpOut; 
+  struct {dctPort_t current, next;} outReg[3];
+  always_ff @(posedge clk or negedge rst_n)begin
+    if(!rst_n) begin
+      outReg[0].current <= '0;
+      outReg[1].current <= '0;
+      outReg[2].current <= '0;
+    end else begin
+      outReg[0].current <= outReg[0].next;
+      outReg[1].current <= outReg[1].next;
+      outReg[2].current <= outReg[2].next;
+    end
+  end
+  assign out = {outReg[2].current, outReg[1].current, outReg[0].current};
+
   logic [$clog2(WIDTH)-1:0] hCnt;
   logic [$clog2(HEIGHT)-1:0] vCnt;
 
-  Dvp #(WIDTH, HEIGHT, DATA_FORMAT) dvp (
-    rst_n,
-    pclk, vsync, href, data,
-    dvpOut, hCnt, vCnt
-  );
+  always_ff @(posedge pclk or negedge rst_n) begin
+    if(!rst_n) begin
+      hCnt <= 0;
+      vCnt <= 0;
+    end else if(in.valid) begin
+      if(in.sop) begin
+        hCnt <= 1;
+        vCnt <= 0; 
+      end else if(in.eop) begin
+        hCnt <= 0;
+        vCnt <= 0; 
+      end else if(hCnt == WIDTH-1) begin
+        hCnt <= 0;
+        vCnt <= vCnt + 1;
+      end else begin
+        hCnt <= hCnt + 1;
+      end
+    end
+  end
 
   logic switch;
-  assign switch = hCnt == WIDTH-1 && (&vCnt[2:0]) && dvpOut.valid;
+  assign switch = hCnt == WIDTH-1 && (&vCnt[2:0]) && in.valid;
 
   ramRd_if #($bits(dataPort_t)-1, BUF_DEPTH) buf0Out (clk);
   ramWr_if #($bits(dataPort_t)-1, BUF_DEPTH) buf0In (pclk);
@@ -68,36 +93,56 @@ module PingpongBuf #(
   RdAddrGen #(WIDTH) rdAddrGen (clk, rst_n, rdStart, rdDone, rdValid, rdAddr);
 
   logic wrBufSel, rdBufSel;
-  assign buf1In.data = {dvpOut.data, dvpOut.sop, dvpOut.eop};
+  assign buf1In.data = {in.data, in.sop, in.eop};
   assign buf1In.addr = {vCnt[2:0], hCnt};
-  assign buf0In.data = {dvpOut.data, dvpOut.sop, dvpOut.eop};
+  assign buf0In.data = {in.data, in.sop, in.eop};
   assign buf0In.addr = {vCnt[2:0], hCnt};
   assign {buf0In.en, buf1In.en} = wrBufSel ?
-    {1'b0, dvpOut.valid} :
-    {dvpOut.valid, 1'b0};
+    {1'b0, in.valid} :
+    {in.valid, 1'b0};
   assign buf0Out.addr = rdAddr;
   assign buf1Out.addr = rdAddr;
   assign {buf0Out.en, buf1Out.en} = rdBufSel ?
     {1'b0, rdValid}:
     {rdValid, 1'b0};
 
-  logic [7:0] r, g, b;
   logic eop, sop;
   logic rdValidDelay;
-  assign {r, g, b, sop, eop} = rdBufSel? buf1Out.data : buf0Out.data;
-  assign {out[0].data, out[1].data, out[2].data, sop, eop} = rdBufSel? buf1Out.data : buf0Out.data;
-  assign {out[0].valid, out[1].valid, out[2].valid} = {3{rdValidDelay}};
-  assign {out[0].sop, out[1].sop, out[2].sop} = {3{sop}};
-  assign {out[0].eop, out[1].eop, out[2].eop} = {3{eop}};
+
   Delay #(1, 1) validDelay (clk, rst_n, rdValid, rdValidDelay);
+  struct{logic current, next;} eopFlag;
+  always_ff @(posedge clk or negedge rst_n)
+    eopFlag.current <= !rst_n ? 0 : eopFlag.next;
   always_comb begin
-    out[0].data = '0;
-    out[1].data = '0;
-    out[2].data = '0;
-    out[0].data[7:0] = r; 
-    out[1].data[7:0] = g; 
-    out[2].data[7:0] = b; 
+    {
+      outReg[2].next.data,
+      outReg[1].next.data,
+      outReg[0].next.data
+    } = '0;
+
+    {
+      outReg[2].next.data[7:0],
+      outReg[1].next.data[7:0],
+      outReg[0].next.data[7:0],
+      sop, eop 
+    } = rdBufSel? buf1Out.data : buf0Out.data;
+
+    {outReg[2].next.valid, outReg[1].next.valid, outReg[0].next.valid} = {3{rdValidDelay}};
+    {outReg[2].next.sop, outReg[1].next.sop, outReg[0].next.sop} = {3{sop}};
+    {outReg[2].next.eop, outReg[1].next.eop, outReg[0].next.eop} = '0;
+
+    eopFlag.next = eopFlag.current;
+    if(eopFlag.current) begin
+      if(rdDone) begin
+        {outReg[2].next.eop, outReg[1].next.eop, outReg[0].next.eop} = '1;
+        eopFlag.next = 0;
+      end
+    end else begin
+      if(eop)
+        eopFlag.next = 1;
+    end
   end
+
 
   typedef enum logic {
     WR_BUF0,

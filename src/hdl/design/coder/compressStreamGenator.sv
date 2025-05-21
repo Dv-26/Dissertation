@@ -16,12 +16,15 @@ module compressStreamGenator #(
     for(genvar i=0; i<ROW; i++) begin
       fifoWr_if #($bits(HuffmanBus_t)-1) bufIn (clk);
       fifoRd_if #($bits(HuffmanBus_t)-1) bufOut (clk);
-      ShiftFIFO #($bits(HuffmanBus_t)-1, 512) inBuf (
-        clk, rst_n, 1'b0,
-        bufIn, bufOut
-      );
+      syncFIFO #($bits(HuffmanBus_t)-1, 512, 1) inBuf (clk, rst_n, bufIn, bufOut);
 
-      assign bufIn.data = {in[i].data, in[i].sop, in[i].eop, in[i].done};
+      if(i == 0)
+        assign bufIn.data = {in[i].data, in[i].sop, 1'b0, in[i].done};
+      else if(i == ROW-1)
+        assign bufIn.data = {in[i].data, 1'b0, in[i].eop, in[i].done};
+      else
+        assign bufIn.data = {in[i].data, 1'b0, 1'b0, in[i].done};
+
       assign bufIn.en = in[i].valid;
       assign bufOut.en = !bufOut.empty & channalSel == i;
 
@@ -47,11 +50,10 @@ module compressStreamGenator #(
   HuffmanBus_t FixedLengthGenIn, FixedLengthGenOut;
   always_comb begin
     FixedLengthGenIn = huffmanBuf[channalSel];
-    FixedLengthGenIn.done = huffmanBuf[ROW-1].done;
-    FixedLengthGenIn.done &= FixedLengthGenIn.eop & FixedLengthGenIn.valid;
+    FixedLengthGenIn.done &= FixedLengthGenIn.eop;
   end
-  FixedLengthGen FixedLengthGen(clk, rst_n, FixedLengthGenIn, FixedLengthGenOut);
-  eopSopGen eopSopGen(clk, rst_n, FixedLengthGenOut, out);
+  FixedLengthGen FixedLengthGen(clk, rst_n, FixedLengthGenIn, out);
+  // eopSopGen eopSopGen(clk, rst_n, FixedLengthGenOut, out);
 endmodule
 
 module eopSopGen (

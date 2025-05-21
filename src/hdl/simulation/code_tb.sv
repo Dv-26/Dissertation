@@ -2,7 +2,7 @@
 //`include "interface.sv"
 `define __SIM__
 module code_tb;
-   
+
   localparam CYCLE = 80;
   localparam WIDTH = 512;
   localparam HEIGHT = 512;

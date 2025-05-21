@@ -1,40 +1,39 @@
 `include "interface.sv"
+`include "uart.svh"
 
 module top #(
-    parameter WIDTH = 1280,
-    parameter HEIGHT = 720
+  parameter WIDTH = 512,
+  parameter HEIGHT = 512
 ) (
-    // `ifndef __SIM__
-    //     inout sda, scl, pwdn, rst,
-    //     (* MARK_DEBUG="true" *)input logic pclk, vsync, href,
-    //     (* MARK_DEBUG="true" *)input logic [7:0] data
-    // `else
-        input logic clk, rst_n,
-        input logic pclk, vsync, href,
-        input logic [7:0] data,
-        output huffman_pkg::HuffmanBus_t out
-    // `endif
+  input logic clk, rst_n,
+  (* MARK_DEBUG="true" *) input logic rx,
+  (* MARK_DEBUG="true" *) output logic tx
 );
+  (* MARK_DEBUG="true" *) logic exClk, inClk, sysRst_n;
+  logic locked;
+  clk_wiz_0 pll (
+    .clk_out1(exClk),     // output clk_out1
+    .clk_out2(inClk),     // output clk_out2
+    .reset(!rst_n), // input reset
+    .locked(locked),       // output locked
+    .clk_in1(clk)
+  );
 
-    (* MARK_DEBUG="true" *)dctPort_t pingpong2Code[3]; 
+  assign sysRst_n = !(!locked & rst_n);
+  UartIF uartRxPort();
+  UartRx #(50000000, 115200) uartRx (exClk, sysRst_n, uartRxPort, rx);
 
-    // `ifndef __SIM__
-    // wire clk, rst_n;
-    //     ps_wrapper ps (
-    //         .FCLK_CLK0_0 (clk),
-    //         .FCLK_RESET0_N_0 (rst_n),
-    //         .IIC_0_0_scl_io (scl),
-    //         .IIC_0_0_sda_io (sda),
-    //         .GPIO_0_0_tri_io ({rst, pwdn})
-    //     );
-    // `else
-        JpegCoder #(12, 3) coder (clk, rst_n, pingpong2Code, out);
-    // `endif
+  // (* MARK_DEBUG="true" *) dataPort_t coderIn;
+  dataPort_t coderIn;
+  Uart2coder #(WIDTH, HEIGHT) uart2coder (exClk, sysRst_n, uartRxPort, coderIn);
 
-    PingpongBuf #(WIDTH, HEIGHT, "RGB888") pingpongBuf (
-        clk, rst_n,
-        pclk, vsync, href, data,
-        pingpong2Code
-    );
+  (* MARK_DEBUG="true" *) huffman_pkg::HuffmanBus_t coderOut;
+  // (* dont_touch = "true" *) huffman_pkg::HuffmanBus_t coderOut;
+  JpegCoder #(WIDTH, HEIGHT, 12, 3) coder (exClk, inClk, sysRst_n, coderIn, coderOut);
+
+  UartIF uartTxPort();
+  Coder2uart coder2uart (exClk, inClk, sysRst_n, coderOut, uartTxPort);
+
+  UartTx #(50000000, 115200) uartTx (exClk, sysRst_n, uartTxPort, tx);
 
 endmodule

@@ -8,8 +8,8 @@ module FixedLengthGen (clk, rst_n, in, out);
   output HuffmanBus_t out;
 
   struct {HuffmanBus_t next, current;} outReg;
-  always_ff @(posedge clk or negedge rst_n)
-    outReg.current <= !rst_n ? '0 : outReg.next;
+  // always_ff @(posedge clk or negedge rst_n)
+  //   outReg.current <= !rst_n ? '0 : outReg.next;
   assign out = outReg.current; 
   struct {logic [$clog2(CODE_W):0] next, current;} shiftReg;
   struct {logic [$clog2(CODE_W):0] next, current, last;} sizeReg;
@@ -44,17 +44,29 @@ module FixedLengthGen (clk, rst_n, in, out);
   end
 
   struct packed {logic done, valid, overflow, eop, sop;} inDelay[2];
-  logic [CODE_W-1:0] up, low;
+  logic sopFlag;
+  always_ff @(posedge clk or negedge rst_n)begin
+    if(!rst_n) begin
+      sopFlag <= 0;
+    end else if(~sopFlag) begin
+      if(in.sop)
+        sopFlag <= 1;
+    end else begin
+      if(overflow | in.done)
+        sopFlag <= 0;
+    end
+  end
 
   always_ff @(posedge clk or negedge rst_n)
     if(!rst_n)begin
       inDelay[0] <= '0;
       inDelay[1] <= '0;
     end else begin
-      inDelay[0] <= {in.done, in.valid, overflow, in.eop, in.sop};
+      inDelay[0] <= {in.done, in.valid, overflow, in.eop, sopFlag};
       inDelay[1] <= inDelay[0];
     end
   
+  logic [CODE_W-1:0] up, low;
   always_ff @(posedge clk)
     if(in.valid)
       {up, low} <= {in.data.code, {CODE_W{1'b0}}}  >> shiftReg.current;
@@ -76,12 +88,13 @@ module FixedLengthGen (clk, rst_n, in, out);
   logic [$clog2(CODE_W)-1:0] splice;
   always_comb begin
     spliceReg.next = spliceReg.current;
-    outReg.next = outReg.current;
+    outReg.next.data = outReg.current.data;
     outReg.next.valid = 0;
     outReg.next.done = 0;
     outReg.next.sop = 0;
     outReg.next.eop = 0;
     state.next = state.current;
+
     case(state.current)
       NORMAL: begin
         if(inDelay[0].valid) begin
