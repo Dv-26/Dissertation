@@ -103,9 +103,9 @@
   件系统的内部结构、层次划分，对每个运算步骤进行了详细的描述。最后完成整体
   的验证。 
 
-  本设计基于Xilinx的Zynq系列的FPGA的硬件平台，对CMOS图像传感器OV5640采集的
-  图像数据进行采集和压缩，再通过使用低速串行通信协议传输压缩数据。在EDA 工
-  具vivado2019.1中完成综合仿真、布局布线以及码流生成。 \vspace{1em} \\
+  本设计基于Xilinx的Zynq系列的FPGA的硬件平台，对上位机输出的rgb格式的图像进
+  行采集和压缩，再通过使用低速串行通信协议传输压缩数据。在EDA 工具vivado2019.1
+  中完成综合仿真、布局布线以及码流生成。 \vspace{1em} \\
   \noindent\textbf{\songti 关键词：} FPGA；图像压缩；JPEG
 \end{abstract}
 
@@ -840,22 +840,38 @@
       \label{code module rtl}
     \end{figure}
     JPEG编码模块的内部模块划分如图\ref{code 
-    module}，它接收ov5460CMOS图像传感器的vga格式的视频信号。输出jpeg格式的
+    module}，它接收从外部输入进来的RGB格式的图像数据。输出jpeg格式的
     压缩码流。视频信号依次经过数据解析模块、色彩空间变换模块、DCT模块、熵编码
-    模块、JPEG数据帧生成模块。
+    模块、JPEG数据帧生成模块。使用vivado实际RTL综合后的RTL视图如图\ref{code module rtl}
+    所示，可以看出其中各个模块的输入输出接口都包含data、valid、sop、eop四种个信号。
+    该信号的功能描述如表\ref{模块输入输出接口}所示。
 
-    数据解析模块解析OV5640输出的DVP格式的视频信号，并将其转换为后续模块处理的
-    每个颜色通道的8×8数据单元；色彩空间模块将RGB格式的信号转换为YCbCr格式的颜
-    色分量；DCT模块对每个颜色通道的8×8单元进行2D-DCT；zigzag模块对8×8单元进行
-    zigzag扫描以及量化，熵编码模块对其进行编码压缩，JPEG数据生成模块对多个颜色
-    通道的压缩模块进行拼接并且添加JPEG文件格式的关键帧；下面的小节详细介绍这4
-    个模块。
+    \begin{table}[H]
+      \centering
+      \caption{模块输入输出接口}
+      \begin{tabular}{ccc}
+        \toprule
+        信号名称 & 宽度 & 功能\\
+        \midrule
+        data & 由数据种类决定 & 传输并处理的数据\\
+        valid & 1 & 有效时表示此时数据有效\\
+        sop & 1 & 帧头信号，当数据为图像帧的第一个数据时有效\\
+        eop & 1 & 帧尾信号，当数据为图像帧的最后一个数据时有效\\
+        \bottomrule
+      \end{tabular}
+    \end{table}
+
+    数据解析模块对其进行跨时域乒乓，并将其转换为后续模块处理的每个颜色通道的8×8
+    数据单元；色彩空间模块将RGB格式的信号转换为YCbCr格式的颜色分量；DCT模块对每
+    个颜色通道的8×8单元进行2D-DCT；zigzag模块对8×8单元进行zigzag扫描以及量化，熵
+    编码模块对其进行编码压缩，JPEG数据生成模块对多个颜色通道的压缩模块进行拼接并
+    且添加JPEG文件格式的关键帧；下面的小节详细介绍这4个模块。
   \subsection{数据解析模块}
     \vspace{1em}
-    上一章讲解了如何使用硬件实现JPEG格式编码中的DCT。本设计使用CMOS图像传感器OV5640作
-    输出的视频信号为原始图像数据输入。而数据解析模块的功能负责解析OV5640输出的视频信
-    号，再将其进行缓存排序得到符合DCT模块8×8像素单元输入的信号。数据解析模块的结构如
-    图\ref{data parser}
+    数据解析模块对输入的图像数据进行缓存，由于后续模块输入的数据是以8×8单元作为单位
+    依次输入处理的。所以需要对输入的信号进行重排序。本设计采用乒乓操作的方式对输入
+    数据进行缓存。再将其进行缓存排序得到符合DCT模块8×8像素单元输入的信号。数据解析
+    模块的结构如图\ref{data parser}。
     \begin{figure}[H]
       \centering
       \includegraphics[scale=0.35]{./pictures/数据解析模块.png}
@@ -863,59 +879,11 @@
       \label{data parser}
     \end{figure}
 
-    由于DVP像素点的数据是以水平扫描的方式顺序进行输出的。所以要以8×8单元的顺序进行输
+    由于输入的图像RGB数据是以水平扫描的方式顺序进行输出的。所以要以8×8单元的顺序进行输
     出就要先缓存8行数据。再进行读取输出，本设计采用乒乓操作的方式对数据进行缓存输出，
     确保输出数据和输入数据的吞吐量能保持一致。写缓存部分的电路和读缓存部分的电路工作
-    在不同的时钟域下。写缓存部分的电路使用ov5640的pclk作为时钟输入。读缓存部分的时钟
-    采用FPGA内部PLL生成的时钟信号。由于ov5640输出的单个像素点的数据是以多个时钟周期
-    8位串行输入的。所以内部时钟域可以低于pclk的频率。
-    \subsubsection{DVP解析模块}
-      \vspace{1em}
-      DVP解析模块负责将OV5640输出的视频信号进行解析，以单个像素点的RGB值为单位进行输
-      出。DVP接口的时序如图\ref{dvp}所示,解析模块负责将OV5640输出的视频信号进行解析
-      DVP解析模块各个输入输出信号如表\ref{dvp io table}所示。
-      \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.4]{./pictures/dvp时序.png}
-        \caption{dvp接口时序}
-        \label{dvp}
-      \end{figure}
-
-      \begin{table}[H]
-        \caption{}
-        \label{dvp io table}
-        \centering
-        \begin{tabular}{ccc}
-          \toprule
-          信号名称 & 方向 & 功能\\
-          \midrule
-          dvpPclk & 输入 & 外部时钟信号\\
-          dvpVsync & 输入 & 场同步信号\\
-          dvpHref & 输入 & 行有效信号\\
-          dvpData & 输入 & 颜色数据输入信号\\
-          data & 输出 & 输出颜色数据\\
-          valid & 输出 & 输出数据有效信号\\
-          hCnt & 输出 & 行计数值\\
-          vCnt & 输出 & 列计数值\\
-          \bottomrule
-        \end{tabular}
-      \end{table}
-      DVP接口信号的时序与VGA接口信号的时序类似。当场同步信号有效拉高一段时间
-      时间表示新的视频帧即将传输，HSYNC拉低一段时间表示新的一行数据即将传输，
-      在时钟信号pclk上升边沿时HREF有效，表示此时像素数据有效。由于数据输入只
-      有8位，单个像素点使用RGB565的格式的数据，所以会依次传输单个像素点数据的
-      高位以及低位。
-
-      由于本设计所采用的ov5640模块不提供HSYNC信号输出，所以只采用HREF信号加
-      行计数器作为定位每行信号的判断依据。该模块采用行计数器和列计数器判断当
-      前所在的像素位置。当捕捉到场同步信号有效时，对两个计数器进行清零。之后
-      在奇数次次HREF信号有效时，缓存数据高位。在偶数次HREF信号有效时，将输入
-      的低位和缓存的高位进行拼接输出，同时输出一个valid一个时钟周期信号有效
-      以及行计数器自增1。依次类推，当行计数器的值等于图像的宽度时，对其进行
-      清零同时自增列计数器。
-      
-      对行计数器和场计数器的计数值进行输出，作为后续缓存的写地址输入。数据
-      有效输出valid作为后续缓存RAM的写使能。
+    在不同的时钟域下。写缓存部分的电路使用模块输入数据的作为时钟输入。读缓存部分的时钟
+    采用FPGA内部PLL生成的时钟信号。
 
       \subsubsection{写状态机以及读状态机}
       写状态和读状态机分别控制写缓存和读缓存从而进行乒乓操作。它们都拥有BUF0
@@ -1497,9 +1465,15 @@
     \caption{编码后的图像Cr通道}
     \label{Cr channal image}
   \end{figure}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{../src/test/decode.jpg}
+    \caption{解码后的图像}
+    \label{decode image}
+  \end{figure}
 
   最终模块输出并解码的三个颜色通道的图片如图\ref{Y channal image},\ref{Cb channal image},\ref{Cr channal image}
-  所示。表统计了压缩前后的各项参数指标。
+  所示。最终解码后的图片如图\ref{decode image}表统计了压缩前后的各项参数指标。
 
   \begin{table}[H]
     \caption{压缩图像的各个属性指标}
@@ -1526,17 +1500,6 @@
   编码模块仿真波形如图\ref{top_wave}所示
   \subsection{数据解析模块功能仿真}
     \vspace{1em}
-    \subsubsection{DVP解析模块功能仿真}
-      \vspace{1em}
-      \begin{figure}[H]
-        \centering
-        \includegraphics[scale=0.25]{./pictures/DVP_simwave.png}
-        \caption{DVP解析模块仿真波形}
-        \label{DVPSimWave}
-      \end{figure}
-      DVP解析模块的仿真波形如图\ref{DVPSimWave}所示， 其中橙色信号为DVP
-      接口输入，可以通过数据输出data信号每隔两个时钟周期对数据输入进行
-      拼接从而输出，同时vali信号有效。
     \subsubsection{读写状态机功能仿真}
       \vspace{1em}
       \begin{figure}[H]
@@ -1639,7 +1602,10 @@
       \caption{量化器输出波形}
       \label{quantizer wave}
     \end{figure}
+  \subsection{熵编码模块仿真}
 \newpage
+
+\
 
 \bibliographystyle{plain}
 \bibliography{references}

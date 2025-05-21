@@ -1,21 +1,22 @@
 # Fdb version 4
-["bibtex paper"] 1746841522.86412 "paper.aux" "paper.bbl" "paper" 1746841568.86759 0
+["bibtex paper"] 1747796281.02705 "paper.aux" "paper.bbl" "paper" 1747796289.25002 0
   "./references.bib" 1746818593.77768 4953 c37099c95a9a2852f032c3f532a6e9ea ""
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1742685315 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "paper.aux" 1746841563.95901 18407 b9c6f1831c8939a2d8f8f0bd8f22dbdd "xelatex"
+  "paper.aux" 1747796284.69907 17957 77fa54632d3262cd1fc8f48699b34123 "xelatex"
   (generated)
   "paper.bbl"
   "paper.blg"
   (rewritten before read)
-["xdvipdfmx"] 1746841564.32189 "paper.xdv" "paper.pdf" "paper" 1746841568.87675 0
-  "paper.xdv" 1746841563.96101 611808 402cf209be21c70e3b56f96507c4e92a "xelatex"
+["xdvipdfmx"] 1747796285.00032 "paper.xdv" "paper.pdf" "paper" 1747796289.25342 0
+  "paper.xdv" 1747796284.7015 594480 a923e6a78eefd181bd1dd88c82f1fb2c "xelatex"
   (generated)
   "paper.pdf"
   (rewritten before read)
-["xelatex"] 1746841562.3575 "paper.tex" "paper.xdv" "paper" 1746841568.86798 0
+["xelatex"] 1747796283.10654 "paper.tex" "paper.xdv" "paper" 1747796289.25019 0
   "../src/test/Cb_channal.jpg" 1746824452.98478 6591 056110becd207453fe1ff6d08d4d345e ""
   "../src/test/Cr_channal.jpg" 1746824452.98511 6661 d24ff28bd3b0dbcbb77aa689d4984283 ""
   "../src/test/Y_channal.jpg" 1746824452.98511 17752 7c4d3bbf6af3ac98f8fc8b73ab51e331 ""
+  "../src/test/decode.jpg" 1747793666.8759 29740 5fcd2eac32d4de2ed11db23a423c88a9 ""
   "../src/test/test_img512x512.png" 1746824453.01011 719641 e3459eef047c09096f9e5d7f50efd8c8 ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1742685315 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1742685315 1004 54797486969f23fa377b128694d548df ""
@@ -86,17 +87,16 @@
   "/usr/share/texmf-dist/tex/xelatex/xecjk/xeCJKfntef.sty" 1742685315 39577 b470f8a1dbecc9c45c9bf05ca7db9188 ""
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1742685315 42087 b0f9697c952c8f5a8eede4134282cb0d ""
   "/var/lib/texmf/web2c/xetex/xelatex.fmt" 1743045153 4492516 352b6b3d876c35bb35467c6be33687d7 ""
-  "paper.aux" 1746841563.95901 18407 b9c6f1831c8939a2d8f8f0bd8f22dbdd "xelatex"
-  "paper.bbl" 1746841522.95801 2952 d4b6850f95934e2658db944456c45262 "bibtex paper"
-  "paper.tex" 1746841561.26701 89837 2bf2d4c126d2f3b3fc4cf075f201786d ""
-  "paper.toc" 1746841563.96101 3640 04c71ca3dc9f12979c6cb1a5aa9598fe "xelatex"
+  "paper.aux" 1747796284.69907 17957 77fa54632d3262cd1fc8f48699b34123 "xelatex"
+  "paper.bbl" 1747796281.12307 2952 d4b6850f95934e2658db944456c45262 "bibtex paper"
+  "paper.tex" 1747796282.68407 87651 cf61e6255330621905da8566038023f3 ""
+  "paper.toc" 1747796284.7015 3482 92a2c41e059ff78b82961402b212b1fe "xelatex"
   "pictures/2Darray.png" 1741951104.872 61147 6a737bbfef42dfabba93fdc670b849dd ""
   "pictures/CoderTop.png" 1743058409.71278 68134 222f07c1891b66ef3c4ca04181c577a2 ""
   "pictures/DCTSchematice.png" 1741951104.873 54439 55caccfa7cf1d6bb57ec0d165681a59d ""
   "pictures/DCTSimulationResult.png" 1741951104.874 5133 64b895dafd3b18d98d1c3e0a2eef9768 ""
   "pictures/DCT模块仿真.png" 1741951104.877 74641 1f0c10a1d00bada46189194398db8e9c ""
   "pictures/DCT脉动阵列.png" 1741951104.878 34997 48249d8fc8e330e7949eba193fb04d06 ""
-  "pictures/DVP_simwave.png" 1743098856.92399 19080 a44a926e054e54d4975704f770d113bf ""
   "pictures/EOBGenASM.png" 1746145991.286 1065636 4f1f386a1fb48e0c016b397ba5100169 ""
   "pictures/EOB生成模块.png" 1746145867.116 19659 46dc0313b8dbb2575a8bcbe8ba3c2268 ""
   "pictures/HuffmanCoder.png" 1746146093.807 36126 b2b053f426b0ff4322c3cf2448ceacc6 ""
@@ -104,7 +104,6 @@
   "pictures/TOPrtl.png" 1746120458.43818 16813 738588d12b0ed7075b20574e89164c41 ""
   "pictures/dct.png" 1741951104.886 50962 38de9675301d72e426ac9de9113a3689 ""
   "pictures/deCodeTree.png" 1741951104.887 167306 235c8655330cfbd2c3422869f93c59f8 ""
-  "pictures/dvp时序.png" 1743067102.40799 111136 8cfbbc7db44a588996aa29374785a196 ""
   "pictures/python脚本运行结果.png" 1741951104.887 7621 66a567213c084fa32c8954cf9c0d53d5 ""
   "pictures/quantizer.png" 1741951104.888 28364 30866bc6339a83e232950a5b3a27b742 ""
   "pictures/quantizerSim.png" 1743055394.15068 16875 158ca90f653b13ee29ae53cc0b17da08 ""
@@ -131,7 +130,7 @@
   "pictures/彩色空间转换模块.png" 1746185778.94799 21831 ca2e450679c18c56d5c5c365207c415d ""
   "pictures/拼接模块.png" 1746157636.51794 53149 a6410af8df91f311f25737f08d780006 ""
   "pictures/数据生成模块.png" 1746183928.682 18786 96806d3711304d86512937480aa74c8b ""
-  "pictures/数据解析模块.png" 1743082054.73617 78808 34c4a1dc175e5df148052a1c0d6e9b9d ""
+  "pictures/数据解析模块.png" 1747795239.21104 61873 921577f6f4eab88bfe6df875f4ded1c4 ""
   "pictures/流水线.png" 1741951104.915 316055 cd9ca1496a9221bcd2fdd65b95736484 ""
   "pictures/熵编码模块.png" 1746121695.35776 21497 b7bcb35365a4e69a9fb2c96f997b460e ""
   "pictures/编解码流程.png" 1741951104.916 181211 364133d8df0b70f02d55413437df782c ""

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  10 MAY 2025 09:46
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2026/dev/Arch Linux) (preloaded format=xelatex 2025.3.27)  21 MAY 2025 10:58
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -615,7 +615,7 @@ Package fontspec Info:
 [2] (./paper.toc
 
 [3]
-Overfull \hbox (1.80669pt too wide) detected at line 42
+Overfull \hbox (1.80669pt too wide) detected at line 41
 \TU/TimesNewRoman(0)/m/n/12.045 3.10 
  []
 
@@ -695,41 +695,39 @@ File: ./pictures/TOPrtl.png Graphic file (type bmp)
 
 
 [16]
+
+LaTeX Warning: Reference `模块输入输出接口' on page 17 undefined on input line 847.
+
 File: ./pictures/数据解析模块.png Graphic file (type bmp)
 <./pictures/数据解析模块.png>
 
 
 [17]
-File: ./pictures/dvp时序.png Graphic file (type bmp)
-<./pictures/dvp时序.png>
-
-
-[18]
 File: ./pictures/wrASM.png Graphic file (type bmp)
 <./pictures/wrASM.png>
 File: ./pictures/rdASM.png Graphic file (type bmp)
 <./pictures/rdASM.png>
 
 
-[19]
+[18]
 File: ./pictures/脉冲同步器.png Graphic file (type bmp)
 <./pictures/脉冲同步器.png>
 File: ./pictures/彩色空间转换模块.png Graphic file (type bmp)
 <./pictures/彩色空间转换模块.png>
 
 
-[20]
+[19]
 File: ./pictures/dct.png Graphic file (type bmp)
 <./pictures/dct.png>
 
 
-[21]
+[20]
 
-[22]
+[21]
 File: ./pictures/DCT脉动阵列.png Graphic file (type bmp)
 <./pictures/DCT脉动阵列.png>
 
-Overfull \hbox (12.92992pt too wide) in paragraph at lines 1121--1122
+Overfull \hbox (12.92992pt too wide) in paragraph at lines 1089--1090
  [][] 
  []
 
@@ -737,19 +735,19 @@ File: ./pictures/x2zPE.png Graphic file (type bmp)
 <./pictures/x2zPE.png>
 
 
-[23]
+[22]
 File: ./pictures/z2yPE.png Graphic file (type bmp)
 <./pictures/z2yPE.png>
 File: ./pictures/PE时序.png Graphic file (type bmp)
 <./pictures/PE时序.png>
 
-Overfull \hbox (9.0865pt too wide) in paragraph at lines 1152--1153
+Overfull \hbox (9.0865pt too wide) in paragraph at lines 1120--1121
  [][] 
  []
 
 
 
-[24]
+[23]
 File: ./pictures/z输出时序.png Graphic file (type bmp)
 <./pictures/z输出时序.png>
 File: ./pictures/和差项生成.png Graphic file (type bmp)
@@ -758,21 +756,21 @@ File: ./pictures/和差项生成步骤.png Graphic file (type bmp)
 <./pictures/和差项生成步骤.png>
 
 
-[25]
+[24]
 File: ./pictures/zigzagModule.png Graphic file (type bmp)
 <./pictures/zigzagModule.png>
 
 
-[26]
+[25]
 File: ./pictures/scanner.png Graphic file (type bmp)
 <./pictures/scanner.png>
 File: ./pictures/zigzag ASM.png Graphic file (type bmp)
 <./pictures/zigzag ASM.png>
 
 
-[27]
+[26]
 
-[28]
+[27]
 File: ./pictures/quantizer.png Graphic file (type bmp)
 <./pictures/quantizer.png>
 File: ./pictures/熵编码模块.png Graphic file (type bmp)
@@ -781,12 +779,12 @@ File: ./pictures/中间码生成模块.png Graphic file (type bmp)
 <./pictures/中间码生成模块.png>
 
 
-[29]
+[28]
 File: ./pictures/tmepCodeASm.png Graphic file (type bmp)
 <./pictures/tmepCodeASm.png>
 
 
-[30]
+[29]
 Missing character: There is no 増 (U+5897) in font [FandolSong-Regular.otf]/OT:script=hani;language=dflt;!
 File: ./pictures/EOB生成模块.png Graphic file (type bmp)
 <./pictures/EOB生成模块.png>
@@ -794,28 +792,28 @@ File: ./pictures/EOBGenASM.png Graphic file (type bmp)
 <./pictures/EOBGenASM.png>
 
 
-[31]
+[30]
 File: ./pictures/HuffmanCoder.png Graphic file (type bmp)
 <./pictures/HuffmanCoder.png>
 
 
-[32]
+[31]
 File: ./pictures/拼接模块.png Graphic file (type bmp)
 <./pictures/拼接模块.png>
 File: ./pictures/spliceASM.png Graphic file (type bmp)
 <./pictures/spliceASM.png>
 
 
-[33]
+[32]
 
-[34]
+[33]
 File: ./pictures/数据生成模块.png Graphic file (type bmp)
 <./pictures/数据生成模块.png>
 
 
-[35]
+[34]
 
-[36]
+[35]
 File: ./pictures/test_ele.png Graphic file (type bmp)
 <./pictures/test_ele.png>
 File: ../src/test/test_img512x512.png Graphic file (type bmp)
@@ -826,33 +824,33 @@ File: ../src/test/Cb_channal.jpg Graphic file (type bmp)
 <../src/test/Cb_channal.jpg>
 
 
-[37]
+[36]
 File: ../src/test/Cr_channal.jpg Graphic file (type bmp)
 <../src/test/Cr_channal.jpg>
+File: ../src/test/decode.jpg Graphic file (type bmp)
+<../src/test/decode.jpg>
 
 
-[38]
+[37]
 File: ./pictures/top_wave.png Graphic file (type bmp)
 <./pictures/top_wave.png>
-File: ./pictures/DVP_simwave.png Graphic file (type bmp)
-<./pictures/DVP_simwave.png>
 File: ./pictures/wrFSMSim.png Graphic file (type bmp)
 <./pictures/wrFSMSim.png>
 
 
-[39]
+[38]
 File: ./pictures/rdFSMSim.png Graphic file (type bmp)
 <./pictures/rdFSMSim.png>
 File: ./pictures/DCTSchematice.png Graphic file (type bmp)
 <./pictures/DCTSchematice.png>
 
 
-[40]
+[39]
 File: ./pictures/DCT模块仿真.png Graphic file (type bmp)
 <./pictures/DCT模块仿真.png>
 
 
-[41]
+[40]
 File: ./pictures/python脚本运行结果.png Graphic file (type bmp)
 <./pictures/python脚本运行结果.png>
 File: ./pictures/DCTSimulationResult.png Graphic file (type bmp)
@@ -863,11 +861,11 @@ File: ./pictures/quantizerSim.png Graphic file (type bmp)
 <./pictures/quantizerSim.png>
 
 
-[42]
+[41]
 
-[43] (./paper.bbl)
+[42] (./paper.bbl)
 
-[44] (./paper.aux)
+[43] (./paper.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/07/14>
@@ -878,16 +876,19 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.41063pt have occurred.
 
 
+LaTeX Warning: There were undefined references.
+
+
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10900 strings out of 475837
- 289169 string characters out of 5775514
- 679246 words of memory out of 5000000
- 33596 multiletter control sequences out of 15000+600000
+ 10890 strings out of 475837
+ 288908 string characters out of 5775514
+ 679189 words of memory out of 5000000
+ 33587 multiletter control sequences out of 15000+600000
  566593 words of font info for 127 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 93i,13n,112p,855b,595s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 93i,13n,112p,855b,596s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.xdv (49 pages, 611808 bytes).
+Output written on paper.xdv (48 pages, 594480 bytes).

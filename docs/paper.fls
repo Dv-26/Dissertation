@@ -166,9 +166,6 @@ INPUT ./pictures/TOPrtl.png
 INPUT ./pictures/数据解析模块.png
 INPUT ./pictures/数据解析模块.png
 INPUT ./pictures/数据解析模块.png
-INPUT ./pictures/dvp时序.png
-INPUT ./pictures/dvp时序.png
-INPUT ./pictures/dvp时序.png
 INPUT ./pictures/wrASM.png
 INPUT ./pictures/wrASM.png
 INPUT ./pictures/wrASM.png
@@ -259,12 +256,12 @@ INPUT ../src/test/Cb_channal.jpg
 INPUT ../src/test/Cr_channal.jpg
 INPUT ../src/test/Cr_channal.jpg
 INPUT ../src/test/Cr_channal.jpg
+INPUT ../src/test/decode.jpg
+INPUT ../src/test/decode.jpg
+INPUT ../src/test/decode.jpg
 INPUT ./pictures/top_wave.png
 INPUT ./pictures/top_wave.png
 INPUT ./pictures/top_wave.png
-INPUT ./pictures/DVP_simwave.png
-INPUT ./pictures/DVP_simwave.png
-INPUT ./pictures/DVP_simwave.png
 INPUT ./pictures/wrFSMSim.png
 INPUT ./pictures/wrFSMSim.png
 INPUT ./pictures/wrFSMSim.png
