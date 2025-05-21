@@ -16,7 +16,17 @@ module compressStreamGenator #(
     for(genvar i=0; i<ROW; i++) begin
       fifoWr_if #($bits(HuffmanBus_t)-1) bufIn (clk);
       fifoRd_if #($bits(HuffmanBus_t)-1) bufOut (clk);
-      syncFIFO #($bits(HuffmanBus_t)-1, 512, 1) inBuf (clk, rst_n, bufIn, bufOut);
+      fifo_generator_1 inBuf (
+        .clk(clk),      // input wire clk
+        .rst(!rst_n),      // input wire rst
+        .din(bufIn.data),      // input wire [73 : 0] din
+        .wr_en(bufIn.en),  // input wire wr_en
+        .rd_en(bufOut.en),  // input wire rd_en
+        .dout(bufOut.data),    // output wire [73 : 0] dout
+        .full(bufIn.full),    // output wire full
+        .empty(bufOut.empty)  // output wire empty
+      );
+      // syncFIFO #($bits(HuffmanBus_t)-1, 512, 1) inBuf (clk, rst_n, bufIn, bufOut);
 
       if(i == 0)
         assign bufIn.data = {in[i].data, in[i].sop, 1'b0, in[i].done};

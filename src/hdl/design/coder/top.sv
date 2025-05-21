@@ -13,7 +13,7 @@ module top #(
   logic locked;
   clk_wiz_0 pll (
     .clk_out1(exClk),     // output clk_out1
-    .clk_out2(inClk),     // output clk_out2
+    .clk_out2(),     // output clk_out2
     .reset(!rst_n), // input reset
     .locked(locked),       // output locked
     .clk_in1(clk)
@@ -29,10 +29,10 @@ module top #(
 
   (* MARK_DEBUG="true" *) huffman_pkg::HuffmanBus_t coderOut;
   // (* dont_touch = "true" *) huffman_pkg::HuffmanBus_t coderOut;
-  JpegCoder #(WIDTH, HEIGHT, 12, 3) coder (exClk, inClk, sysRst_n, coderIn, coderOut);
+  JpegCoder #(WIDTH, HEIGHT, 12, 3) coder (exClk, exClk, sysRst_n, coderIn, coderOut);
 
   UartIF uartTxPort();
-  Coder2uart coder2uart (exClk, inClk, sysRst_n, coderOut, uartTxPort);
+  Coder2uart coder2uart (exClk, exClk, sysRst_n, coderOut, uartTxPort);
 
   UartTx #(50000000, 115200) uartTx (exClk, sysRst_n, uartTxPort, tx);
 

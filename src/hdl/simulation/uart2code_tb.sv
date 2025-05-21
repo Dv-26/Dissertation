@@ -6,8 +6,8 @@
 module uart2coderTB(); 
 
   localparam CYCLE = 80;
-  localparam WIDTH = 512;
-  localparam HEIGHT = 512;
+  localparam WIDTH = 8;
+  localparam HEIGHT = 8;
 
   logic pclk, rst_n;
   logic rx, tx;

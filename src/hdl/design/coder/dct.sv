@@ -178,10 +178,24 @@ module Pe #(
     end
   endgenerate
 
-  assign rowOut.result.data = resultSel? acc.data : rowIn.result.data;
-  assign rowOut.result.eop = rowIn.in.eop;
-  assign rowOut.result.sop = resultSel? acc.sop : rowIn.result.sop;
-  assign rowOut.result.valid = resultSel | rowIn.result.valid;
+  result_t resultReg;
+  always_ff @(posedge clk or negedge rst_n) begin 
+    if(!rst_n) begin
+      resultReg <= '0;
+    end else begin
+      if(resultSel) begin
+        resultReg.data <= acc.data;
+        resultReg.sop <= acc.sop;
+      end
+      resultReg.eop <= rowIn.in.eop;
+      resultReg.valid <= resultSel;
+    end
+  end
+
+  assign rowOut.result.data = resultReg.valid? resultReg.data : rowIn.result.data;
+  assign rowOut.result.eop = resultReg.eop;
+  assign rowOut.result.sop = resultReg.valid? resultReg.sop : rowIn.result.sop;
+  assign rowOut.result.valid = resultReg.valid | rowIn.result.valid;
 endmodule
 
 module sumDiffGen #(
