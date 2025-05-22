@@ -56,7 +56,12 @@
       <file>biblatex.def</file>
       <file>standard.bbx</file>
       <file>numeric.bbx</file>
-      <file>numeric.cbx</file>
+      <file>numeric-comp.bbx</file>
+      <file>gb7714-2015.bbx</file>
+      <file>gb7714-1987.bbx</file>
+      <file>numeric-comp.cbx</file>
+      <file>gb7714-2015.cbx</file>
+      <file>gb7714-1987.cbx</file>
       <file>biblatex.cfg</file>
       <file>english.lbx</file>
     </requires>

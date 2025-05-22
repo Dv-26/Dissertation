@@ -11,6 +11,7 @@
 \usepackage{fontspec}   %设置英文字体
 \usepackage{titletoc}     %设置目录样式
 \usepackage{amsmath}
+\usepackage[super, square]{natbib}
 
 \setmainfont{Times New Roman} %设置英文字体
 
@@ -81,6 +82,7 @@
 \renewcommand{\abstractnamefont}
   {\centering\zihao{-4}\normalfont\sffamily}
   \renewcommand{\abstractname}{\zihao{3} \heiti 摘\ \ \ 要}
+  \addcontentsline{toc}{section}{摘要}
 \begin{abstract}
   \zihao{-4}
   随着近几十年来多媒体技术、图像扫描技术、移动终端、通信技术的不断发展，数
@@ -114,6 +116,7 @@
 \renewcommand{\abstractnamefont}
   {\centering\large\normalfont\sffamily}
   \renewcommand{\abstractname}{ABSTRACT}
+  \addcontentsline{toc}{section}{ABSTRACT}
 \begin{abstract}
   With the continuous advancement of multimedia technology, image scanning technology, 
   mobile terminals, and communication technology in recent decades, the widespread use
@@ -143,20 +146,28 @@
 \begin{spacing}{1.25} %设置行距离
 \section{绪\ \ 论}
   \subsection{研究背景及研究意义}
-  \subsubsection{选题背景}
     \vspace{1em}
     图像数据作为信息的重要载体，在如今这个信息化的社会扮演着不可欠缺的角色
     相对与文本，图像具有强大的表达能力，通过像素、色彩及形状结构等元素传递
-    出大量的信息。随着高清图像和视频的普及，图像数据的数量呈指数级增长。对
-    高存储空间传输带宽的需求日益严峻。一味地添加设备的存储容量和信道的带宽
-    是不现实的，因此图像压缩技术孕育而生。
+    出大量的信息。而数字成像设备捕获和处理的图像对人们生活和生产活动在各个
+    方面产生直接影响。\cite{数字图像处理MATLAB版本科教学版}随着高清图像和视
+    频的普及，图像数据的数量呈指数级增长。对高存储空间传输带宽的需求日益严
+    峻。以分辨率为1920×1080的24位像素深度的60刷新率的视频数据为例，如果使用
+    原像素数据进行存储。1GB的存储空间仅能够存储6秒左右的视频片段。因此一味地
+    添加设备的存储容量和信道的带宽是不现实的，由此图像压缩技术孕育而生。该
+    技术通过图像数据存在大量的冗余的特性，对图像数据进行压缩编码。
 
-    目前图像压缩格式应用最广的是JPGE压缩格式。它运用图像数据在空间上的冗余
-    性以及人眼对图像的辨别度有限等特性来减少图像的数据量。目前JPEG图像大多
-    数使用软件进行编解码。但对于医疗器械、自动驾驶、视频监控等对视频画面逐
-    帧处理要求高的场景，这种方式有着效率低、运行功耗高等诸多缺点。
-  \subsubsection{研究意义}
-    \vspace{1em}
+    目前图像压缩格式应用最广的是JPGE压缩格式。它运用图像数据在空间上的连续
+    性，空间上存在一定程度的冗余性；以及人眼对图像的辨别度有限，即在视觉上
+    存在一定程度的冗余性；最后有些图像中包含了一些先验知识有关的信息，即知
+    识冗余性；通过这些特性\cite{1022468688.nh}来减少图像的数据量。目前JPEG
+    图像大多数使用软件进行编解码。但对于医疗器械、自动驾驶、视频监控等对视
+    频画面逐帧处理要求高的场景，这种方式有着效率低、运行功耗高等诸多缺点。
+
+    在硬件实现上，业内普遍用图像专用集成电路（Application Specific Intergrated
+    Circuit ASIC），但是ASIC缺乏一定的灵活性，不能轻松实现一些差异化的图像
+    处理功能。而基于FPGA平台的图像压缩系统是当前研究开发的热点。
+    
     本设计采用FPGA高并行计算能力和低功耗的特性设计出一套高效运行的JPGE格式
     编码系统。该系统能保证图像数据高实时传输地同时保持较低的功耗，适合运
     它运用在嵌入式系统或边缘计算设备。通过对算法进行硬件级优化，FPGA能够对
@@ -180,25 +191,38 @@
     低负责度的实时应用中，JPEG2000无法替代JPEG，在大多数的场合之下，使用JPEG
     就能满足需要了。
 
-    国内在JPEG的研究和应用方向上主要都是通过软件编程运行在CPU实现的。在应用
-    方面，为了解决胶囊内窥镜有效空间和电池容量以及传输实时性要求高的场景，上
-    海交通大学的赵恒阳、刘华\cite{ref1}使用fpga芯片对图像进行JPEG格式的编码，以
-    2Mbps的数据速率进行传输，可以达到30fps的视频刷新率。在算法改进方面杜英杰
-    \cite{ref2}针对传统JPEG使用固定量表，在压缩图像的视觉质量和压缩率的制衡不能
-    灵活调节的问题。提出了一种基于感知量化和统计量化的自适应量化算法，可以根
-    据在不同频率信息中应用不同量化步长的方法，实现更高的压缩比和更优的图像压
-    缩效果，并使用FPGA进行硬件实现。东南大学的李丹青\cite{可重构}根据DCT/IDCT
-    计算的数据流利用粗细度可重构阵列对其进行实现。
+    国外在jpeg硬件编解码方面的研究成果有：在使用ASIC上，美国AD公司推出的高性能
+    图像编解码芯片AD212是。支持JPEG和JPEG2000图像格式的编解码，在JPEG编解码方面
+    器核心DCT变换基于优化的8×8定点运算架构，能够处理完成正向和反向DCT计算，同时
+    通过可编程量化表支持动态调整，使用者可以更具使用需求平衡图像质量和带宽占用
+    。在性能方面ADV212的JPEG编码处理速率可达60MSamples/s,能满足1080p分辨率下30fps
+    实时处理的需求。对于JPEN格式编解码FPGA实现的研究现状有：里斯本高级工程学院
+    的学者\cite{ref10}利用FPGA独有的硬件结构可编程的特点，使用了FPGA动态局部可重
+    构技术，根据编码的流程对FPGA硬件逻辑资源进行分时复用，实现硬件资源利用最大化。
+    采用该方案相对使用传统的静态解决方案在资源占用上节省了60\%，但代价是是运行速度
+    上慢了9倍。Shan等人\cite{ref11}通过行列分解的方式实现2D-DCT（二维离散余弦变换）
+    ，并在设计中引入乒乓缓存器。在运行在100MHZ的时钟信号下，针对1920*1080的图像，
+    最快解码率可达到30fps的视频刷新率。Teja\cite{teja2015verilog}等人针对2D-IDCT
+    （二维离散余弦逆变换）设计了一种全流水的硬件结构，同时不使用乘法器，降低了
+    2D-IDCT模块的资源利用。在JPEG解码上的研究主要围绕Huffman解码展开，巴尔伊兰
+    大学的研究者\cite{klein2003parallel}提出了并行Huffman解码的方式。随机分配解码
+    数据不同的解码核，如果产生了错误，通过一种同步技术使之后的解码正确化。该方式
+    在一般情况下拥有比传统的串行解码少很多解码时间。Y.-W. Chang等研究者\cite{chang2006direct}
+    设计了Huffman解码的直接映射结构，此方法可以省去传统Huffman解码的过程中的搜寻
+    匹配过程。
 
-    国外在JPEN格式编解码FPGA实现的研究现状有：里斯本高级工程学院的学者
-    \cite{ref10}利用FPGA独有的硬件结构可编程的特点，使用了FPGA动态局部可重构
-    技术，根据编码的流程对FPGA硬件逻辑资源进行分时复用，实现硬件资源利用最大
-    化。采用该方案相对使用传统的静态解决方案在资源占用上节省了60\%，但代价是
-    是运行速度上慢了9倍。Shan等人\cite{ref11}通过行列分解的方式实现2D-DCT（
-    二维离散余弦变换），并在设计中引入乒乓缓存器。在运行在100MHZ的时钟信号下，
-    针对1920*1080的图像，最快解码率可达到30fps的视频刷新率。Teja\cite{teja2015verilog}
-    等人针对2D-IDCT（二维离散余弦逆变换）设计了一种全流水的硬件结构，同时不使
-    用乘法器，降低了2D-IDCT模块的资源利用。
+    国内在JPEG硬件编码的研究成果有：在应用方面，为了解决胶囊内窥镜有效空间和
+    电池容量以及传输实时性要求高的场景，上海交通大学的赵恒阳、刘华\cite{ref1}
+    使用fpga芯片对图像进行JPEG格式的编码，以2Mbps的数据速率进行传输，可以达到
+    30fps的视频刷新率。在算法改进方面杜英杰\cite{ref2}针对传统JPEG使用固定量表，
+    在压缩图像的视觉质量和压缩率的制衡不能灵活调节的问题。提出了一种基于感知量化
+    和统计量化的自适应量化算法，可以根据在不同频率信息中应用不同量化步长的方法，
+    实现更高的压缩比和更优的图像压缩效果，并使用FPGA进行硬件实现。东南大学的李丹
+    青\cite{可重构}根据DCT/IDCT计算的数据流利用粗细度可重构阵列对其进行实现。邱操
+    \cite{1019687658.nh}提出并设计了一种新颖的基于颜色分量的多流水线架构，解决了
+    DC系数无法在单条流水线中编码的问题。在148.5Mhz的时钟频率下，比特吞吐率可达
+    3084Mbit/s。任静\cite{1020391053.nh}在Chen算法的基础上，通过二分频信号控制器
+    对加减运算做出选择，减少了加法器的调用，从而实现了DCT的优化。
   \subsection{使用芯片简介}
     \vspace{1em}
     本设计使用的芯片型号是Xilinx公司Zynq-7000系列的XC7Z020-CLG484。Zynq-7000
@@ -1546,6 +1570,13 @@
         \label{DCTSimulationWave}
       \end{figure}
 
+      \begin{figure}[H]
+        \centering
+        \includegraphics[scale=0.275]{./pictures/dct_wave.png}
+        \caption{单个颜色通道仿真波形}
+        \label{single color channal}
+      \end{figure}
+
     下面验证计算结果的准确性，以如表（\ref{testMatrix}）矩阵作为输入。
     与使用python的numpy库编写的DCT计算结果进行对比。
     \begin{table}[H]
@@ -1585,6 +1616,7 @@
     可以粗略地估计模块的运算结果和实际的运算结果存在$\stackrel{+}{-}5$的误差。这是由于对定
     点数运算结果进行截位导致的。本模块使用10位数据进行运算因此误差的
   \subsection{zigzag扫描及量化模块}
+    \vspace{1em}
     zigzag扫描器的仿真波形如图\ref{scannerWave}所示。可以明显看出坐标值x和y是按照zigzag扫描
     的顺序进行变化的。
       \begin{figure}[H]
@@ -1598,16 +1630,119 @@
     出经过zigzag扫描和量化后出现连续的0值。
     \begin{figure}[H]
       \centering
-      \includegraphics[scale=0.25]{./pictures/quantizerSim.png}
+      \includegraphics[scale=0.32]{./pictures/quantizer_wave.png}
       \caption{量化器输出波形}
       \label{quantizer wave}
     \end{figure}
   \subsection{熵编码模块仿真}
+    \vspace{1em}
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.25]{./pictures/temp_wave.png}
+      \caption{中间码生成模块仿真波形}
+      \label{temp wave}
+    \end{figure}
+    如图\ref{temp wave}所示，中间码生成模块接收量化输出，并将其非零值
+    进行VLI编码，记录非零值前的零值的个数。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.25]{./pictures/EOBGen_wave.png}
+      \caption{EOB生成模块仿真波形}
+      \label{EOBGen wave}
+    \end{figure}
+    如图\ref{EOBGen wave}所示，EOB输出器接收中间码生成模块的输出。如果
+    存在EOB，将EOB前面的ZRL进行销毁，并输出EOB。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.25]{./pictures/Huffman_wave.png}
+      \caption{Huffman编码仿真波形}
+      \label{Huffman wave}
+    \end{figure}
+    如图\ref{Huffman wave}所示，Huffman编码器接收EOB生成模块的输出。并将
+    run值和有效长度值进行huffman编码再与VLI编码拼接输出，同时输出对应编码的
+    有效长度。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.25]{./pictures/splice_wave.png}
+      \caption{不定长数据拼接模块仿真波形}
+      \label{splice wave}
+    \end{figure}
+    如图\ref{splice wave}所示，该模块接收Huffman编码模块的输入，并更具有效长
+    度进行拼接，当done信号有效时，说明单个8×8单元输入完毕。对拼接值进行输出
+    同时输出对应有效长度。
 \newpage
+\section{FPGA实现与上板验证}
+  本设计使用Smart ZYNQ SP开发板进行FPGA实现。该开发板搭载一颗ZYNQ XC7Z020-CLG484。
+  本设计使用了该SOC的PL部分作为FPGA实现。在vivado软件中进行实现，最终实现的资源占
+  用如图\ref{implementation}所示。
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{./pictures/资源占用.png}
+    \caption{资源占用}
+    \label{implementation}
+  \end{figure}
 
-\
+  本设计的时序分析报告结果如图/ref{timing}所示。
+  \begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{./pictures/时序报告.png}
+    \caption{时序报告}
+    \label{timing}
+  \end{figure}
+  根据时序报告可以得出，本设计的保持时间余量WNS为5.847ns。本设计的fpga实现使用
+  50Mhz作为时钟输入。由公式(\ref{Fmax})得出最大工作时钟约为70.65Mhz。
+  \begin{equation}
+    F_{max}=\frac{1}{T-{WNS}}
+    \label{Fmax}
+  \end{equation}
+
+
+  \subsection{上板验证}
+    本设计使用Smart ZYNQ SP开发板进行FPGA实现。该开发板搭载一颗ZYNQ XC7Z020-CLG484
+    同时使用FT2232HQ提供了一路USB-UART接口。本设计的验证平台如图\ref{FPGA}所示。
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.40]{./pictures/验证平台.png}
+      \caption{验证平台}
+      \label{FPGA}
+    \end{figure}
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.20]{./pictures/实机验证.jpg}
+      \caption{实机验证}
+      \label{fpga test}
+    \end{figure}
+    本系统在PC通过uart接口发生和接收原始图像和压缩数据。并在PC端进行解码验证功能正确性。
+
+
+\newpage
+  \vspace{1em}
+
 
 \bibliographystyle{plain}
+\addcontentsline{toc}{section}{参考文献}
 \bibliography{references}
 \end{spacing}
+
+\newpage
+\section*{致\ \ \ 谢}
+\addcontentsline{toc}{section}{致谢}
+
+  行文至此，意味着我的本科生涯与毕业论文即将画上句点。回首这段求学旅程，虽有艰辛，但更多
+  的是成长与感动。在此，我谨向所有给予我帮助和支持的人致以最诚挚的感谢。首先，衷心感谢我
+  的指导老师孙永坚老师，从选题定题、框架搭建到细节修改，您始终以严谨的学术态度和耐心的
+  指导为我指明方向，您渊博的学识、敏锐的学术洞察力以及精益求精的治学精神，将永远激励我在
+  未来的道路上砥砺前行。感谢我的同窗好友以及室友们，是你们在学术探讨中的思维碰撞让我受益
+  匪浅，在低谷时的鼓励让我重拾信心，与你们共度的青春岁月，是我大学生活中最珍贵的财富。深
+  深感谢我的父母和家人，二十余载无私的付出与包容，为我撑起一片追逐梦想的天空，你们的爱与
+  支持，是我勇往直前的永恒动力。最后，向参与论文评审和答辩的各位专家老师致以谢意，感谢你
+  们提出的宝贵意见，文中不足之处，责任皆在于我，未来将继续完善。以梦为马，不负韶华，愿将
+  此文献给所有关心我的人，愿我们山水有相逢，未来皆可期。\vspace{1em} \\
+  \begin{flushright}
+    黄智为\\
+    \today{}
+  \end{flushright}
+  
+  
 \end{document}
