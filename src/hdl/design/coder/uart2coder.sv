@@ -79,17 +79,18 @@ module Coder2uart (
   fifoWr_if #($bits(in.data.code)) bufIn(inClk);
   fifoRd_if #($bits(in.data.code)/8) bufOut(exClk);
 
-  fifo_generator_0 piso (
-    .rst(!rst_n),        // input wire rst
-    .wr_clk(inClk),  // input wire wr_clk
-    .rd_clk(exClk),  // input wire rd_clk
-    .din(bufIn.data),        // input wire [63 : 0] din
-    .wr_en(bufIn.en),    // input wire wr_en
-    .rd_en(bufOut.en),    // input wire rd_en
-    .dout(bufOut.data),      // output wire [7 : 0] dout
-    .full(bufIn.full),      // output wire full
-    .empty(bufOut.empty)    // output wire empty
-  ); 
+  // fifo_generator_0 piso (
+  //   .rst(!rst_n),        // input wire rst
+  //   .wr_clk(inClk),  // input wire wr_clk
+  //   .rd_clk(exClk),  // input wire rd_clk
+  //   .din(bufIn.data),        // input wire [63 : 0] din
+  //   .wr_en(bufIn.en),    // input wire wr_en
+  //   .rd_en(bufOut.en),    // input wire rd_en
+  //   .dout(bufOut.data),      // output wire [7 : 0] dout
+  //   .full(bufIn.full),      // output wire full
+  //   .empty(bufOut.empty)    // output wire empty
+  // ); 
+  PISO #($bits(in.data.code), 512, 8) piso (rst_n, bufIn, bufOut);
   assign {bufIn.data, bufIn.en} = {in.data.code, in.valid};
 
   (* MARK_DEBUG="true" *) logic full;
