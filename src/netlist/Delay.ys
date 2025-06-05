@@ -1,3 +1,0 @@
-read_verilog -sv -formal -overwrite {workspace}/hdl/design/Delay.sv
-design -reset-vlog; proc;
-write_json {workspace}/netlist/Delay.json
