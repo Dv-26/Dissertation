@@ -50,9 +50,13 @@ module Dct #(
         Delay #($bits(dctPort_t), i) inDelay (clk, rst_n, in[i], x[i]);
       end
     end
+
+    for (i=0; i<4; i++) begin
+      coefficientMap #(DATA_WIDTH, i) coefficientMapX2z (clk, x2zCoe[i]);
+      coefficientMap #(DATA_WIDTH, i) coefficientMapZ2y (clk, z2yCoe[i]);
+    end
   endgenerate
 
-  coefficientMap #(DATA_WIDTH, 8) coefficientMap (clk, x2zCoe, z2yCoe);
   Array #(DATA_WIDTH, 2, 4, ROW) x2zArray (clk, rst_n, x2zCoe, x, z);
   Array #(DATA_WIDTH, 16, 4, ROW) z2yArray (clk, rst_n, z2yCoe, z, y);
 
@@ -242,46 +246,63 @@ endmodule
 
 module coefficientMap #(
   parameter DATA_WIDTH = 8,
-  parameter DEPTH = 8,
   parameter COL = 4
 ) (
   input logic clk,
-  rom_if.tx a[4],
-  rom_if.tx b[4]
+  rom_if.tx a
 );
 
-  reg [DATA_WIDTH-1:0]  memoryArray[DEPTH][4];
-  generate
-    genvar i;
-    for(i=0; i<COL; i++) begin
-      always_ff @(posedge clk)
-        if(a[i].en)
-          a[i].data <= memoryArray[a[i].addr][i];
-      always_ff @(posedge clk)
-        if(b[i].en)
-          b[i].data <= memoryArray[b[i].addr][i];
-      // assign a[i].data = a[i].en? memoryArray[a[i].addr][i] : '0;
-      // assign b[i].data = b[i].en? memoryArray[b[i].addr][i] : '0;
-    end
-  endgenerate
+  reg [DATA_WIDTH-1:0]  memoryArray[4];
+  always_ff @(posedge clk)
+    if(a.en)
+      a.data <= memoryArray[a.addr];
 
   localparam real PI = 3.14159265358979323846;  // Define π manually
-  logic signed [DATA_WIDTH-1:0] cos[7];
-  int n;
-  initial begin
-    for(n=0; n<7; n++)begin
-      if(n == 0)
-        cos[n] = $cos(4*PI / 16) * 2**(DATA_WIDTH-1);
-      else
-        cos[n] = $cos(n*PI / 16) * 2**(DATA_WIDTH-1);
+  function int getConst(int i);
+    real cosine_val;
+    real result;
+    cosine_val = (i==0) ? $cos(4.0 * PI / 16.0) : $cos(i * PI / 16.0);
+    result = cosine_val * (2.0**(DATA_WIDTH-1));
+    return int'(result);
+  endfunction
+
+  always_comb begin
+    if(COL == 0) begin
+      memoryArray[0] = getConst(0);
+      memoryArray[1] = getConst(1);
+      memoryArray[2] = getConst(0);
+      memoryArray[3] = getConst(3);
+      memoryArray[4] = getConst(0);
+      memoryArray[5] = getConst(4);
+      memoryArray[6] = getConst(0);
+      memoryArray[7] = getConst(6);
+    end else if(COL == 1) begin
+      memoryArray[0] = getConst(2);
+      memoryArray[1] = getConst(3);
+      memoryArray[2] = getConst(5);
+      memoryArray[3] = -1 * getConst(6);
+      memoryArray[4] = -1 * getConst(5);
+      memoryArray[5] = -1 * getConst(1);
+      memoryArray[6] = -1 * getConst(2);
+      memoryArray[7] = -1 * getConst(4);
+    end else if(COL == 2) begin
+      memoryArray[0] = getConst(0);
+      memoryArray[1] = getConst(4);
+      memoryArray[2] = -1 * getConst(0);
+      memoryArray[3] = -1 * getConst(1);
+      memoryArray[4] = -1 * getConst(0);
+      memoryArray[5] = getConst(6);
+      memoryArray[6] = getConst(0);
+      memoryArray[7] = getConst(3);
+    end else begin
+      memoryArray[0] = getConst(5);
+      memoryArray[1] = getConst(6);
+      memoryArray[2] = -1 * getConst(2);
+      memoryArray[3] = -1 * getConst(4);
+      memoryArray[4] = getConst(2);
+      memoryArray[5] = getConst(3);
+      memoryArray[6] = -1 * getConst(5);
+      memoryArray[7] = -1 * getConst(1);
     end
-    memoryArray[0] = {cos[0], cos[2], cos[0], cos[5]};
-    memoryArray[1] = {cos[1], cos[3], cos[4], cos[6]};
-    memoryArray[2] = {cos[0], cos[5], -1*cos[0], -1*cos[2]};
-    memoryArray[3] = {cos[3], -1*cos[6], -1*cos[1], -1*cos[4]};
-    memoryArray[4] = {cos[0], -1*cos[5], -1*cos[0], cos[2]};
-    memoryArray[5] = {cos[4], -1*cos[1], cos[6], cos[3]};
-    memoryArray[6] = {cos[0], -1*cos[2], cos[0], -1*cos[5]};
-    memoryArray[7] = {cos[6], -1*cos[4], cos[3], -1*cos[1]};
   end
 endmodule
