@@ -252,7 +252,7 @@ module coefficientMap #(
   rom_if.tx a
 );
 
-  reg [DATA_WIDTH-1:0]  memoryArray[4];
+  reg [DATA_WIDTH-1:0]  memoryArray[8];
   always_ff @(posedge clk)
     if(a.en)
       a.data <= memoryArray[a.addr];

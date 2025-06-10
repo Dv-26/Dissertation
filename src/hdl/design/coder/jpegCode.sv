@@ -12,7 +12,7 @@ module JpegCoder #(
 );
   import huffman_pkg::HuffmanBus_t;
 
-  dctPort_t rgb[ROW];
+(* MARK_DEBUG="true" *)  dctPort_t rgb[ROW];
   PingpongBuf #(WIDTH, HEIGHT) pingpong (pclk, clk, rst_n, in, rgb);
   dctPort_t ycbcr[ROW];
   RGB2YCbCr #(DATA_WIDTH) rgb2ycbcr (clk, rst_n, rgb, ycbcr);

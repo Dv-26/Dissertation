@@ -3,7 +3,8 @@
 
 module top #(
   parameter WIDTH = 512,
-  parameter HEIGHT = 512
+  parameter HEIGHT = 512,
+  parameter BPS = 115200
 ) (
   input logic clk, rst_n,
   (* MARK_DEBUG="true" *) input logic rx,
@@ -21,7 +22,7 @@ module top #(
 
   assign sysRst_n = !(!locked & rst_n);
   UartIF uartRxPort();
-  UartRx #(50000000, 115200) uartRx (exClk, sysRst_n, uartRxPort, rx);
+  UartRx #(50000000, BPS) uartRx (exClk, sysRst_n, uartRxPort, rx);
 
   // (* MARK_DEBUG="true" *) dataPort_t coderIn;
   dataPort_t coderIn;
@@ -34,6 +35,6 @@ module top #(
   UartIF uartTxPort();
   Coder2uart coder2uart (exClk, exClk, sysRst_n, coderOut, uartTxPort);
 
-  UartTx #(50000000, 115200) uartTx (exClk, sysRst_n, uartTxPort, tx);
+  UartTx #(50000000, BPS) uartTx (exClk, sysRst_n, uartTxPort, tx);
 
 endmodule
