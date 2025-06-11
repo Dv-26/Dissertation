@@ -25,22 +25,22 @@
 \@writefile{toc}{\contentsline {section}{\numberline {2}JPEG图像压缩相关理论}{4}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {2{}-1}{\ignorespaces JPEG的编码和解码流程}}{4}{}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{jpeg}{{2{}-1}{4}{}{}{}}
+\newlabel{jpeg}{{2{}-1}{4}{}{figure.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}彩色空间变换及逆变换}{4}{}\protected@file@percent }
 \citation{ahmed2006discrete}
-\newlabel{RGB2YCbCr}{{2.1}{5}{}{}{}}
-\newlabel{YCbCr2RGB}{{2.2}{5}{}{}{}}
+\newlabel{RGB2YCbCr}{{2.1}{5}{}{equation.2.1}{}}
+\newlabel{YCbCr2RGB}{{2.2}{5}{}{equation.2.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}离散余弦变换及逆变换}{5}{}\protected@file@percent }
-\newlabel{2D-DCT}{{2.3}{6}{}{}{}}
-\newlabel{8*8 2D-DCT}{{2.5}{6}{}{}{}}
+\newlabel{2D-DCT}{{2.3}{6}{}{equation.2.3}{}}
+\newlabel{8*8 2D-DCT}{{2.5}{6}{}{equation.2.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}量化及反量化}{6}{}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {2{}-1}{\ignorespaces 亮度量化表}}{7}{}\protected@file@percent }
-\newlabel{亮度量化表}{{2{}-1}{7}{}{}{}}
+\newlabel{亮度量化表}{{2{}-1}{7}{}{table.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2{}-2}{\ignorespaces 色度量化表}}{7}{}\protected@file@percent }
-\newlabel{色度量化表}{{2{}-2}{7}{}{}{}}
+\newlabel{色度量化表}{{2{}-2}{7}{}{table.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.4}ZigZag扫描及反扫描}{8}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {2{}-2}{\ignorespaces ZigZag扫描}}{8}{}\protected@file@percent }
-\newlabel{zigzag}{{2{}-2}{8}{}{}{}}
+\newlabel{zigzag}{{2{}-2}{8}{}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.5}熵编码及熵解码}{8}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.5.1}DC系数差分脉冲编码}{8}{}\protected@file@percent }
 \citation{huffman1952method}
@@ -69,159 +69,163 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {3{}-4}{\ignorespaces 流水线操作}}{16}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.2}脉动阵列}{16}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3{}-5}{\ignorespaces 二维脉动技术矩阵乘法}}{17}{}\protected@file@percent }
-\newlabel{2D array}{{3{}-5}{17}{}{}{}}
+\newlabel{2D array}{{3{}-5}{17}{}{figure.5}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.3}乒乓操作}{17}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {3{}-6}{\ignorespaces 乒乓操作}}{17}{}\protected@file@percent }
-\newlabel{2D array}{{3{}-6}{17}{}{}{}}
+\newlabel{2D array}{{3{}-6}{17}{}{figure.6}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.1.4}算法状态机}{18}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-7}{\ignorespaces 带数据通路的状态机}}{18}{}\protected@file@percent }
-\newlabel{asmd}{{3{}-7}{18}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}编码模块划分}{18}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-8}{\ignorespaces 编码模块}}{18}{}\protected@file@percent }
-\newlabel{code module}{{3{}-8}{18}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-9}{\ignorespaces 编码模块rtl视图}}{18}{}\protected@file@percent }
-\newlabel{code module rtl}{{3{}-9}{18}{}{}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3{}-13}{\ignorespaces 模块输入输出接口}}{19}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}数据解析模块}{19}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-10}{\ignorespaces 数据解析模块结构图}}{19}{}\protected@file@percent }
-\newlabel{data parser}{{3{}-10}{19}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}写状态机以及读状态机}{20}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-11}{\ignorespaces 写入状态机ASM图}}{20}{}\protected@file@percent }
-\newlabel{wrASM}{{3{}-11}{20}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-12}{\ignorespaces 读出状态机ASM图}}{20}{}\protected@file@percent }
-\newlabel{rdASM}{{3{}-12}{20}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-13}{\ignorespaces 脉冲同步器}}{20}{}\protected@file@percent }
-\newlabel{pulse synchronizer}{{3{}-13}{20}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}色彩空间变换模块}{21}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-14}{\ignorespaces 树形计算结构}}{21}{}\protected@file@percent }
-\newlabel{tree}{{3{}-14}{21}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}DCT模块}{21}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-7}{\ignorespaces 控制单元以及数据通路}}{18}{}\protected@file@percent }
+\newlabel{asmd}{{3{}-7}{18}{}{figure.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-8}{\ignorespaces ASM图的构成}}{18}{}\protected@file@percent }
+\newlabel{asm}{{3{}-8}{18}{}{figure.8}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-9}{\ignorespaces ASM的实例}}{19}{}\protected@file@percent }
+\newlabel{asm exp}{{3{}-9}{19}{}{figure.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}编码模块划分}{20}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-10}{\ignorespaces 编码模块}}{20}{}\protected@file@percent }
+\newlabel{code module}{{3{}-10}{20}{}{figure.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-11}{\ignorespaces 编码模块rtl视图}}{20}{}\protected@file@percent }
+\newlabel{code module rtl}{{3{}-11}{20}{}{figure.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3{}-13}{\ignorespaces 模块输入输出接口}}{20}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}数据解析模块}{21}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-12}{\ignorespaces 数据解析模块结构图}}{21}{}\protected@file@percent }
+\newlabel{data parser}{{3{}-12}{21}{}{figure.12}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}写状态机以及读状态机}{21}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-13}{\ignorespaces 写入状态机ASM图}}{21}{}\protected@file@percent }
+\newlabel{wrASM}{{3{}-13}{21}{}{figure.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-14}{\ignorespaces 读出状态机ASM图}}{22}{}\protected@file@percent }
+\newlabel{rdASM}{{3{}-14}{22}{}{figure.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-15}{\ignorespaces 脉冲同步器}}{22}{}\protected@file@percent }
+\newlabel{pulse synchronizer}{{3{}-15}{22}{}{figure.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}色彩空间变换模块}{22}{}\protected@file@percent }
 \citation{chen1977fast}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-15}{\ignorespaces DCT模块内部结构}}{22}{}\protected@file@percent }
-\newlabel{code module}{{3{}-15}{22}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}DA算法}{22}{}\protected@file@percent }
-\newlabel{colDCT}{{3.1}{22}{}{}{}}
-\newlabel{rowDCT}{{3.2}{22}{}{}{}}
-\newlabel{C}{{3.3}{23}{}{}{}}
-\newlabel{col}{{3.4}{23}{}{}{}}
-\newlabel{rowColDCT}{{3.6}{23}{}{}{}}
-\newlabel{colDCTCol}{{3.7}{23}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}DA算法的硬件实现}{24}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-16}{\ignorespaces 计算$Z=CX$的一维脉动阵列实现}}{24}{}\protected@file@percent }
-\newlabel{DCT脉动阵列}{{3{}-16}{24}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-17}{\ignorespaces $Z=CX$的PE}}{24}{}\protected@file@percent }
-\newlabel{x2zPE}{{3{}-17}{24}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-18}{\ignorespaces $Y^{T}=CZ^{T}$的PE}}{25}{}\protected@file@percent }
-\newlabel{z2yPE}{{3{}-18}{25}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-19}{\ignorespaces $Z=CX$阵列PE运行时序}}{25}{}\protected@file@percent }
-\newlabel{PE运行时序}{{3{}-19}{25}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-20}{\ignorespaces z输出时序}}{26}{}\protected@file@percent }
-\newlabel{z输出时序}{{3{}-20}{26}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-21}{\ignorespaces $Y^{T}=CZ^{T}$和差项生成模块}}{26}{}\protected@file@percent }
-\newlabel{和差项生成}{{3{}-21}{26}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-22}{\ignorespaces $Z^{T}$和差项生成步骤}}{27}{}\protected@file@percent }
-\newlabel{和差项生成步骤}{{3{}-22}{27}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Zigzag扫描模块}{27}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-23}{\ignorespaces Zigzag扫描模块内部划分}}{27}{}\protected@file@percent }
-\newlabel{zigzag module}{{3{}-23}{27}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.1}zigzao扫描器}{28}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-24}{\ignorespaces Zigzag 扫描器}}{28}{}\protected@file@percent }
-\newlabel{scanner}{{3{}-24}{28}{}{}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {3{}-14}{\ignorespaces Zigzag模块输入输出信号}}{28}{}\protected@file@percent }
-\newlabel{zigzag io}{{3{}-14}{28}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-25}{\ignorespaces Zigzag ASM图}}{29}{}\protected@file@percent }
-\newlabel{zigzag ASM}{{3{}-25}{29}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}量化模块}{29}{}\protected@file@percent }
-\newlabel{qeuatizer equation}{{3.9}{30}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-26}{\ignorespaces 量化器结构图}}{30}{}\protected@file@percent }
-\newlabel{quantizer}{{3{}-26}{30}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}熵编码模块}{30}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-27}{\ignorespaces 熵编码模块}}{30}{}\protected@file@percent }
-\newlabel{enropyCoder}{{3{}-27}{30}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.1}中间码生成模块}{30}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-28}{\ignorespaces 中间码模块}}{31}{}\protected@file@percent }
-\newlabel{tempGen}{{3{}-28}{31}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-29}{\ignorespaces 中间码模块ASM图}}{31}{}\protected@file@percent }
-\newlabel{tempGenASM}{{3{}-29}{31}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.2}EOB生成模块}{32}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-30}{\ignorespaces EOB生成模块}}{32}{}\protected@file@percent }
-\newlabel{EOBGen}{{3{}-30}{32}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-31}{\ignorespaces EOB生成模块ASM图}}{33}{}\protected@file@percent }
-\newlabel{EOBGenASM}{{3{}-31}{33}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.3}Huffman编码模块}{33}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-32}{\ignorespaces Huffman编码模块}}{33}{}\protected@file@percent }
-\newlabel{HuffmanCoder}{{3{}-32}{33}{}{}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.4}不定长数据拼接模块}{34}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-33}{\ignorespaces 不定长数据拼接模块}}{34}{}\protected@file@percent }
-\newlabel{spliceModule}{{3{}-33}{34}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-34}{\ignorespaces 不定长数据拼接模块ASM图}}{35}{}\protected@file@percent }
-\newlabel{spliceASM}{{3{}-34}{35}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.9}JPEG数据生成模块}{36}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3{}-35}{\ignorespaces JPEG数据生成模块}}{36}{}\protected@file@percent }
-\newlabel{数据生成模块}{{3{}-35}{36}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.10}本章总结}{36}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}JPEG编码系统仿真结果与指标分析}{38}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.0.1}编码模块仿真}{38}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-36}{\ignorespaces 测试环境}}{38}{}\protected@file@percent }
-\newlabel{test}{{4{}-36}{38}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-37}{\ignorespaces 测试原图像}}{38}{}\protected@file@percent }
-\newlabel{origin image}{{4{}-37}{38}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-38}{\ignorespaces 编码后的图像Y通道}}{39}{}\protected@file@percent }
-\newlabel{Y channal image}{{4{}-38}{39}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-39}{\ignorespaces 编码后的图像Cb通道}}{39}{}\protected@file@percent }
-\newlabel{Cb channal image}{{4{}-39}{39}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-40}{\ignorespaces 编码后的图像Cr通道}}{39}{}\protected@file@percent }
-\newlabel{Cr channal image}{{4{}-40}{39}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-41}{\ignorespaces 解码后的图像}}{40}{}\protected@file@percent }
-\newlabel{decode image}{{4{}-41}{40}{}{}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4{}-15}{\ignorespaces 压缩图像的各个属性指标}}{40}{}\protected@file@percent }
-\newlabel{image vs}{{4{}-15}{40}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-42}{\ignorespaces 编码模块仿真波形}}{40}{}\protected@file@percent }
-\newlabel{top_wave}{{4{}-42}{40}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}数据解析模块功能仿真}{41}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}读写状态机功能仿真}{41}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-43}{\ignorespaces 写状态机仿真波形}}{41}{}\protected@file@percent }
-\newlabel{WRFSMSimWave}{{4{}-43}{41}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-44}{\ignorespaces 读状态机仿真波形}}{41}{}\protected@file@percent }
-\newlabel{RdFSMSimWave}{{4{}-44}{41}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}DCT模块功能仿真}{41}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-45}{\ignorespaces DCT运算部分RTL视图}}{42}{}\protected@file@percent }
-\newlabel{DCTSchematice}{{4{}-45}{42}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-46}{\ignorespaces DCT模块仿真波形}}{42}{}\protected@file@percent }
-\newlabel{DCTSimulationWave}{{4{}-46}{42}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-47}{\ignorespaces 单个颜色通道仿真波形}}{43}{}\protected@file@percent }
-\newlabel{single color channal}{{4{}-47}{43}{}{}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4{}-16}{\ignorespaces 测试8×8单元测试输入}}{43}{}\protected@file@percent }
-\newlabel{testMatrix}{{4{}-16}{43}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-48}{\ignorespaces python脚本运行结果}}{43}{}\protected@file@percent }
-\newlabel{py result}{{4{}-48}{43}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-49}{\ignorespaces  DCT仿真结果波形}}{43}{}\protected@file@percent }
-\newlabel{result simulation}{{4{}-49}{43}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}zigzag扫描及量化模块}{44}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-50}{\ignorespaces Zigzag 仿真波形图}}{44}{}\protected@file@percent }
-\newlabel{scannerWave}{{4{}-50}{44}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-51}{\ignorespaces 量化器输出波形}}{44}{}\protected@file@percent }
-\newlabel{quantizer wave}{{4{}-51}{44}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}熵编码模块仿真}{44}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-52}{\ignorespaces 中间码生成模块仿真波形}}{44}{}\protected@file@percent }
-\newlabel{temp wave}{{4{}-52}{44}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-53}{\ignorespaces EOB生成模块仿真波形}}{45}{}\protected@file@percent }
-\newlabel{EOBGen wave}{{4{}-53}{45}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-54}{\ignorespaces Huffman编码仿真波形}}{45}{}\protected@file@percent }
-\newlabel{Huffman wave}{{4{}-54}{45}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4{}-55}{\ignorespaces 不定长数据拼接模块仿真波形}}{45}{}\protected@file@percent }
-\newlabel{splice wave}{{4{}-55}{45}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}FPGA实现与上板验证}{46}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5{}-56}{\ignorespaces 资源占用}}{46}{}\protected@file@percent }
-\newlabel{implementation}{{5{}-56}{46}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5{}-57}{\ignorespaces 时序报告}}{46}{}\protected@file@percent }
-\newlabel{timing}{{5{}-57}{46}{}{}{}}
-\newlabel{Fmax}{{5.1}{46}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}上板验证}{46}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5{}-58}{\ignorespaces 验证平台}}{47}{}\protected@file@percent }
-\newlabel{FPGA}{{5{}-58}{47}{}{}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5{}-59}{\ignorespaces 实机验证}}{47}{}\protected@file@percent }
-\newlabel{fpga test}{{5{}-59}{47}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-16}{\ignorespaces 树形计算结构}}{23}{}\protected@file@percent }
+\newlabel{tree}{{3{}-16}{23}{}{figure.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}DCT模块}{23}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-17}{\ignorespaces DCT模块内部结构}}{23}{}\protected@file@percent }
+\newlabel{code module}{{3{}-17}{23}{}{figure.17}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}DA算法}{24}{}\protected@file@percent }
+\newlabel{colDCT}{{3.1}{24}{}{equation.3.1}{}}
+\newlabel{rowDCT}{{3.2}{24}{}{equation.3.2}{}}
+\newlabel{C}{{3.3}{24}{}{equation.3.3}{}}
+\newlabel{col}{{3.4}{24}{}{equation.3.4}{}}
+\newlabel{rowColDCT}{{3.6}{24}{}{equation.3.6}{}}
+\newlabel{colDCTCol}{{3.7}{25}{}{equation.3.7}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}DA算法的硬件实现}{25}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-18}{\ignorespaces 计算$Z=CX$的一维脉动阵列实现}}{25}{}\protected@file@percent }
+\newlabel{DCT脉动阵列}{{3{}-18}{25}{}{figure.18}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-19}{\ignorespaces $Z=CX$的PE}}{26}{}\protected@file@percent }
+\newlabel{x2zPE}{{3{}-19}{26}{}{figure.19}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-20}{\ignorespaces $Y^{T}=CZ^{T}$的PE}}{26}{}\protected@file@percent }
+\newlabel{z2yPE}{{3{}-20}{26}{}{figure.20}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-21}{\ignorespaces $Z=CX$阵列PE运行时序}}{27}{}\protected@file@percent }
+\newlabel{PE运行时序}{{3{}-21}{27}{}{figure.21}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-22}{\ignorespaces z输出时序}}{27}{}\protected@file@percent }
+\newlabel{z输出时序}{{3{}-22}{27}{}{figure.22}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-23}{\ignorespaces $Y^{T}=CZ^{T}$和差项生成模块}}{28}{}\protected@file@percent }
+\newlabel{和差项生成}{{3{}-23}{28}{}{figure.23}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-24}{\ignorespaces $Z^{T}$和差项生成步骤}}{28}{}\protected@file@percent }
+\newlabel{和差项生成步骤}{{3{}-24}{28}{}{figure.24}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Zigzag扫描模块}{28}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-25}{\ignorespaces Zigzag扫描模块内部划分}}{29}{}\protected@file@percent }
+\newlabel{zigzag module}{{3{}-25}{29}{}{figure.25}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.6.1}zigzao扫描器}{29}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-26}{\ignorespaces Zigzag 扫描器}}{29}{}\protected@file@percent }
+\newlabel{scanner}{{3{}-26}{29}{}{figure.26}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3{}-14}{\ignorespaces Zigzag模块输入输出信号}}{29}{}\protected@file@percent }
+\newlabel{zigzag io}{{3{}-14}{29}{}{table.14}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-27}{\ignorespaces Zigzag ASM图}}{30}{}\protected@file@percent }
+\newlabel{zigzag ASM}{{3{}-27}{30}{}{figure.27}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}量化模块}{30}{}\protected@file@percent }
+\newlabel{qeuatizer equation}{{3.9}{31}{}{equation.3.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-28}{\ignorespaces 量化器结构图}}{31}{}\protected@file@percent }
+\newlabel{quantizer}{{3{}-28}{31}{}{figure.28}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}熵编码模块}{31}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-29}{\ignorespaces 熵编码模块}}{31}{}\protected@file@percent }
+\newlabel{enropyCoder}{{3{}-29}{31}{}{figure.29}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.1}中间码生成模块}{31}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-30}{\ignorespaces 中间码模块}}{32}{}\protected@file@percent }
+\newlabel{tempGen}{{3{}-30}{32}{}{figure.30}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-31}{\ignorespaces 中间码模块ASM图}}{32}{}\protected@file@percent }
+\newlabel{tempGenASM}{{3{}-31}{32}{}{figure.31}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.2}EOB生成模块}{33}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-32}{\ignorespaces EOB生成模块}}{33}{}\protected@file@percent }
+\newlabel{EOBGen}{{3{}-32}{33}{}{figure.32}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-33}{\ignorespaces EOB生成模块ASM图}}{34}{}\protected@file@percent }
+\newlabel{EOBGenASM}{{3{}-33}{34}{}{figure.33}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.3}Huffman编码模块}{34}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-34}{\ignorespaces Huffman编码模块}}{34}{}\protected@file@percent }
+\newlabel{HuffmanCoder}{{3{}-34}{34}{}{figure.34}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.8.4}不定长数据拼接模块}{35}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-35}{\ignorespaces 不定长数据拼接模块}}{35}{}\protected@file@percent }
+\newlabel{spliceModule}{{3{}-35}{35}{}{figure.35}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-36}{\ignorespaces 不定长数据拼接模块ASM图}}{36}{}\protected@file@percent }
+\newlabel{spliceASM}{{3{}-36}{36}{}{figure.36}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.9}JPEG数据生成模块}{37}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3{}-37}{\ignorespaces JPEG数据生成模块}}{37}{}\protected@file@percent }
+\newlabel{数据生成模块}{{3{}-37}{37}{}{figure.37}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.10}本章总结}{37}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}JPEG编码系统仿真结果与指标分析}{39}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.0.1}编码模块仿真}{39}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-38}{\ignorespaces 测试环境}}{39}{}\protected@file@percent }
+\newlabel{test}{{4{}-38}{39}{}{figure.38}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-39}{\ignorespaces 测试原图像}}{39}{}\protected@file@percent }
+\newlabel{origin image}{{4{}-39}{39}{}{figure.39}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-40}{\ignorespaces 编码后的图像Y通道}}{40}{}\protected@file@percent }
+\newlabel{Y channal image}{{4{}-40}{40}{}{figure.40}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-41}{\ignorespaces 编码后的图像Cb通道}}{40}{}\protected@file@percent }
+\newlabel{Cb channal image}{{4{}-41}{40}{}{figure.41}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-42}{\ignorespaces 编码后的图像Cr通道}}{40}{}\protected@file@percent }
+\newlabel{Cr channal image}{{4{}-42}{40}{}{figure.42}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-43}{\ignorespaces 解码后的图像}}{41}{}\protected@file@percent }
+\newlabel{decode image}{{4{}-43}{41}{}{figure.43}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4{}-15}{\ignorespaces 压缩图像的各个属性指标}}{41}{}\protected@file@percent }
+\newlabel{image vs}{{4{}-15}{41}{}{table.15}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-44}{\ignorespaces 编码模块仿真波形}}{41}{}\protected@file@percent }
+\newlabel{top_wave}{{4{}-44}{41}{}{figure.44}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}数据解析模块功能仿真}{42}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}读写状态机功能仿真}{42}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-45}{\ignorespaces 写状态机仿真波形}}{42}{}\protected@file@percent }
+\newlabel{WRFSMSimWave}{{4{}-45}{42}{}{figure.45}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-46}{\ignorespaces 读状态机仿真波形}}{42}{}\protected@file@percent }
+\newlabel{RdFSMSimWave}{{4{}-46}{42}{}{figure.46}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}DCT模块功能仿真}{42}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-47}{\ignorespaces DCT运算部分RTL视图}}{43}{}\protected@file@percent }
+\newlabel{DCTSchematice}{{4{}-47}{43}{}{figure.47}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-48}{\ignorespaces DCT模块仿真波形}}{43}{}\protected@file@percent }
+\newlabel{DCTSimulationWave}{{4{}-48}{43}{}{figure.48}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-49}{\ignorespaces 单个颜色通道仿真波形}}{44}{}\protected@file@percent }
+\newlabel{single color channal}{{4{}-49}{44}{}{figure.49}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4{}-16}{\ignorespaces 测试8×8单元测试输入}}{44}{}\protected@file@percent }
+\newlabel{testMatrix}{{4{}-16}{44}{}{table.16}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-50}{\ignorespaces python脚本运行结果}}{44}{}\protected@file@percent }
+\newlabel{py result}{{4{}-50}{44}{}{figure.50}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-51}{\ignorespaces  DCT仿真结果波形}}{44}{}\protected@file@percent }
+\newlabel{result simulation}{{4{}-51}{44}{}{figure.51}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}zigzag扫描及量化模块}{45}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-52}{\ignorespaces Zigzag 仿真波形图}}{45}{}\protected@file@percent }
+\newlabel{scannerWave}{{4{}-52}{45}{}{figure.52}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-53}{\ignorespaces 量化器输出波形}}{45}{}\protected@file@percent }
+\newlabel{quantizer wave}{{4{}-53}{45}{}{figure.53}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}熵编码模块仿真}{45}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-54}{\ignorespaces 中间码生成模块仿真波形}}{45}{}\protected@file@percent }
+\newlabel{temp wave}{{4{}-54}{45}{}{figure.54}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-55}{\ignorespaces EOB生成模块仿真波形}}{46}{}\protected@file@percent }
+\newlabel{EOBGen wave}{{4{}-55}{46}{}{figure.55}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-56}{\ignorespaces Huffman编码仿真波形}}{46}{}\protected@file@percent }
+\newlabel{Huffman wave}{{4{}-56}{46}{}{figure.56}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4{}-57}{\ignorespaces 不定长数据拼接模块仿真波形}}{46}{}\protected@file@percent }
+\newlabel{splice wave}{{4{}-57}{46}{}{figure.57}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}FPGA实现与上板验证}{47}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5{}-58}{\ignorespaces 资源占用}}{47}{}\protected@file@percent }
+\newlabel{implementation}{{5{}-58}{47}{}{figure.58}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5{}-59}{\ignorespaces 时序报告}}{47}{}\protected@file@percent }
+\newlabel{timing}{{5{}-59}{47}{}{figure.59}{}}
+\newlabel{Fmax}{{5.1}{47}{}{equation.5.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}上板验证}{47}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5{}-60}{\ignorespaces 验证平台}}{48}{}\protected@file@percent }
+\newlabel{FPGA}{{5{}-60}{48}{}{figure.60}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5{}-61}{\ignorespaces 实机验证}}{48}{}\protected@file@percent }
+\newlabel{fpga test}{{5{}-61}{48}{}{figure.61}{}}
 \bibstyle{plain}
 \bibdata{references}
 \bibcite{2004vlsi数字信号处理系统}{{1}{}{{}}{{}}}
@@ -243,10 +247,10 @@
 \bibcite{可重构}{{17}{}{{}}{{}}}
 \bibcite{ref2}{{18}{}{{}}{{}}}
 \bibcite{JFIF}{{19}{}{{}}{{}}}
-\@writefile{toc}{\contentsline {section}{参考文献}{48}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{参考文献}{49}{}\protected@file@percent }
 \bibcite{ref1}{{20}{}{{}}{{}}}
 \bibcite{1019687658.nh}{{21}{}{{}}{{}}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\@writefile{toc}{\contentsline {section}{致谢}{50}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{致谢}{51}{}\protected@file@percent }
 \ttl@finishall
-\gdef \@abspage@last{55}
+\gdef \@abspage@last{56}
