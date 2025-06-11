@@ -49,6 +49,6 @@
 \contentsline {subsection}{\numberline {4.4}熵编码模块仿真}{45}{}%
 \contentsline {section}{\numberline {5}FPGA实现与上板验证}{47}{}%
 \contentsline {subsection}{\numberline {5.1}上板验证}{47}{}%
-\contentsline {section}{参考文献}{49}{}%
-\contentsline {section}{致谢}{51}{}%
+\contentsline {section}{参考文献}{50}{}%
+\contentsline {section}{致谢}{52}{}%
 \contentsfinish 

@@ -856,7 +856,7 @@
           数据通路。另一类是设计控制不同指令执行循序的电路，称为控制单元。控制
           通路和数据通路的连接关系如图\ref{asmd}所示。数据通路根据系统的功能对
           寄存器进行操作，控制单元为数据通路提供一些系列控制信号。需要注意，从
-          数据通路到控制单元的反馈为系统的稳定性提供了保证。
+          数据通路到控制单元的反馈为系统的稳定性提供了保证\cite{mano2020digital}。
           \begin{figure}[H]
             \centering
             \includegraphics[scale=0.4]{./pictures/ASMD.png}
@@ -1305,10 +1305,7 @@
           \label{zigzag ASM}
         \end{figure}
 
-        该状态机的ASM图如图\ref{zigzag ASM}所示，在ASM图中每个虚线框代表一个状态
-        每个状态中都带有一个矩形框，矩形框的左上角标注状态名称，内部存放穆尔型输出，
-        同时表示该信号此时有效。与流程图类似，棱形框代表状态输入信号的判断。圆角矩
-        形内部存放米利型输出。下面分别用三个状态描述zigzag扫描的运行步骤。
+        该状态机的ASM图如图\ref{zigzag ASM}所示。下面分别用三个状态描述zigzag扫描的运行步骤。
 
         初态为IDLE状态，表示该模块空闲，当接收到start信号有效时，跳转到SCAN状态开始
         工作；SCAN状态表示该模块正进行扫描，valid信号有效。如图\ref{zigzag ASM}右下角
@@ -1785,6 +1782,45 @@
       \label{fpga test}
     \end{figure}
     本系统在PC通过uart接口发生和接收原始图像和压缩数据。并在PC端进行解码验证功能正确性。
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.30]{./pictures/uart_rx.png}
+      \caption{PC端接收数据}
+      \label{fpga test}
+    \end{figure}
+
+    测试的原图像为图\ref{origin image}，在PC端进行解码后的图像如图\ref{test decode result}所示，
+    和仿真的结果基本保持一致。
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.4]{../src/test/out.jpg}
+      \caption{上板验证压缩后的图像}
+      \label{test decode result}
+    \end{figure}
+
+    在验证的同时通过片上逻辑分析仪观测编码模块实际输出信号。由于该模块是通过串口输入数据
+    因此输入的数据传输率较低。并不能使编码模块的吞吐率达到极限。由于该模块会对图像前8行的
+    数据进行乒乓缓存，而乒乓缓存输出的数据吞吐量是模块能承受的最大吞吐量。故将乒乓缓存的
+    输出代表模块输入的信号并进行观察。
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale=0.5]{./pictures/ila_wave.png}
+      \caption{片上逻辑分析仪步骤波形}
+      \label{ILA wave}
+    \end{figure}
+
+    通过片上逻辑分析仪捕捉的波形如\ref{ILA wave}所示，其中橙色的信号为连续输入的前8行RGB数据。
+    绿色的波形为输出编码数据。通过对比输入输出的value信号可以直观地表示数据进行了压缩操作。
+    可以看到编码模块工作时钟频率为50Mhz，输入数据每个时钟周期输入3字节的RGB格式信号。模块的
+    吞吐率如下
+    \[
+      Throughput = f_{clk} \times D_{width} = 50 \times 10^6  Hz \times 3  Bytes/cycle = 150 \times 10^6  Bytes/s
+    \]
+
+
 
 
 \newpage
